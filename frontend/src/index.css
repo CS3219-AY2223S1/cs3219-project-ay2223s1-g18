@@ -5,6 +5,7 @@ body {
     "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--base-900) !important;
 }
 
 code {
@@ -65,4 +66,47 @@ code {
   --text-lg: 1.5rem; /* 24px */
   --text-xl: 2.25rem; /* 36px */
   --text-2xl: 3rem; /* 48px */
+
+  --transition: 200ms ease-out;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+input,
+textarea {
+  background-color: var(--base-50);
+  padding: 1px 20px;
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  appearance: none;
+  border-radius: 12px;
+  border: 2px solid var(--base-200);
+  transition: 200ms ease-out;
+  width: 100%;
+  margin-top: 8px;
+  font-family: "Circular";
+  font-size: var(--text-base);
+}
+
+textarea {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border: 2px solid var(--base-300);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--base-400);
+  font-family: "Circular";
 }
