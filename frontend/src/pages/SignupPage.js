@@ -44,14 +44,14 @@ function SignupPage() {
             alt="logo"
             style={{
               height: "32px",
-              margin: "60px 0 40px 0",
+              margin: "40px 24px",
               cursor: "pointer",
             }}
           />
         </a>
         <Header>Welcome to Peerprep!</Header>
         <CardWrap>
-          <Card>
+          <div style={{ maxWidth: "400px" }}>
             <div style={{ width: "100%", marginBottom: "24px" }}>
               <label>Username</label>
               <input
@@ -85,9 +85,9 @@ function SignupPage() {
               Sign up
             </Button>
             <p>
-              Already have an account? <a href="/home">Log in</a>
+              Already have an account? <a href="/login">Log in</a>
             </p>
-          </Card>
+          </div>
         </CardWrap>
       </CardPageWrap>
     </div>
@@ -101,7 +101,6 @@ const CardPageWrap = styled.div`
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  padding: 0 24px;
   overflow-x: hidden;
 `;
 
@@ -109,12 +108,13 @@ const Header = styled.h1`
   margin: 0 auto;
   max-width: 700px;
   text-align: center;
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   font-weight: 800;
 `;
 
 const CardWrap = styled.div`
-  display: grid;
+  display: flex;
+  justify-content: center;
   margin: 0;
   gap: 24px;
   padding: 24px 0;
@@ -125,21 +125,5 @@ const CardWrap = styled.div`
 
   @media (min-width: 832px) {
     padding: 64px 48px;
-  }
-`;
-
-const Card = styled.div`
-  display: block;
-  padding: 24px;
-  max-width: 400px;
-
-  @media (min-width: 640px) {
-    padding: 32px;
-  }
-
-  @media (min-width: 832px) {
-    padding: 32px 48px;
-    margin: 0 auto;
-    width: 100%;
   }
 `;
