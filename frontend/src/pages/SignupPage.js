@@ -84,7 +84,7 @@ function SignupPage() {
             >
               Sign up
             </Button>
-            <p>
+            <p style={{ marginTop: "8px" }}>
               Already have an account? <a href="/login">Log in</a>
             </p>
           </div>
