@@ -6,7 +6,6 @@ import UserModel from '../models/users.model.js'
 export default class UserService {
 
   static async createUser(email, name, password) {
-    console.log(UserModel)
     return new Promise((resolve, reject) => {
       Helper
         .save(UserModel, {
@@ -15,7 +14,6 @@ export default class UserService {
           password
         })
         .then((res) => {
-          console.log(res)
           resolve(res);
         })
         .catch((e) => reject(e));
