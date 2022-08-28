@@ -8,14 +8,12 @@ const createUser = (req, res) => {
     UserService
         .createUser(email, name, password)
         .then((response) => {
-            console.log(response)
             return res.status(201).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
-            console.log(err)
             return res.status(500).json({ status: false, err });
         });
 };
@@ -25,6 +23,7 @@ const authenticateUser = (req, res) => {
     UserService
         .authenticateUser(name, password)
         .then((response) => {
+            
             return res.status(201).json({
                 status: true,
                 response,
@@ -73,9 +72,9 @@ const getUsers = (req, res) => {
 
 const updateUser = (req, res) => {
     const { id } = req.params;
-    const { password } = req.body;
+    const { email, name, password } = req.body;
     UserService
-        .updateUser(id, password)
+        .updateUser(id, email, name, password)
         .then((response) => {
             return res.status(200).json({
                 status: true,
