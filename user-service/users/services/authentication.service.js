@@ -5,8 +5,11 @@ dotenv.config();
 
 
 export async function hashPassword(password)  {
-    console.log(process.env.HASH_SALT_ROUNDS)
-    return bcrypt.hash(password, process.env.HASH_SALT_ROUNDS);
+    return bcrypt.hash(password, 11);
+};
+
+export async function verifyHashPassword(enteredPassword, storedHashPassword)  {
+    return bcrypt.compare(enteredPassword, storedHashPassword);
 };
 
 export function createJwtToken(username)  {
