@@ -72,9 +72,9 @@ const getUsers = (req, res) => {
 
 const updateUser = (req, res) => {
     const { id } = req.params;
-    const { email, name, password } = req.body;
+    const { name, password } = req.body;
     UserService
-        .updateUser(id, email, name, password)
+        .updateUser(id, name, password)
         .then((response) => {
             return res.status(200).json({
                 status: true,

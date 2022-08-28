@@ -60,10 +60,10 @@ export default class UserService {
     });
   };
 
-  static async updateUser(id, email, name, password) {
+  static async updateUser(id, name, password) {
     return new Promise((resolve, reject) => {
       Helper
-        .update(UserModel, { userId: id }, { email: email, name: name, password: password },  { new: true })
+        .update(UserModel, { userId: id }, { name: name, password: password },  { new: true })
         .then((res) => {
           resolve(res);
         })
