@@ -6,7 +6,6 @@ dotenv.config();
 import connectDatabase from './database/connect.js'
 import UserRouter from "./users/routes/users.route.js";
 
-
 const port = process.env.USER_PORT || 3000;
 
 const app = express();
@@ -23,7 +22,6 @@ app.use("/users", UserRouter);
 
 // Controller will contain all the User-defined Routes - To be deleted
 import { createUser } from './controller/user-controller.js';
-
 router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
 app.use('/api/user', router).all((_, res) => {
