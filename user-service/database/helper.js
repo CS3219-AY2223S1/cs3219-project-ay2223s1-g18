@@ -9,7 +9,11 @@ export default class Helper {
         return Model.find(query).exec(); 
     };
 
-    static update(Model, condition, set, newDoc) { 
+    static listOne(Model, query) { 
+        return Model.findOne(query).exec(); 
+    };
+
+    static updateOne(Model, condition, set, newDoc) { 
         return Model.findOneAndUpdate(condition, set, newDoc).exec(); 
     };
 

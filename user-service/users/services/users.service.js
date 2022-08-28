@@ -1,17 +1,18 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-import { createJwtToken } from './authentication.service.js';
+import { hashPassword, createJwtToken } from './authentication.service.js';
 
 export default class UserService {
 
   static async createUser(email, name, password) {
+
     return new Promise((resolve, reject) => {
       Helper
         .save(UserModel, {
           name,
           email,
-          password
+          hashedPassword
         })
         .then((res) => {
           resolve(res);
@@ -22,8 +23,19 @@ export default class UserService {
 
   static async authenticateUser(name, password) {
     // TODO: Add verification with database
-    return createJwtToken(name);
+    return new Promise((resolve, reject) => {
+      Helper
+        .listOne(UserModel, { name: name, password: password }
+        )
+        .then((res) => {
+          if(!res)
+            reject("error")
+          resolve(createJwtToken(name))
+        })
+        .catch((e) => reject(e));
+      });
   };
+
 
   static async getUserById(id) {
     return new Promise((resolve, reject) => {
@@ -52,7 +64,7 @@ export default class UserService {
   static async updateUser(id, name, password) {
     return new Promise((resolve, reject) => {
       Helper
-        .update(UserModel, { userId: id }, { name: name, password: password },  { new: true })
+        .updateOne(UserModel, { userId: id }, { name: name, password: password }, { new: true })
         .then((res) => {
           resolve(res);
         })

@@ -12,6 +12,7 @@ const createUser = (req, res) => {
             });
         })
         .catch((err) => {
+            console.log(err)
             return res.status(500).json({ status: false, err });
         });
 };
@@ -27,7 +28,6 @@ const authenticateUser = (req, res) => {
             });
         })
         .catch((err) => {
-            console.log(err)
             return res.status(500).json({ status: false, err });
         });
 };
