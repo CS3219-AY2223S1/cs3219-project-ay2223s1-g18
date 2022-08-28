@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
-let databaseUri = process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
+import dotenv from 'dotenv';
+dotenv.config();
 
+const databaseUri = process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
 const connect = async () => {
 
     mongoose.connect(databaseUri, {

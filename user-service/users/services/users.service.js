@@ -1,17 +1,8 @@
 
-import connectdb from '../../database/connect.js'
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
 
 export default class UserService {
-  constructor() {
-    try {
-      console.log(101)
-      connectdb.connect();
-    } catch (e) {
-      console.error(e);
-    }
-  }
 
   createUser = async (email, name, password) => {
     return new Promise((resolve, reject) => {
