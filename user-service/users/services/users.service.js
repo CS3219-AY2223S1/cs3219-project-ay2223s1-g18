@@ -2,9 +2,11 @@
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
 
+
 export default class UserService {
 
-  createUser = async (email, name, password) => {
+  static async createUser(email, name, password) {
+    console.log(UserModel)
     return new Promise((resolve, reject) => {
       Helper
         .save(UserModel, {
@@ -13,13 +15,14 @@ export default class UserService {
           password
         })
         .then((res) => {
+          console.log(res)
           resolve(res);
         })
         .catch((e) => reject(e));
     });
   };
 
-  authenticateUser = async (name, password) => {
+  static async authenticateUser(name, password) {
     // return new Promise((resolve, reject) => {
     //   Helper
     //     .save(UserModel, {
@@ -35,7 +38,7 @@ export default class UserService {
     return { status: "Auth work in progress" }
   };
 
-  getUserById = async (id) => {
+  static async getUserById(id) {
     return new Promise((resolve, reject) => {
       Helper
         .list(UserModel, {
@@ -48,7 +51,7 @@ export default class UserService {
     });
   };
 
-  getUsers = async () => {
+  static async getUsers() {
     return new Promise((resolve, reject) => {
       Helper
         .list(UserModel, {})
@@ -59,7 +62,7 @@ export default class UserService {
     });
   };
 
-  updateUser = async (name, email) => {
+  static async updateUser(name, email) {
     return new Promise((resolve, reject) => {
       Helper
         .update(UserModel, { email: email, name: name }, null, { new: true })
@@ -70,7 +73,7 @@ export default class UserService {
     });
   };
 
-  deleteUser = async (id) => {
+  static async deleteUser(id) {
     return new Promise((resolve, reject) => {
       Helper
         .deleteOne(UserModel, { userId: id })
