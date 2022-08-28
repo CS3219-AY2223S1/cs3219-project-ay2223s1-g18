@@ -1,8 +1,6 @@
 
 import UserService from '../services/users.service.js';
 
-
-
 const createUser = (req, res) => {
     const { email, name, password } = req.body;
     UserService
@@ -23,13 +21,13 @@ const authenticateUser = (req, res) => {
     UserService
         .authenticateUser(name, password)
         .then((response) => {
-            
-            return res.status(201).json({
+            return res.status(200).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
+            console.log(err)
             return res.status(500).json({ status: false, err });
         });
 };

@@ -1,7 +1,7 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-
+import { createJwtToken } from './authentication.service.js';
 
 export default class UserService {
 
@@ -21,19 +21,8 @@ export default class UserService {
   };
 
   static async authenticateUser(name, password) {
-    // return new Promise((resolve, reject) => {
-    //   Helper
-    //     .save(UserModel, {
-    //       name,
-    //       email,
-    //       password
-    //     })
-    //     .then((res) => {
-    //       resolve(res);
-    //     })
-    //     .catch((e) => reject(e));
-    // });
-    return { status: "Auth work in progress" }
+    // TODO: Add verification with database
+    return createJwtToken(name);
   };
 
   static async getUserById(id) {
