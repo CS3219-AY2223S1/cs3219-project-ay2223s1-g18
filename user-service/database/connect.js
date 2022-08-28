@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 let databaseUri = process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
 
-const connection = async () => {
+const connect = async () => {
 
     mongoose.connect(databaseUri, {
         useNewUrlParser: true,
@@ -20,4 +20,4 @@ const connection = async () => {
     return mongoose;
 };
 
-module.exports = { connection, mongoose };
+export default connect;

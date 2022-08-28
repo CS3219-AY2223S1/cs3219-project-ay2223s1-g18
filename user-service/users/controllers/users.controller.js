@@ -1,91 +1,100 @@
-const usersService = require("../services/users.service");
 
-module.exports.createUser = (req, res) => {
-    const { email, name, password } = req.body;
-    usersService
-        .createUser(email, name, password)
-        .then((response) => {
-            return res.status(201).json({
-                status: true,
-                response,
-            });
-        })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
-        });
-};
+import UserService from '../services/users.service.js';
 
-module.exports.authenticateUser = (req, res) => {
-    const { name, password } = req.body;
-    usersService
-        .authenticateUser(name, password)
-        .then((response) => {
-            return res.status(201).json({
-                status: true,
-                response,
+export default class UserController {
+    createUser = (req, res) => {
+        const { email, name, password } = req.body;
+        UserService
+            .createUser(email, name, password)
+            .then((response) => {
+                return res.status(201).json({
+                    status: true,
+                    response,
+                });
+            })
+            .catch((err) => {
+                return res.status(500).json({ status: false, err });
             });
-        })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
-        });
-};
+    };
 
-module.exports.getUserById = (req, res) => {
-    const { id } = req.params;
-    usersService
-        .getUserById(id)
-        .then((response) => {
-            return res.status(200).json({
-                status: true,
-                response,
+    authenticateUser = (req, res) => {
+        const { name, password } = req.body;
+        UserService
+            .authenticateUser(name, password)
+            .then((response) => {
+                return res.status(201).json({
+                    status: true,
+                    response,
+                });
+            })
+            .catch((err) => {
+                return res.status(500).json({ status: false, err });
             });
-        })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
-        });
-};
+    };
 
-module.exports.getUsers = (req, res) => {
-    usersService
-        .getUsers()
-        .then((response) => {
-            return res.status(200).json({
-                status: true,
-                response,
-            });
-        })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
+    getHealthStatus = (req, res) => {
+        res.json({
+            status: "ok",
         });
-};
+    };
 
-module.exports.deleteUser = (req, res) => {
-    const { id } = req.params;
-    usersService
-        .deleteUser(id)
-        .then((response) => {
-            return res.status(200).json({
-                status: true,
-                response,
+    getUserById = (req, res) => {
+        const { id } = req.params;
+        UserService
+            .getUserById(id)
+            .then((response) => {
+                return res.status(200).json({
+                    status: true,
+                    response,
+                });
+            })
+            .catch((err) => {
+                return res.status(500).json({ status: false, err });
             });
-        })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
-        });
-};
+    };
 
-module.exports.updateUser = (req, res) => {
-    const { id } = req.params;
-    const { password } = req.body;
-    usersService
-        .updateUser(id, password)
-        .then((response) => {
-            return res.status(200).json({
-                status: true,
-                response,
+    getUsers = (req, res) => {
+        UserService
+            .getUsers()
+            .then((response) => {
+                return res.status(200).json({
+                    status: true,
+                    response,
+                });
+            })
+            .catch((err) => {
+                return res.status(500).json({ status: false, err });
             });
-        })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
-        });
-};
+    };
+    
+    updateUser = (req, res) => {
+        const { id } = req.params;
+        const { password } = req.body;
+        UserService
+            .updateUser(id, password)
+            .then((response) => {
+                return res.status(200).json({
+                    status: true,
+                    response,
+                });
+            })
+            .catch((err) => {
+                return res.status(500).json({ status: false, err });
+            });
+    };
+
+    deleteUser = (req, res) => {
+        const { id } = req.params;
+        UserService
+            .deleteUser(id)
+            .then((response) => {
+                return res.status(200).json({
+                    status: true,
+                    response,
+                });
+            })
+            .catch((err) => {
+                return res.status(500).json({ status: false, err });
+            });
+    };
+}

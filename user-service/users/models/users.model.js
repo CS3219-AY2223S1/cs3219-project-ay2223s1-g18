@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
-const uuid = require("uuid");
+import mongoose from 'mongoose';
+import {v4} from 'uuid';
+
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -7,7 +8,7 @@ const userSchema = new Schema({
         type: String,
         required: true,
         unique: true,
-        default: uuid.v4,
+        default: v4,
     },
     email: {
         type: String,
@@ -25,4 +26,4 @@ const userSchema = new Schema({
     },
 });
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

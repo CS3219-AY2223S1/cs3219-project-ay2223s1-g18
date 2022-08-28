@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const database = require("./database/connection");
-const users = require("./accounts/routes/users.route");
+import UserRouter from "./users/routes/users.route.js" ;
 import { createUser } from './controller/user-controller.js';
+
 const port = process.env.USER_PORT || 3000;
 
 const app = express();
@@ -15,29 +17,16 @@ app.options('*', cors())
 
 const router = express.Router()
 
-app.use("/users", users);
+app.use("/users", UserRouter);
 
 
 // Controller will contain all the User-defined Routes - To be deleted
 router.get('/', (_, res) => res.send('Hello World from user-service'))
 router.post('/', createUser)
-
-app.get("/health-check", (req, res) => {
-    res.json({
-      status: "ok",
-    });
-  });
-  
 app.use('/api/user', router).all((_, res) => {
     res.setHeader('content-type', 'application/json')
     res.setHeader('Access-Control-Allow-Origin', '*')
 })
 
-try {
-    database.connection();
-  } catch (e) {
-    console.error(e);
-  }
   
-
-app.listen(port, () => console.log('user-service listening on port:'+ port));
+app.listen(port, () => console.log('User-Service listening on Port', port));
