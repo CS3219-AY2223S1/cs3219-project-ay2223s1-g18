@@ -1,11 +1,30 @@
 import styled from "styled-components";
 import { useState } from "react";
 import Button from "../components/Button";
+import axios from "axios";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoginSuccess, setIsLoginSuccess] = useState("");
+
+  const handleLogin = async () => {
+    setIsLoginSuccess(false);
+    const res = await axios
+      // TODO: set api url properly
+      .post("http://localhost:8000/users/auth", { name: username, password })
+      .catch((err) => {
+        // TODO: Handle this properly
+        console.log("error", err);
+      });
+    if (res && res.data.status) {
+      console.log("LOGIN", res);
+      // TODO: save JWT in cookie
+      //     setIsLoginSuccess(true);
+      //     navigate("/home");
+    }
+  };
 
   return (
     <CardPageWrap>
@@ -54,6 +73,7 @@ function LoginPage() {
             variant="primary"
             size="big"
             style={{ marginTop: "48px", width: "100%" }}
+            onClick={handleLogin}
           >
             Log in
           </Button>
