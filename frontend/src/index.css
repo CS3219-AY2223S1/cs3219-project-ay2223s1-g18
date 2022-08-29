@@ -72,7 +72,7 @@ code {
 
 a {
   color: var(--accent) !important;
-  text-decoration: none;
+  text-decoration: none !important;
   font-weight: 500 !important;
   cursor: pointer;
 }
