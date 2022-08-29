@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState } from "react";
 import axios from "axios";
@@ -9,7 +10,9 @@ function SignupPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [usernameTakenError, setUsernameTakenError] = useState("");
   const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignup = async () => {
     setIsSignupSuccess(false);
@@ -17,13 +20,14 @@ function SignupPage() {
       .post(URL_USER_SVC, { username, password })
       .catch((err) => {
         if (err.response.status === STATUS_CODE_CONFLICT) {
-          setError("This username already exists");
+          setUsernameTakenError("This username already exists");
         } else {
           setError("Please try again later");
         }
       });
     if (res && res.status === STATUS_CODE_CREATED) {
       setIsSignupSuccess(true);
+      navigate("/home");
     }
   };
 
@@ -42,8 +46,10 @@ function SignupPage() {
               value={username}
               style={{ width: "356px" }}
             />
-            {error && (
-              <p style={{ color: "var(--red)", marginTop: "8px" }}>{error}</p>
+            {usernameTakenError && (
+              <p style={{ color: "var(--red)", marginTop: "8px" }}>
+                {usernameTakenError}
+              </p>
             )}
           </div>
 
@@ -54,12 +60,16 @@ function SignupPage() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "356px" }}
+            style={{ width: "356px", marginBottom: "48px" }}
           />
+
+          {error && (
+            <p style={{ color: "var(--red)", marginBottom: "8px" }}>{error}</p>
+          )}
           <Button
             variant="primary"
             size="big"
-            style={{ marginTop: "48px", width: "100%" }}
+            style={{ width: "100%" }}
             onClick={handleSignup}
           >
             Sign up

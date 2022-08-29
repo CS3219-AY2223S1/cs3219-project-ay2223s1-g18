@@ -13,7 +13,7 @@ const Navbar = () => {
         <img src={logo} alt="logo" />
       </a>
       <div className="d-flex">
-        {pathname != "/login" && pathname != "/signup" && (
+        {pathname !== "/login" && pathname !== "/signup" && (
           <div>
             <Link to="/login">
               <Button
