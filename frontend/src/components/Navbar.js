@@ -1,8 +1,31 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
+import Button from "./Button";
+import logo from "../assets/Logo.svg";
 
 const Navbar = () => {
-  return <StyledNav>Navbar</StyledNav>;
+  return (
+    <StyledNav>
+      <img src={logo} alt="logo" />
+      <div className="d-flex">
+        <Link to="/login">
+          <Button
+            variant="secondary"
+            size="small"
+            style={{ marginRight: "8px" }}
+          >
+            Log in
+          </Button>
+        </Link>
+        <Link to="/signup">
+          <Button variant="primary" size="small">
+            Sign up
+          </Button>
+        </Link>
+      </div>
+    </StyledNav>
+  );
 };
 
 export default Navbar;
@@ -13,10 +36,13 @@ const StyledNav = styled.nav`
   max-width: 1280px;
   margin-left: auto;
   margin-right: auto;
-  padding: 12px 32px;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 8px 32px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   @media (min-width: 640px) {
-    padding-top: 16px;
+    padding-top: 12px;
   }
 `;

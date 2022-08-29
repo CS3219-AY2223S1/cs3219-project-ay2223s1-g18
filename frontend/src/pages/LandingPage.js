@@ -23,7 +23,6 @@ const HeroPoints = [
 ];
 
 const LandingPage = () => {
-  console.log(HeroPoints);
   return (
     <StyledHeroSection>
       <div className="hero-container px-5 mx-auto">
@@ -33,7 +32,7 @@ const LandingPage = () => {
             <Row>
               {HeroPoints.map(({ title, description }) => {
                 return (
-                  <Col xs={12} sm={4}>
+                  <Col xs={12} sm={4} key={title}>
                     <PointBlock title={title} description={description} />
                   </Col>
                 );
@@ -52,7 +51,7 @@ const LandingPage = () => {
           </Col>
           <Col xs={12} md={4}>
             <div className="image-wrap">
-              <img src={heroImage} />
+              <img src={heroImage} alt="hero" />
             </div>
           </Col>
         </Row>
