@@ -1,28 +1,37 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import Button from "./Button";
 import logo from "../assets/Logo.svg";
 
 const Navbar = () => {
+  const pathname = useLocation().pathname;
+
   return (
     <StyledNav>
-      <img src={logo} alt="logo" />
+      <a href="/">
+        <img src={logo} alt="logo" />
+      </a>
       <div className="d-flex">
-        <Link to="/login">
-          <Button
-            variant="secondary"
-            size="small"
-            style={{ marginRight: "8px" }}
-          >
-            Log in
-          </Button>
-        </Link>
-        <Link to="/signup">
-          <Button variant="primary" size="small">
-            Sign up
-          </Button>
-        </Link>
+        {pathname != "/login" && pathname != "/signup" && (
+          <div>
+            <Link to="/login">
+              <Button
+                variant="secondary"
+                size="small"
+                style={{ marginRight: "8px" }}
+              >
+                Log in
+              </Button>
+            </Link>
+
+            <Link to="/signup">
+              <Button variant="primary" size="small">
+                Sign up
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </StyledNav>
   );
@@ -32,7 +41,7 @@ export default Navbar;
 
 const StyledNav = styled.nav`
   width: 100%;
-  min-height: 40px;
+  height: 64px;
   max-width: 1280px;
   margin-left: auto;
   margin-right: auto;

@@ -3,8 +3,6 @@ import { useState } from "react";
 import axios from "axios";
 import { URL_USER_SVC } from "../configs";
 import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import { Link } from "react-router-dom";
-import logo from "../assets/Logo.svg";
 import Button from "../components/Button";
 
 function SignupPage() {
@@ -30,78 +28,65 @@ function SignupPage() {
   };
 
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100vw",
-        overflowX: "hidden",
-      }}
-    >
-      <CardPageWrap>
-        <a href="/">
-          <img
-            src={logo}
-            alt="logo"
-            style={{
-              height: "32px",
-              margin: "40px 24px",
-              cursor: "pointer",
-            }}
-          />
-        </a>
-        <Header>Welcome to Peerprep!</Header>
-        <CardWrap>
-          <div style={{ maxWidth: "400px" }}>
-            <div style={{ width: "100%", marginBottom: "24px" }}>
-              <label>Username</label>
-              <input
-                type="username"
-                required
-                placeholder="Your username here"
-                onChange={(e) => setUsername(e.target.value)}
-                value={username}
-                style={{ width: "356px" }}
-              />
-              {error && (
-                <p style={{ color: "var(--red)", marginTop: "8px" }}>{error}</p>
-              )}
-            </div>
-
-            <label>Password</label>
+    <CardPageWrap>
+      <Header>Welcome to Peerprep!</Header>
+      <CardWrap>
+        <div style={{ maxWidth: "400px" }}>
+          <div style={{ width: "100%", marginBottom: "24px" }}>
+            <label>Username</label>
             <input
-              type="password"
+              type="username"
               required
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Your username here"
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
               style={{ width: "356px" }}
             />
-            <Button
-              variant="primary"
-              size="big"
-              style={{ marginTop: "48px", width: "100%" }}
-              onClick={handleSignup}
-            >
-              Sign up
-            </Button>
-            <p style={{ marginTop: "8px" }}>
-              Already have an account? <a href="/login">Log in</a>
-            </p>
+            {error && (
+              <p style={{ color: "var(--red)", marginTop: "8px" }}>{error}</p>
+            )}
           </div>
-        </CardWrap>
-      </CardPageWrap>
-    </div>
+
+          <label>Password</label>
+          <input
+            type="password"
+            required
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ width: "356px" }}
+          />
+          <Button
+            variant="primary"
+            size="big"
+            style={{ marginTop: "48px", width: "100%" }}
+            onClick={handleSignup}
+          >
+            Sign up
+          </Button>
+          <p style={{ marginTop: "16px" }}>
+            Already have an account? <a href="/login">Log in</a>
+          </p>
+        </div>
+      </CardWrap>
+    </CardPageWrap>
   );
 }
 
 export default SignupPage;
 
 const CardPageWrap = styled.div`
-  width: 100%;
+  width: 100vw;
+  height: calc(100vh - 64px);
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
   overflow-x: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Header = styled.h1`

@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
@@ -14,10 +15,13 @@ function App() {
         <Navbar />
 
         <Routes>
+          <Route path="/login" element={<LoginPage />}></Route>
+          <Route path="/signup" element={<SignupPage />}></Route>
+
           <Route exact path="/" element={<LandingPage />}></Route>
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />}></Route>
+
+          {/* <PrivateRoute exact path="/home" component={<HomePage />} /> */}
         </Routes>
       </Router>
     </div>
