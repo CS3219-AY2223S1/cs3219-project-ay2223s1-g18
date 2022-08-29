@@ -1,13 +1,112 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Circular", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: var(--base-900) !important;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+@font-face {
+  font-family: "Circular";
+  src: local("Circular"), url(./fonts/circular-book.ttf) format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Circular";
+  src: local("Circular"), url(./fonts/circular-medium.ttf) format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Circular";
+  src: local("Circular"), url(./fonts/circular-bold.ttf) format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Circular";
+  src: local("Circular"), url(./fonts/circular-black.ttf) format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+:root {
+  --base-900: #111827;
+  --base-800: #1f2937;
+  --base-700: #374151;
+  --base-600: #4b5563;
+  --base-500: #6b7280;
+  --base-400: #9ca3af;
+  --base-300: #d1d5db;
+  --base-200: #e5e7eb;
+  --base-100: #f3f4f6;
+  --base-50: #f9fafb;
+
+  --accent: #4f46e5;
+
+  --red: #dc2626;
+  --green: #16a34a;
+  --yellow: #f59e0b;
+
+  /* FONT SIZE */
+  --text-xs: 0.75rem; /* 12px */
+  --text-sm: 0.875rem; /* 14px */
+  --text-base: 1rem; /* 16px */
+  --text-lg: 1.5rem; /* 24px */
+  --text-xl: 2.25rem; /* 36px */
+  --text-2xl: 3rem; /* 48px */
+
+  --transition: 200ms ease-out;
+}
+
+a {
+  color: var(--accent) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+}
+
+input,
+textarea {
+  background-color: var(--base-50);
+  padding: 1px 20px;
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+  appearance: none;
+  border-radius: 12px;
+  border: 2px solid var(--base-200);
+  transition: 200ms ease-out;
+  width: 100%;
+  margin-top: 8px;
+  font-family: "Circular";
+  font-size: var(--text-base);
+}
+
+textarea {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border: 2px solid var(--base-300);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--base-400);
+  font-family: "Circular";
 }
