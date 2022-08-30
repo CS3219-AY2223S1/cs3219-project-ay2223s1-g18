@@ -6,7 +6,7 @@ dotenv.config();
 import connectDatabase from './database/connect.js'
 import UserRouter from "./users/routes/users.route.js";
 
-const port = process.env.USER_PORT || 3000;
+const port = process.env.USER_PORT || 8000;
 
 const app = express();
 
