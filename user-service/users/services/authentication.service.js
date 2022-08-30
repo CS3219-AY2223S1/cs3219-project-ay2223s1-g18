@@ -5,7 +5,7 @@ dotenv.config();
 
 
 export async function hashPassword(password)  {
-    return bcrypt.hash(password, 11);
+    return bcrypt.hash(password, parseInt(process.env.HASH_SALT_ROUNDS));
 };
 
 export async function verifyHashPassword(enteredPassword, storedHashPassword)  {

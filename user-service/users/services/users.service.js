@@ -18,10 +18,10 @@ export default class UserService {
     const matchingUser = await Helper.listOne(UserModel, { username })
     const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
 
-    if (isEnteredPasswordValid)
-      return createJwtToken(username)
-    else
+    if (!isEnteredPasswordValid)
       throw ("errr")
+    
+    return createJwtToken(username)
   };
 
 
