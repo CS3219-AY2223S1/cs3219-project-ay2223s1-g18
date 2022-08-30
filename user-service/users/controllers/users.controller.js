@@ -7,7 +7,6 @@ const serverErrorResponse = JSON.stringify({
     response: {
         status: false,
         message: "Error in request fulfilment!",
-        error: errorObject
     }
 })
 
@@ -47,13 +46,23 @@ const authenticateUser = (req, res) => {
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'ValidationError') {
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Username and/or Password are missing!"
+            }
+
+            else if (errorObject.name == 'BadUsernameError' || errorObject.name == 'BadPasswordError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Invalid Username and/or Password!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
 const getHealthStatus = (req, res) => {
-    console.log(http)
     res.status(HttpResponse.OK).json({
         status: "true",
         response: "operational"
@@ -65,13 +74,24 @@ const getUserByName = (req, res) => {
     UserService
         .getUserByName(username)
         .then((response) => {
+            if(response.length == 0)
+                throw({name: 'BadUsernameError'})
             return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            
+            if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.HttpResponse.NOT_FOUND
+                errorResponse.response.message = "No such Username found for update!"
+            }
+
+            // TODO: Add 403 handling
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
@@ -84,8 +104,16 @@ const getUsers = (req, res) => {
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.HttpResponse.NOT_FOUND
+                errorResponse.response.message = "No such Username found for update!"
+            }
+
+            // TODO: Add 403 handling
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
@@ -95,13 +123,29 @@ const updateUserByName = (req, res) => {
     UserService
         .updateUserByName(username, password)
         .then((response) => {
+
+            if (!response)
+                throw ({name: 'BadUsernameError'})
+
             return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'ValidationError') {
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Password is missing!"
+            }
+
+            if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.HttpResponse.NOT_FOUND
+                errorResponse.response.message = "No such Username found for update!"
+            }
+            // TODO: Add 403 handling
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
@@ -110,13 +154,23 @@ const deleteUserByName = (req, res) => {
     UserService
         .deleteUserByName(username)
         .then((response) => {
+            if (response.deletedCount == 0)
+                throw ({name: 'BadUsernameError'})
             return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
+                errorResponse.response.message = "Invalid username supplied for deletion!"
+            }
+
+            // TODO: Add 403 handling
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 

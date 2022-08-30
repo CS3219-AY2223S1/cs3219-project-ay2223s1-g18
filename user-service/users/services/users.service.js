@@ -16,10 +16,12 @@ export default class UserService {
 
   static async authenticateUser(username, password) {
     const matchingUser = await Helper.listOne(UserModel, { username })
-    const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
+    if(!matchingUser)
+      throw({name: 'BadUsernameError'})
 
+    const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
     if (!isEnteredPasswordValid)
-      throw ("errr")
+      throw ({name: 'BadPasswordError'})
     
     return createJwtToken(username);
   };
@@ -34,6 +36,8 @@ export default class UserService {
   };
 
   static async updateUserByName(username, password) {
+    if(!password)
+      throw({name: "ValidationError"})
     const hashedPassword = await hashPassword(password)
     return Helper.updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
 
