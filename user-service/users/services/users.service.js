@@ -1,5 +1,5 @@
 
-import Helper from '../../../database/helper.js'
+import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
 import { hashPassword, verifyHashPassword, createJwtToken } from './authentication.service.js';
 

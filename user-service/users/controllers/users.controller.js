@@ -12,8 +12,27 @@ const createUser = (req, res) => {
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
+        .catch((errorObject) => {
+            const serverResponse = {
+                statusCode: HttpResponse.INTERNAL_SERVER_ERROR,
+                response: {
+                    status: false,
+                    message: "Error in request fulfilment!",
+                    error: errorObject
+                }
+            }
+
+            if (errorObject.name == 'ValidationError') {
+                serverResponse.statusCode = HttpResponse.BAD_REQUEST
+                serverResponse.response.message = "Email, Username and/or Password are missing!"
+            }
+                
+            else if (errorObject.code == 11000) { // Duplicate Error
+                serverResponse.statusCode = HttpResponse.CONFLICT
+                serverResponse.response.message = "Email/Username exists in application!"
+            }
+
+            return res.status(serverResponse.statusCode).json(serverResponse.response);
         });
 };
 
