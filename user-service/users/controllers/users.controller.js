@@ -71,8 +71,9 @@ const getHealthStatus = (req, res) => {
 
 const getUserByName = (req, res) => {
     const { username } = req.params;
+    const token = req.headers.authorization;
     UserService
-        .getUserByName(username)
+        .getUserByName(token, username)
         .then((response) => {
             if(response.length == 0)
                 throw({name: 'BadUsernameError'})
@@ -85,19 +86,24 @@ const getUserByName = (req, res) => {
             const errorResponse = JSON.parse(serverErrorResponse)
             
             if (errorObject.name == 'BadUsernameError') {
-                errorResponse.statusCode = HttpResponse.HttpResponse.NOT_FOUND
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
                 errorResponse.response.message = "No such Username found for update!"
             }
 
-            // TODO: Add 403 handling
+            else if (errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
+            
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
 const getUsers = (req, res) => {
+    const token = req.headers.authorization;
     UserService
-        .getUsers()
+        .getUsers(token)
         .then((response) => {
             return res.status(HttpResponse.OK).json({
                 status: true,
@@ -107,11 +113,13 @@ const getUsers = (req, res) => {
         .catch((errorObject) => {
             const errorResponse = JSON.parse(serverErrorResponse)
             if (errorObject.name == 'BadUsernameError') {
-                errorResponse.statusCode = HttpResponse.HttpResponse.NOT_FOUND
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
                 errorResponse.response.message = "No such Username found for update!"
             }
-
-            // TODO: Add 403 handling
+            else if (errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
@@ -120,8 +128,9 @@ const getUsers = (req, res) => {
 const updateUserByName = (req, res) => {
     const { username } = req.params;
     const { password } = req.body;
+    const token = req.headers.authorization;
     UserService
-        .updateUserByName(username, password)
+        .updateUserByName(token, username, password)
         .then((response) => {
 
             if (!response)
@@ -138,12 +147,15 @@ const updateUserByName = (req, res) => {
                 errorResponse.statusCode = HttpResponse.BAD_REQUEST
                 errorResponse.response.message = "Password is missing!"
             }
-
-            if (errorObject.name == 'BadUsernameError') {
-                errorResponse.statusCode = HttpResponse.HttpResponse.NOT_FOUND
+            else if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
                 errorResponse.response.message = "No such Username found for update!"
             }
-            // TODO: Add 403 handling
+
+            else if (errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
@@ -151,8 +163,9 @@ const updateUserByName = (req, res) => {
 
 const deleteUserByName = (req, res) => {
     const { username } = req.params;
+    const token = req.headers.authorization;
     UserService
-        .deleteUserByName(username)
+        .deleteUserByName(token, username)
         .then((response) => {
             if (response.deletedCount == 0)
                 throw ({name: 'BadUsernameError'})
@@ -168,7 +181,10 @@ const deleteUserByName = (req, res) => {
                 errorResponse.response.message = "Invalid username supplied for deletion!"
             }
 
-            // TODO: Add 403 handling
+            else if (errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
         });

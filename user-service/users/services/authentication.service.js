@@ -15,12 +15,17 @@ export async function verifyHashPassword(enteredPassword, storedHashPassword)  {
 export function createJwtToken(username)  {
     return {
         token: jwt.sign(
-            { data: username }, 
+            { username }, 
             process.env.JWT_TOKEN_SECRET, 
             { expiresIn: process.env.JWT_TOKEN_EXPIRY }),
         expiresIn: process.env.JWT_TOKEN_EXPIRY
     }
 };
 
+export function analyseJwtToken(token) {
+    if (token == null)
+        throw({ name: 'JsonWebTokenError' })
+    return jwt.verify(token.split(' ')[1], process.env.JWT_TOKEN_SECRET);
+}
 
 
