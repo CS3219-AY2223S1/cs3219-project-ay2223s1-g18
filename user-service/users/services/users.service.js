@@ -34,12 +34,13 @@ export default class UserService {
   };
 
   static async getUsers(token) {
+    const tokenDetails = analyseJwtToken(token)
+
     return Helper.list(UserModel, {})
   };
 
   static async updateUserByName(token, username, password) {
     const tokenDetails = analyseJwtToken(token)
-    console.log(tokenDetails)
     if (!password)
       throw ({ name: "ValidationError" })
     const hashedPassword = await hashPassword(password)

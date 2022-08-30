@@ -53,9 +53,9 @@ const authenticateUser = (req, res) => {
                 errorResponse.response.message = "Username and/or Password are missing!"
             }
 
-            else if (errorObject.name == 'BadUsernameError' || errorObject.name == 'BadPasswordError') {
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
                 errorResponse.statusCode = HttpResponse.UNAUTHORIZED
-                errorResponse.response.message = "Invalid Username and/or Password!"
+                errorResponse.response.message = "Not Authorized to use service!"
             }
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
@@ -90,8 +90,8 @@ const getUserByName = (req, res) => {
                 errorResponse.response.message = "No such Username found for update!"
             }
 
-            else if (errorObject.name == 'JsonWebTokenError') {
-                errorResponse.statusCode = HttpResponse.FORBIDDEN
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
             }
             
@@ -111,13 +111,14 @@ const getUsers = (req, res) => {
             });
         })
         .catch((errorObject) => {
+            console.log(errorObject)
             const errorResponse = JSON.parse(serverErrorResponse)
             if (errorObject.name == 'BadUsernameError') {
                 errorResponse.statusCode = HttpResponse.NOT_FOUND
                 errorResponse.response.message = "No such Username found for update!"
             }
-            else if (errorObject.name == 'JsonWebTokenError') {
-                errorResponse.statusCode = HttpResponse.FORBIDDEN
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
             }
 
@@ -152,8 +153,8 @@ const updateUserByName = (req, res) => {
                 errorResponse.response.message = "No such Username found for update!"
             }
 
-            else if (errorObject.name == 'JsonWebTokenError') {
-                errorResponse.statusCode = HttpResponse.FORBIDDEN
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
             }
 
@@ -181,8 +182,8 @@ const deleteUserByName = (req, res) => {
                 errorResponse.response.message = "Invalid username supplied for deletion!"
             }
 
-            else if (errorObject.name == 'JsonWebTokenError') {
-                errorResponse.statusCode = HttpResponse.FORBIDDEN
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
             }
 
