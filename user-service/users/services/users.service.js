@@ -43,11 +43,12 @@ export default class UserService {
   };
 
 
-  static async getUserById(id) {
+  static async getUserByName(username) {
+    console.log(username)
     return new Promise((resolve, reject) => {
       Helper
         .list(UserModel, {
-          userId: id,
+          username,
         })
         .then((res) => {
           resolve(res);
@@ -67,11 +68,11 @@ export default class UserService {
     });
   };
 
-  static async updateUser(id, name, password) {
+  static async updateUserByName(username, password) {
     const hashedPassword = await hashPassword(password)
     return new Promise((resolve, reject) => {
       Helper
-        .updateOne(UserModel, { userId: id }, { name: name, password: hashedPassword }, { new: true })
+        .updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
         .then((res) => {
           resolve(res);
         })
@@ -79,10 +80,10 @@ export default class UserService {
     });
   };
 
-  static async deleteUser(id) {
+  static async deleteUserByName(username) {
     return new Promise((resolve, reject) => {
       Helper
-        .deleteOne(UserModel, { userId: id })
+        .deleteOne(UserModel, { username })
         .then((res) => {
           resolve(res);
         })

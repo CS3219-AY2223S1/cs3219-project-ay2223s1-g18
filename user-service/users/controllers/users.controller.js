@@ -39,10 +39,10 @@ const getHealthStatus = (req, res) => {
     });
 };
 
-const getUserById = (req, res) => {
-    const { id } = req.params;
+const getUserByName = (req, res) => {
+    const { username } = req.params;
     UserService
-        .getUserById(id)
+        .getUserByName(username)
         .then((response) => {
             return res.status(200).json({
                 status: true,
@@ -68,11 +68,11 @@ const getUsers = (req, res) => {
         });
 };
 
-const updateUser = (req, res) => {
-    const { id } = req.params;
-    const { username, password } = req.body;
+const updateUserByName = (req, res) => {
+    const { username } = req.params;
+    const { password } = req.body;
     UserService
-        .updateUser(id, username, password)
+        .updateUserByName(username, password)
         .then((response) => {
             return res.status(200).json({
                 status: true,
@@ -84,10 +84,10 @@ const updateUser = (req, res) => {
         });
 };
 
-const deleteUser = (req, res) => {
-    const { id } = req.params;
+const deleteUserByName = (req, res) => {
+    const { username } = req.params;
     UserService
-        .deleteUser(id)
+        .deleteUserByName(username)
         .then((response) => {
             return res.status(200).json({
                 status: true,
@@ -99,4 +99,4 @@ const deleteUser = (req, res) => {
         });
 };
 
-export { createUser, authenticateUser, getHealthStatus, getUserById, getUsers, updateUser, deleteUser }
+export { createUser, authenticateUser, getHealthStatus, getUserByName, getUsers, updateUserByName, deleteUserByName }
