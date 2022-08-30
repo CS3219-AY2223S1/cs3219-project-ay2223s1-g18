@@ -6,19 +6,18 @@ import { hashPassword, verifyHashPassword, createJwtToken } from './authenticati
 export default class UserService {
 
   static async createUser(email, username, password) {
-    const hashedPassword = await hashPassword(password)
-    return new Promise((resolve, reject) => {
-      Helper
-        .save(UserModel, {
-          username,
-          email,
-          password: hashedPassword
-        })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+    try {
+      const hashedPassword = await hashPassword(password)
+      console.log(10101)
+      return await Helper
+      .save(UserModel, {
+        username,
+        email,
+        password: hashedPassword
+      })
+    } catch(e) {
+      console.error(e)
+    }
   };
 
   static async authenticateUser(username, password) {
@@ -28,15 +27,15 @@ export default class UserService {
         )
         .then((res) => {
           if(res) {
-            verifyHashPassword(password, res.password)
+            const result = resolve(verifyHashPassword(password, res.password))
             .then((isEnteredPasswordValid) => {
               if(isEnteredPasswordValid)
               resolve(createJwtToken(username))
             })
-            .catch((e) => console.error(e));
+            .catch((e) => reject(e));
           }
           else
-            reject("error")
+            throw("Invalid")
         })
         .catch((e) => reject(e));
       });
@@ -44,7 +43,6 @@ export default class UserService {
 
 
   static async getUserByName(username) {
-    console.log(username)
     return new Promise((resolve, reject) => {
       Helper
         .list(UserModel, {

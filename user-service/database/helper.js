@@ -1,6 +1,6 @@
 
 export default class Helper {
-    static save(Model, data) {
+    static async save(Model, data) {
         const collection = new Model(data);
         return collection.save();
     };
