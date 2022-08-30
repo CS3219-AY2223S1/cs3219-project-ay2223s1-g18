@@ -17,7 +17,7 @@ app.options('*', cors())
 
 const router = express.Router()
 
-app.use("/users", UserRouter);
+app.use('/api/user', UserRouter);
 
 
 // Controller will contain all the User-defined Routes - To be deleted
