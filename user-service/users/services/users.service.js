@@ -9,8 +9,7 @@ export default class UserService {
     try {
       const hashedPassword = await hashPassword(password)
       console.log(10101)
-      return await Helper
-      .save(UserModel, {
+      return await Helper.save(UserModel, {
         username,
         email,
         password: hashedPassword
@@ -21,71 +20,51 @@ export default class UserService {
   };
 
   static async authenticateUser(username, password) {
-    return new Promise((resolve, reject) => {
-      Helper
-        .listOne(UserModel, { username }
-        )
-        .then((res) => {
-          if(res) {
-            const result = resolve(verifyHashPassword(password, res.password))
-            .then((isEnteredPasswordValid) => {
-              if(isEnteredPasswordValid)
-              resolve(createJwtToken(username))
-            })
-            .catch((e) => reject(e));
-          }
-          else
-            throw("Invalid")
-        })
-        .catch((e) => reject(e));
-      });
+    try {
+      const matchingUser = await Helper.listOne(UserModel, { username })
+      const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
+      
+      if(isEnteredPasswordValid)
+        return createJwtToken(username)
+      else
+        throw("errr")
+    } catch(e) {
+        console.error(e)
+    }
   };
 
 
   static async getUserByName(username) {
-    return new Promise((resolve, reject) => {
-      Helper
-        .list(UserModel, {
-          username,
-        })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+    try {
+      return Helper.list(UserModel, {username})
+    } catch(e) {
+        console.error(e)
+    }
   };
 
   static async getUsers() {
-    return new Promise((resolve, reject) => {
-      Helper
-        .list(UserModel, {})
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+    try {
+      return Helper.list(UserModel, {})
+    } catch(e) {
+        console.error(e)
+    }
   };
 
   static async updateUserByName(username, password) {
-    const hashedPassword = await hashPassword(password)
-    return new Promise((resolve, reject) => {
-      Helper
-        .updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+    try {
+      const hashedPassword = await hashPassword(password)
+      return Helper.updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
+    } catch(e) {
+        console.error(e)
+    }
+    
   };
 
   static async deleteUserByName(username) {
-    return new Promise((resolve, reject) => {
-      Helper
-        .deleteOne(UserModel, { username })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+    try {
+      return Helper.deleteOne(UserModel, { username })
+    } catch(e) {
+        console.error(e)
+    }
   };
 }
