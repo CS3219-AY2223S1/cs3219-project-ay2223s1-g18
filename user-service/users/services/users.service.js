@@ -5,12 +5,12 @@ import { hashPassword, verifyHashPassword, createJwtToken } from './authenticati
 
 export default class UserService {
 
-  static async createUser(email, name, password) {
+  static async createUser(email, username, password) {
     const hashedPassword = await hashPassword(password)
     return new Promise((resolve, reject) => {
       Helper
         .save(UserModel, {
-          name,
+          username,
           email,
           password: hashedPassword
         })
@@ -21,10 +21,10 @@ export default class UserService {
     });
   };
 
-  static async authenticateUser(name, password) {
+  static async authenticateUser(username, password) {
     return new Promise((resolve, reject) => {
       Helper
-        .listOne(UserModel, { name: name }
+        .listOne(UserModel, { username }
         )
         .then((res) => {
           if(res) {

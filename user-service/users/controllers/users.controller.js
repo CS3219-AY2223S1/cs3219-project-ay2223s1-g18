@@ -2,9 +2,9 @@
 import UserService from '../services/users.service.js';
 
 const createUser = (req, res) => {
-    const { email, name, password } = req.body;
+    const { email, username, password } = req.body;
     UserService
-        .createUser(email, name, password)
+        .createUser(email, username, password)
         .then((response) => {
             return res.status(201).json({
                 status: true,
@@ -18,9 +18,9 @@ const createUser = (req, res) => {
 };
 
 const authenticateUser = (req, res) => {
-    const { name, password } = req.body;
+    const { username, password } = req.body;
     UserService
-        .authenticateUser(name, password)
+        .authenticateUser(username, password)
         .then((response) => {
             return res.status(200).json({
                 status: true,
@@ -70,9 +70,9 @@ const getUsers = (req, res) => {
 
 const updateUser = (req, res) => {
     const { id } = req.params;
-    const { name, password } = req.body;
+    const { username, password } = req.body;
     UserService
-        .updateUser(id, name, password)
+        .updateUser(id, username, password)
         .then((response) => {
             return res.status(200).json({
                 status: true,
