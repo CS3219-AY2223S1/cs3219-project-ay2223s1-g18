@@ -1,18 +1,19 @@
 
 import UserService from '../services/users.service.js';
+import { HttpResponse } from '../../constants/httpResponse.js';
 
 const createUser = (req, res) => {
     const { email, username, password } = req.body;
     UserService
         .createUser(email, username, password)
         .then((response) => {
-            return res.status(201).json({
+            return res.status(HttpResponse.CREATED).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
-            return res.status(500).json({ status: false, err });
+            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
         });
 };
 
@@ -21,18 +22,19 @@ const authenticateUser = (req, res) => {
     UserService
         .authenticateUser(username, password)
         .then((response) => {
-            return res.status(200).json({
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
-            return res.status(500).json({ status: false, err });
+            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
         });
 };
 
 const getHealthStatus = (req, res) => {
-    res.status(200).json({
+    console.log(http)
+    res.status(HttpResponse.OK).json({
         status: "true",
         response: "operational"
     });
@@ -43,13 +45,13 @@ const getUserByName = (req, res) => {
     UserService
         .getUserByName(username)
         .then((response) => {
-            return res.status(200).json({
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
-            return res.status(500).json({ status: false, err });
+            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
         });
 };
 
@@ -57,13 +59,13 @@ const getUsers = (req, res) => {
     UserService
         .getUsers()
         .then((response) => {
-            return res.status(200).json({
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
-            return res.status(500).json({ status: false, err });
+            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
         });
 };
 
@@ -73,13 +75,13 @@ const updateUserByName = (req, res) => {
     UserService
         .updateUserByName(username, password)
         .then((response) => {
-            return res.status(200).json({
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
-            return res.status(500).json({ status: false, err });
+            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
         });
 };
 
@@ -88,13 +90,13 @@ const deleteUserByName = (req, res) => {
     UserService
         .deleteUserByName(username)
         .then((response) => {
-            return res.status(200).json({
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
         .catch((err) => {
-            return res.status(500).json({ status: false, err });
+            return res.status(HttpResponse.INTERNAL_SERVER_ERROR).json({ status: false, err });
         });
 };
 
