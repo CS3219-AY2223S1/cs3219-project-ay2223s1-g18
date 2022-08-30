@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import {v4} from 'uuid';
 
 const { Schema } = mongoose;
 
