@@ -31,7 +31,7 @@ export default class UserService {
             verifyHashPassword(password, res.password)
             .then((isEnteredPasswordValid) => {
               if(isEnteredPasswordValid)
-              resolve(createJwtToken(name))
+              resolve(createJwtToken(username))
             })
             .catch((e) => console.error(e));
           }
