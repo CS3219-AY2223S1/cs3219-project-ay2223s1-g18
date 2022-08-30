@@ -2,6 +2,15 @@
 import UserService from '../services/users.service.js';
 import { HttpResponse } from '../../constants/httpResponse.js';
 
+const serverErrorResponse = JSON.stringify({
+    statusCode: HttpResponse.INTERNAL_SERVER_ERROR,
+    response: {
+        status: false,
+        message: "Error in request fulfilment!",
+        error: errorObject
+    }
+})
+
 const createUser = (req, res) => {
     const { email, username, password } = req.body;
     UserService
@@ -13,26 +22,18 @@ const createUser = (req, res) => {
             });
         })
         .catch((errorObject) => {
-            const serverResponse = {
-                statusCode: HttpResponse.INTERNAL_SERVER_ERROR,
-                response: {
-                    status: false,
-                    message: "Error in request fulfilment!",
-                    error: errorObject
-                }
-            }
-
+            const errorResponse = JSON.parse(serverErrorResponse)
             if (errorObject.name == 'ValidationError') {
-                serverResponse.statusCode = HttpResponse.BAD_REQUEST
-                serverResponse.response.message = "Email, Username and/or Password are missing!"
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Email, Username and/or Password are missing!"
             }
                 
             else if (errorObject.code == 11000) { // Duplicate Error
-                serverResponse.statusCode = HttpResponse.CONFLICT
-                serverResponse.response.message = "Email/Username exists in application!"
+                errorResponse.statusCode = HttpResponse.CONFLICT
+                errorResponse.response.message = "Email/Username exists in application!"
             }
 
-            return res.status(serverResponse.statusCode).json(serverResponse.response);
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
