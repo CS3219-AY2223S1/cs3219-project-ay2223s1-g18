@@ -26,7 +26,7 @@ const createUser = (req, res) => {
                 errorResponse.statusCode = HttpResponse.BAD_REQUEST
                 errorResponse.response.message = "Email, Username and/or Password are missing!"
             }
-                
+
             else if (errorObject.code == 11000) { // Duplicate Error
                 errorResponse.statusCode = HttpResponse.CONFLICT
                 errorResponse.response.message = "Email/Username exists in application!"
@@ -69,7 +69,7 @@ const logoutUser = (req, res) => {
         .then((response) => {
             return res.status(HttpResponse.OK).json({
                 status: true,
-                response: { message: "Successfully logged user out!"},
+                response: { message: "Successfully logged user out!" },
             });
         })
         .catch((errorObject) => {
@@ -101,8 +101,8 @@ const getUserByName = (req, res) => {
     UserService
         .getUserByName(token, username)
         .then((response) => {
-            if(response.length == 0)
-                throw({name: 'BadUsernameError'})
+            if (response.length == 0)
+                throw ({ name: 'BadUsernameError' })
             return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
@@ -110,7 +110,7 @@ const getUserByName = (req, res) => {
         })
         .catch((errorObject) => {
             const errorResponse = JSON.parse(serverErrorResponse)
-            
+
             if (errorObject.name == 'BadUsernameError') {
                 errorResponse.statusCode = HttpResponse.NOT_FOUND
                 errorResponse.response.message = "No such Username found for update!"
@@ -120,7 +120,7 @@ const getUserByName = (req, res) => {
                 errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
             }
-            
+
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
@@ -161,7 +161,7 @@ const updateUserByName = (req, res) => {
         .then((response) => {
 
             if (!response)
-                throw ({name: 'BadUsernameError'})
+                throw ({ name: 'BadUsernameError' })
 
             return res.status(HttpResponse.OK).json({
                 status: true,
@@ -182,7 +182,8 @@ const updateUserByName = (req, res) => {
             else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
                 errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
-            } else if (errorObject.name == 'InvalidPrivilegesError') {
+            } 
+            else if (errorObject.name == 'InvalidPrivilegesError') {
                 errorResponse.statusCode = HttpResponse.FORBIDDEN
                 errorResponse.response.message = "Not able to perform service!"
             }
@@ -198,7 +199,7 @@ const deleteUserByName = (req, res) => {
         .deleteUserByName(token, username)
         .then((response) => {
             if (response.deletedCount == 0)
-                throw ({name: 'BadUsernameError'})
+                throw ({ name: 'BadUsernameError' })
             return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
