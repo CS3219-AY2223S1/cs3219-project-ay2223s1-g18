@@ -1,8 +1,10 @@
+import { startRedisClient } from '../../cache/setup.js'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
+const redisClient = startRedisClient()
 
 export async function hashPassword(password)  {
     return bcrypt.hash(password, parseInt(process.env.HASH_SALT_ROUNDS));
