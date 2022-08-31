@@ -1,7 +1,7 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken } from './authentication.service.js';
+import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken, blacklistJwtToken } from './authentication.service.js';
 
 export default class UserService {
 
@@ -26,21 +26,25 @@ export default class UserService {
     return createJwtToken(username);
   };
 
+  static async logoutUser(token) {
+    const tokenData = await analyseJwtToken(token, true);
+    await blacklistJwtToken(token, tokenData);
+  }
 
   static async getUserByName(token, username) {
-    const tokenDetails = analyseJwtToken(token)
+    const tokenDetails = await analyseJwtToken(token)
 
     return Helper.list(UserModel, { username })
   };
 
   static async getUsers(token) {
-    const tokenDetails = analyseJwtToken(token)
+    const tokenDetails = await analyseJwtToken(token)
 
     return Helper.list(UserModel, {})
   };
 
   static async updateUserByName(token, username, password) {
-    const tokenDetails = analyseJwtToken(token)
+    const tokenDetails = await analyseJwtToken(token)
     if (!password)
       throw ({ name: "ValidationError" })
     const hashedPassword = await hashPassword(password)
@@ -49,7 +53,7 @@ export default class UserService {
   };
 
   static async deleteUserByName(token, username) {
-    const tokenDetails = analyseJwtToken(token)
+    const tokenDetails = await analyseJwtToken(token)
     return Helper.deleteOne(UserModel, { username })
   };
 }

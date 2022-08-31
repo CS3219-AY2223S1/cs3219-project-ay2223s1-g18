@@ -62,6 +62,33 @@ const authenticateUser = (req, res) => {
         });
 };
 
+const logoutUser = (req, res) => {
+    const token = req.headers.authorization;
+    UserService
+        .logoutUser(token)
+        .then((response) => {
+            return res.status(HttpResponse.OK).json({
+                status: true,
+                response,
+            });
+        })
+        .catch((errorObject) => {
+            console.log(errorObject)
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'ValidationError') {
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Username and/or Password are missing!"
+            }
+
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+};
+
 const getHealthStatus = (req, res) => {
     res.status(HttpResponse.OK).json({
         status: "true",
@@ -111,7 +138,6 @@ const getUsers = (req, res) => {
             });
         })
         .catch((errorObject) => {
-            console.log(errorObject)
             const errorResponse = JSON.parse(serverErrorResponse)
             if (errorObject.name == 'BadUsernameError') {
                 errorResponse.statusCode = HttpResponse.NOT_FOUND
@@ -191,4 +217,4 @@ const deleteUserByName = (req, res) => {
         });
 };
 
-export { createUser, authenticateUser, getHealthStatus, getUserByName, getUsers, updateUserByName, deleteUserByName }
+export { createUser, authenticateUser, logoutUser, getHealthStatus, getUserByName, getUsers, updateUserByName, deleteUserByName }

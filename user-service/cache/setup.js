@@ -7,17 +7,14 @@ export async function startRedisClient() {
         port: process.env.USER_REDIS_PORT
     });
     client.on("connect", (err) => {
-        console.log("Client connected to Redis...");
+        console.log("Connected to Redis Client successfully!");
     });
     client.on("ready", (err) => {
-        console.log("Redis ready to use");
+        console.log("Redis Client is ready to be used!");
     });
     client.on("error", (err) => {
-        console.error("Redis Client", err);
+        console.error("Error in starting Redis Client:", err);
     });
-    client.on("end", () => {
-        console.log("Redis disconnected successfully");
-    });
-    await client.connect();
+    client.connect();
     return client;
 }

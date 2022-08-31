@@ -1,7 +1,7 @@
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import RedisInstance from '../../cache/instance';
+import RedisInstance from '../../cache/instance.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -26,21 +26,17 @@ export function createJwtToken(username) {
     }
 };
 
-export function analyseJwtToken(token, isBlacklistingToken) {
+export async function analyseJwtToken(token) {
     if (token == null)
         throw ({ name: 'JsonWebTokenError' });
     const decodedToken = jwt.verify(token.split(' ')[1], process.env.JWT_TOKEN_SECRET);
-    if (!isBlacklistingToken) {
-        const status = await JwtBlacklist.getObject(token)
-
-        if (status)
-            throw ({ name: 'JsonWebTokenError' });
-    }
+    const status = await JwtBlacklist.getObject(token)
+    if (status)
+        throw ({ name: 'JsonWebTokenError' });
     return decodedToken;
 }
 
-export function blacklistJwtToken(token) {
-    const tokenData = analyseJwtToken(token, true);
+export async function blacklistJwtToken(token, tokenData) {
     const insertionStatus = await JwtBlacklist.createObject(token, KEY_VALUE);
     await JwtBlacklist.setExpiryOfObject(token, +tokenData.exp);
 }
