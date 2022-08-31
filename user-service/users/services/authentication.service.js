@@ -26,13 +26,18 @@ export function createJwtToken(username) {
     }
 };
 
-export async function analyseJwtToken(token) {
+export async function analyseJwtToken(token, targetUser = null) {
+    // if (targetUser &&  targetUser != decodedToken)
     if (token == null)
         throw ({ name: 'JsonWebTokenError' });
     const decodedToken = jwt.verify(token.split(' ')[1], process.env.JWT_TOKEN_SECRET);
     const status = await JwtBlacklist.getObject(token)
     if (status)
         throw ({ name: 'JsonWebTokenError' });
+
+    if (targetUser && targetUser != decodedToken.username)
+        throw ({ name: 'InvalidPrivilegesError' });
+
     return decodedToken;
 }
 

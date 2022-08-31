@@ -44,7 +44,7 @@ export default class UserService {
   };
 
   static async updateUserByName(token, username, password) {
-    const tokenDetails = await analyseJwtToken(token)
+    const tokenDetails = await analyseJwtToken(token, username)
     if (!password)
       throw ({ name: "ValidationError" })
     const hashedPassword = await hashPassword(password)
@@ -53,7 +53,7 @@ export default class UserService {
   };
 
   static async deleteUserByName(token, username) {
-    const tokenDetails = await analyseJwtToken(token)
+    const tokenDetails = await analyseJwtToken(token, username)
     return Helper.deleteOne(UserModel, { username })
   };
 }

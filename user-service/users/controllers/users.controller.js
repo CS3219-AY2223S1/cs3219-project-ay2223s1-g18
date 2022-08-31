@@ -69,11 +69,10 @@ const logoutUser = (req, res) => {
         .then((response) => {
             return res.status(HttpResponse.OK).json({
                 status: true,
-                response,
+                response: { message: "Successfully logged user out!"},
             });
         })
         .catch((errorObject) => {
-            console.log(errorObject)
             const errorResponse = JSON.parse(serverErrorResponse)
             if (errorObject.name == 'ValidationError') {
                 errorResponse.statusCode = HttpResponse.BAD_REQUEST
@@ -138,6 +137,7 @@ const getUsers = (req, res) => {
             });
         })
         .catch((errorObject) => {
+            console.log(errorObject)
             const errorResponse = JSON.parse(serverErrorResponse)
             if (errorObject.name == 'BadUsernameError') {
                 errorResponse.statusCode = HttpResponse.NOT_FOUND
@@ -182,6 +182,9 @@ const updateUserByName = (req, res) => {
             else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
                 errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
+            } else if (errorObject.name == 'InvalidPrivilegesError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not able to perform service!"
             }
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
@@ -211,6 +214,9 @@ const deleteUserByName = (req, res) => {
             else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
                 errorResponse.statusCode = HttpResponse.UNAUTHORIZED
                 errorResponse.response.message = "Not Authorized to use service!"
+            } else if (errorObject.name == 'InvalidPrivilegesError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not able to perform service!"
             }
 
             return res.status(errorResponse.statusCode).json(errorResponse.response);
