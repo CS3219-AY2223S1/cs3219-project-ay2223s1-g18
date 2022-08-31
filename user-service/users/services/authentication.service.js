@@ -1,10 +1,11 @@
-import { startRedisClient } from '../../cache/setup.js'
+
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import RedisInstance from '../../cache/instance';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const redisClient = startRedisClient()
+const JwtBlacklist = new RedisInstance();
 const KEY_VALUE = "valid"
 
 export async function hashPassword(password) {
@@ -30,7 +31,7 @@ export function analyseJwtToken(token, isBlacklistingToken) {
         throw ({ name: 'JsonWebTokenError' });
     const decodedToken = jwt.verify(token.split(' ')[1], process.env.JWT_TOKEN_SECRET);
     if (!isBlacklistingToken) {
-        const status = await redisClient.GET(token);
+        const status = await JwtBlacklist.getObject(token)
 
         if (status)
             throw ({ name: 'JsonWebTokenError' });
@@ -40,6 +41,6 @@ export function analyseJwtToken(token, isBlacklistingToken) {
 
 export function blacklistJwtToken(token) {
     const tokenData = analyseJwtToken(token, true);
-    const insertionStatus = await redisClient.SET(token, KEY_VALUE);
-    await redisClient.EXPIREAT(token, +tokenData.exp);
+    const insertionStatus = await JwtBlacklist.createObject(token, KEY_VALUE);
+    await JwtBlacklist.setExpiryOfObject(token, +tokenData.exp);
 }
