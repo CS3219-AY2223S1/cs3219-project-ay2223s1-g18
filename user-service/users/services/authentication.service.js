@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const redisClient = startRedisClient()
+const KEY_VALUE = "valid"
 
 export async function hashPassword(password)  {
     return bcrypt.hash(password, parseInt(process.env.HASH_SALT_ROUNDS));
@@ -26,8 +27,13 @@ export function createJwtToken(username)  {
 
 export function analyseJwtToken(token) {
     if (token == null)
-        throw({ name: 'JsonWebTokenError' })
+        throw({ name: 'JsonWebTokenError' });
     return jwt.verify(token.split(' ')[1], process.env.JWT_TOKEN_SECRET);
 }
 
+export function blacklistJwtToken(token) {
+    const tokenData = analyseJwtToken(token);
+    const insertionStatus = await client.SET(token, KEY_VALUE);
+    await client.EXPIREAT(token, +payload.exp);
 
+}
