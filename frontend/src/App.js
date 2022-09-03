@@ -12,11 +12,14 @@ import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
+import CountdownCircle from "./components/CountdownCircle";
 
 function App() {
   return (
     <div className="App">
-      <Router>
+      <CountdownCircle />
+
+      {/* <Router>
         <Navbar />
 
         <Routes>
@@ -36,7 +39,7 @@ function App() {
             element={document.cookie ? <HomePage /> : <Navigate to="/" />}
           />
         </Routes>
-      </Router>
+      </Router> */}
     </div>
   );
 }
