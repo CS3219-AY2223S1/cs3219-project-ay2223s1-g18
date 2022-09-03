@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import axios from "axios";
 
@@ -7,10 +8,9 @@ function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoginSuccess, setIsLoginSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
-    setIsLoginSuccess(false);
     const res = await axios
       // TODO: set api url properly
       .post("http://localhost:8000/users/auth", { name: username, password })
@@ -19,10 +19,10 @@ function LoginPage() {
         console.log("error", err);
       });
     if (res && res.data.status) {
-      console.log("LOGIN", res);
-      // TODO: save JWT in cookie
-      //     setIsLoginSuccess(true);
-      //     navigate("/home");
+      document.cookie = "token=" + res.data.response.token;
+      if (document.cookie) {
+        navigate("/home");
+      }
     }
   };
 
