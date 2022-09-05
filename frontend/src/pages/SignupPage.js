@@ -7,31 +7,55 @@ import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
 import Button from "../components/Button";
 
 function SignupPage() {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [usernameTakenError, setUsernameTakenError] = useState("");
-  const [isSignupSuccess, setIsSignupSuccess] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
 
   const handleSignup = async () => {
-    var email = "test1@test.com";
-    setIsSignupSuccess(false);
-
-    const res = await axios
-      .post(URL_USER_SVC, { email, username, password })
-      .catch((err) => {
-        if (err.response.status === STATUS_CODE_CONFLICT) {
-          setUsernameTakenError("This username already exists");
-        } else {
-          setError("Please try again later");
-        }
-      });
-    if (res && res.status === STATUS_CODE_CREATED) {
-      setIsSignupSuccess(true);
-      // localStorage.setItem("currentUsername", JSON.stringify(username));
-      navigate("/login");
+    if (checkInputsFilled()) {
+      const res = await axios
+        .post(URL_USER_SVC, { email, username, password })
+        .catch((err) => {
+          if (err.response.status === STATUS_CODE_CONFLICT) {
+            setError("Username or email has already been taken.");
+          } else {
+            setError("Something went wrong. Please try again later");
+          }
+        });
+      if (res && res.status === STATUS_CODE_CREATED) {
+        // localStorage.setItem("currentUsername", JSON.stringify(username));
+        navigate("/login");
+      }
     }
+  };
+
+  const checkInputsFilled = () => {
+    setError("");
+    var allInputsFilled = true;
+    if (email) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+      allInputsFilled = false;
+    }
+    if (username) {
+      setUsernameError(false);
+    } else {
+      setUsernameError(true);
+      allInputsFilled = false;
+    }
+    if (password) {
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+      allInputsFilled = false;
+    }
+    return allInputsFilled;
   };
 
   return (
@@ -39,6 +63,21 @@ function SignupPage() {
       <Header>Welcome to Peerprep!</Header>
       <CardWrap>
         <div style={{ maxWidth: "400px" }}>
+          <div style={{ width: "100%", marginBottom: "24px" }}>
+            <label>Email</label>
+            <input
+              type="email"
+              required
+              placeholder="Your email here"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              style={{ width: "356px" }}
+            />
+            {emailError && (
+              <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
+            )}
+          </div>
+
           <div style={{ width: "100%", marginBottom: "24px" }}>
             <label>Username</label>
             <input
@@ -49,22 +88,25 @@ function SignupPage() {
               value={username}
               style={{ width: "356px" }}
             />
-            {usernameTakenError && (
-              <p style={{ color: "var(--red)", marginTop: "8px" }}>
-                {usernameTakenError}
-              </p>
+            {usernameError && (
+              <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
             )}
           </div>
 
-          <label>Password</label>
-          <input
-            type="password"
-            required
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "356px", marginBottom: "48px" }}
-          />
+          <div style={{ width: "100%", marginBottom: "24px" }}>
+            <label>Password</label>
+            <input
+              type="password"
+              required
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ width: "356px", marginBottom: "48px" }}
+            />
+            {passwordError && (
+              <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
+            )}
+          </div>
 
           {error && (
             <p style={{ color: "var(--red)", marginBottom: "8px" }}>{error}</p>
