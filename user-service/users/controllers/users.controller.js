@@ -1,102 +1,227 @@
 
 import UserService from '../services/users.service.js';
+import { HttpResponse } from '../../constants/httpResponse.js';
+
+const serverErrorResponse = JSON.stringify({
+    statusCode: HttpResponse.INTERNAL_SERVER_ERROR,
+    response: {
+        status: false,
+        message: "Error in request fulfilment!",
+    }
+})
 
 const createUser = (req, res) => {
-    const { email, name, password } = req.body;
+    const { email, username, password } = req.body;
     UserService
-        .createUser(email, name, password)
+        .createUser(email, username, password)
         .then((response) => {
-            return res.status(201).json({
+            return res.status(HttpResponse.CREATED).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            console.log(err)
-            return res.status(500).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'ValidationError') {
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Email, Username and/or Password are missing!"
+            }
+
+            else if (errorObject.code == 11000) { // Duplicate Error
+                errorResponse.statusCode = HttpResponse.CONFLICT
+                errorResponse.response.message = "Email/Username exists in application!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
 const authenticateUser = (req, res) => {
-    const { name, password } = req.body;
+    const { username, password } = req.body;
     UserService
-        .authenticateUser(name, password)
+        .authenticateUser(username, password)
         .then((response) => {
-            return res.status(200).json({
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'ValidationError') {
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Username and/or Password are missing!"
+            }
+
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+};
+
+const logoutUser = (req, res) => {
+    const token = req.headers.authorization;
+    UserService
+        .logoutUser(token)
+        .then((response) => {
+            return res.status(HttpResponse.OK).json({
+                status: true,
+                response: { message: "Successfully logged user out!" },
+            });
+        })
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'ValidationError') {
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Username and/or Password are missing!"
+            }
+
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
 const getHealthStatus = (req, res) => {
-    res.status(200).json({
+    res.status(HttpResponse.OK).json({
         status: "true",
         response: "operational"
     });
 };
 
-const getUserById = (req, res) => {
-    const { id } = req.params;
+const getUserByName = (req, res) => {
+    const { username } = req.params;
+    const token = req.headers.authorization;
     UserService
-        .getUserById(id)
+        .getUserByName(token, username)
         .then((response) => {
-            return res.status(200).json({
+            if (response.length == 0)
+                throw ({ name: 'BadUsernameError' })
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+
+            if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
+                errorResponse.response.message = "No such Username found for update!"
+            }
+
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
+
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
 const getUsers = (req, res) => {
+    const token = req.headers.authorization;
     UserService
-        .getUsers()
+        .getUsers(token)
         .then((response) => {
-            return res.status(200).json({
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
+        .catch((errorObject) => {
+            console.log(errorObject)
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
+                errorResponse.response.message = "No such Username found for update!"
+            }
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Not Authorized to use service!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
-const updateUser = (req, res) => {
-    const { id } = req.params;
-    const { name, password } = req.body;
+const updateUserByName = (req, res) => {
+    const { username } = req.params;
+    const { password } = req.body;
+    const token = req.headers.authorization;
     UserService
-        .updateUser(id, name, password)
+        .updateUserByName(token, username, password)
         .then((response) => {
-            return res.status(200).json({
+
+            if (!response)
+                throw ({ name: 'BadUsernameError' })
+
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'ValidationError') {
+                errorResponse.statusCode = HttpResponse.BAD_REQUEST
+                errorResponse.response.message = "Password is missing!"
+            }
+            else if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
+                errorResponse.response.message = "No such Username found for update!"
+            }
+
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Not Authorized to use service!"
+            } 
+            else if (errorObject.name == 'InvalidPrivilegesError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not able to perform service!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
-const deleteUser = (req, res) => {
-    const { id } = req.params;
+const deleteUserByName = (req, res) => {
+    const { username } = req.params;
+    const token = req.headers.authorization;
     UserService
-        .deleteUser(id)
+        .deleteUserByName(token, username)
         .then((response) => {
-            return res.status(200).json({
+            if (response.deletedCount == 0)
+                throw ({ name: 'BadUsernameError' })
+            return res.status(HttpResponse.OK).json({
                 status: true,
                 response,
             });
         })
-        .catch((err) => {
-            return res.status(500).json({ status: false, err });
+        .catch((errorObject) => {
+            const errorResponse = JSON.parse(serverErrorResponse)
+            if (errorObject.name == 'BadUsernameError') {
+                errorResponse.statusCode = HttpResponse.NOT_FOUND
+                errorResponse.response.message = "Invalid username supplied for deletion!"
+            }
+
+            else if (errorObject.name == 'TokenExpiredError' || errorObject.name == 'JsonWebTokenError') {
+                errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+                errorResponse.response.message = "Not Authorized to use service!"
+            } else if (errorObject.name == 'InvalidPrivilegesError') {
+                errorResponse.statusCode = HttpResponse.FORBIDDEN
+                errorResponse.response.message = "Not able to perform service!"
+            }
+
+            return res.status(errorResponse.statusCode).json(errorResponse.response);
         });
 };
 
-export { createUser, authenticateUser, getHealthStatus, getUserById, getUsers, updateUser, deleteUser }
+export { createUser, authenticateUser, logoutUser, getHealthStatus, getUserByName, getUsers, updateUserByName, deleteUserByName }

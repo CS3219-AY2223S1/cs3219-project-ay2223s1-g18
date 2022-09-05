@@ -1,92 +1,59 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-import { hashPassword, verifyHashPassword, createJwtToken } from './authentication.service.js';
+import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken, blacklistJwtToken } from './authentication.service.js';
 
 export default class UserService {
 
-  static async createUser(email, name, password) {
+  static async createUser(email, username, password) {
     const hashedPassword = await hashPassword(password)
-    return new Promise((resolve, reject) => {
-      Helper
-        .save(UserModel, {
-          name,
-          email,
-          password: hashedPassword
-        })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+    return await Helper.save(UserModel, {
+      username,
+      email,
+      password: hashedPassword
+    })
   };
 
-  static async authenticateUser(name, password) {
-    return new Promise((resolve, reject) => {
-      Helper
-        .listOne(UserModel, { name: name }
-        )
-        .then((res) => {
-          if(res) {
-            verifyHashPassword(password, res.password)
-            .then((isEnteredPasswordValid) => {
-              if(isEnteredPasswordValid)
-              resolve(createJwtToken(name))
-            })
-            .catch((e) => console.error(e));
-          }
-          else
-            reject("error")
-        })
-        .catch((e) => reject(e));
-      });
+  static async authenticateUser(username, password) {
+    const matchingUser = await Helper.listOne(UserModel, { username })
+    if (!matchingUser)
+      throw ({ name: 'BadUsernameError' })
+
+    const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
+    if (!isEnteredPasswordValid)
+      throw ({ name: 'BadPasswordError' })
+
+    return createJwtToken(username);
   };
 
+  static async logoutUser(token) {
+    const tokenData = await analyseJwtToken(token, true);
+    await blacklistJwtToken(token, tokenData);
+  }
 
-  static async getUserById(id) {
-    return new Promise((resolve, reject) => {
-      Helper
-        .list(UserModel, {
-          userId: id,
-        })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+  static async getUserByName(token, username) {
+    const tokenDetails = await analyseJwtToken(token)
+
+    return Helper.list(UserModel, { username })
   };
 
-  static async getUsers() {
-    return new Promise((resolve, reject) => {
-      Helper
-        .list(UserModel, {})
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+  static async getUsers(token) {
+    const tokenDetails = await analyseJwtToken(token)
+
+    return Helper.list(UserModel, {})
   };
 
-  static async updateUser(id, name, password) {
+  static async updateUserByName(token, username, password) {
+    const tokenDetails = await analyseJwtToken(token, username)
+    if (!password)
+      throw ({ name: "ValidationError" })
     const hashedPassword = await hashPassword(password)
-    return new Promise((resolve, reject) => {
-      Helper
-        .updateOne(UserModel, { userId: id }, { name: name, password: hashedPassword }, { new: true })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+    return Helper.updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
+
   };
 
-  static async deleteUser(id) {
-    return new Promise((resolve, reject) => {
-      Helper
-        .deleteOne(UserModel, { userId: id })
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((e) => reject(e));
-    });
+  static async deleteUserByName(token, username) {
+    const tokenDetails = await analyseJwtToken(token, username)
+    return Helper.deleteOne(UserModel, { username })
   };
 }

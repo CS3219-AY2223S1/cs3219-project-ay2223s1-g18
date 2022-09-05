@@ -17,16 +17,13 @@ app.options("*", cors());
 
 const router = express.Router();
 
-app.use("/users", UserRouter);
+app.use("/api/user", UserRouter);
 
-// Controller will contain all the User-defined Routes - To be deleted
-import { createUser } from "./controller/user-controller.js";
-router.get("/", (_, res) => res.send("Hello World from user-service"));
-router.post("/", createUser);
-app.use("/api/user", router).all((_, res) => {
-  res.setHeader("content-type", "application/json");
-  res.setHeader("Access-Control-Allow-Origin", "*");
-});
+// router.post('/', createUser)
+// app.use('/api/user', router).all((_, res) => {
+//   res.setHeader('content-type', 'application/json')
+//   res.setHeader('Access-Control-Allow-Origin', '*')
+// })
 
 try {
   connectDatabase();
