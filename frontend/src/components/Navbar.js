@@ -6,33 +6,34 @@ import logo from "../assets/Logo.svg";
 
 const Navbar = () => {
   const pathname = useLocation().pathname;
+  const currentUsername = JSON.parse(localStorage.getItem("currentUsername"));
 
   return (
     <StyledNav>
       <a href="/">
         <img src={logo} alt="logo" />
       </a>
-      <div className="d-flex">
-        {pathname === "/" && (
-          <div>
-            <Link to="/login">
-              <Button
-                variant="secondary"
-                size="small"
-                style={{ marginRight: "8px" }}
-              >
-                Log in
-              </Button>
-            </Link>
+      {currentUsername && <p className="m-0">{currentUsername}</p>}
 
-            <Link to="/signup">
-              <Button variant="primary" size="small">
-                Sign up
-              </Button>
-            </Link>
-          </div>
-        )}
-      </div>
+      {pathname === "/" && (
+        <div className="d-flex">
+          <Link to="/login">
+            <Button
+              variant="secondary"
+              size="small"
+              style={{ marginRight: "8px" }}
+            >
+              Log in
+            </Button>
+          </Link>
+
+          <Link to="/signup">
+            <Button variant="primary" size="small">
+              Sign up
+            </Button>
+          </Link>
+        </div>
+      )}
     </StyledNav>
   );
 };

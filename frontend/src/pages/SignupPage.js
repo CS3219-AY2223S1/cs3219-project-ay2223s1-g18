@@ -15,9 +15,11 @@ function SignupPage() {
   const navigate = useNavigate();
 
   const handleSignup = async () => {
+    var email = "test1@test.com";
     setIsSignupSuccess(false);
+
     const res = await axios
-      .post(URL_USER_SVC, { username, password })
+      .post(URL_USER_SVC, { email, username, password })
       .catch((err) => {
         if (err.response.status === STATUS_CODE_CONFLICT) {
           setUsernameTakenError("This username already exists");
@@ -27,7 +29,8 @@ function SignupPage() {
       });
     if (res && res.status === STATUS_CODE_CREATED) {
       setIsSignupSuccess(true);
-      navigate("/home");
+      // localStorage.setItem("currentUsername", JSON.stringify(username));
+      navigate("/login");
     }
   };
 

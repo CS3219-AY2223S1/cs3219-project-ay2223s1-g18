@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import axios from "axios";
+import { URL_USER_SVC } from "../configs";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -13,7 +14,7 @@ function LoginPage() {
   const handleLogin = async () => {
     const res = await axios
       // TODO: set api url properly
-      .post("http://localhost:8000/users/auth", { name: username, password })
+      .post(`${URL_USER_SVC}/auth/`, { username, password })
       .catch((err) => {
         // TODO: Handle this properly
         console.log("error", err);
