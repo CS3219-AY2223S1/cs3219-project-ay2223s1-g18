@@ -13,6 +13,7 @@ import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
 import CountdownPage from "./pages/CountdownPage";
+import InterviewPage from "./pages/InterviewPage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             element={document.cookie ? <HomePage /> : <Navigate to="/" />}
           />
           <Route path="/loading" element={<CountdownPage />} />
+          <Route path="/interview" element={<InterviewPage />} />
         </Routes>
       </Router>
     </div>
