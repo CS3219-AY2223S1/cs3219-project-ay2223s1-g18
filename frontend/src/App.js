@@ -1,27 +1,43 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import PrivateRoute from "./PrivateRoute";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import Navbar from "./components/Navbar";
+import CountdownPage from "./pages/CountdownPage";
+import InterviewPage from "./pages/InterviewPage";
 
 function App() {
   return (
     <div className="App">
       <Router>
         <Navbar />
-
         <Routes>
+          <Route exact path="/" element={<LandingPage />}></Route>
+
           <Route path="/login" element={<LoginPage />}></Route>
           <Route path="/signup" element={<SignupPage />}></Route>
 
-          <Route exact path="/" element={<LandingPage />}></Route>
-          <Route path="/home" element={<HomePage />}></Route>
-
-          {/* <PrivateRoute exact path="/home" component={<HomePage />} /> */}
+          <Route
+            path="/home"
+            // render={() =>
+            //   document.cookie ? <HomePage /> : <Navigate to="/login" />
+            // }
+            // render={() =>
+            //   document.cookie ? <HomePage /> : <Navigate to="/login" />
+            // }
+            element={document.cookie ? <HomePage /> : <Navigate to="/" />}
+          />
+          <Route path="/loading" element={<CountdownPage />} />
+          <Route path="/interview" element={<InterviewPage />} />
         </Routes>
       </Router>
     </div>

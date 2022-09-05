@@ -1,11 +1,32 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import axios from "axios";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    const res = await axios
+      // TODO: set api url properly
+      .post("http://localhost:8000/users/auth", { name: username, password })
+      .catch((err) => {
+        // TODO: Handle this properly
+        console.log("error", err);
+      });
+    if (res && res.data.status) {
+      document.cookie = "token=" + res.data.response.token;
+      localStorage.setItem("currentUsername", JSON.stringify(username));
+
+      if (document.cookie) {
+        navigate("/home");
+      }
+    }
+  };
 
   return (
     <CardPageWrap>
@@ -54,6 +75,7 @@ function LoginPage() {
             variant="primary"
             size="big"
             style={{ marginTop: "48px", width: "100%" }}
+            onClick={handleLogin}
           >
             Log in
           </Button>
