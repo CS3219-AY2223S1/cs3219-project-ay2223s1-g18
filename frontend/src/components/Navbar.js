@@ -12,6 +12,7 @@ import logoutIcon from "../assets/logout-icon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
 
 const Navbar = ({ layout }) => {
+  console.log("layout: ", layout);
   const currentUsername = fetchStorage("currentUsername");
 
   return (
@@ -21,11 +22,28 @@ const Navbar = ({ layout }) => {
       )}
 
       {layout === "public" && <PublicLayoutNav />}
+      {layout === "interviewRoom" && <InterviewRoomNav />}
     </>
   );
 };
 
 export default Navbar;
+
+var InterviewRoomNav = () => {
+  return (
+    <StyledNav>
+      <Link to="/home">
+        <Button variant="secondary" size="small">
+          Leave Room
+        </Button>
+      </Link>
+      <h3 className="m-0">Practice</h3>
+      <Button variant="secondary" size="small">
+        Next Question
+      </Button>
+    </StyledNav>
+  );
+};
 
 var ProtectedLayoutNav = ({ currentUsername }) => {
   const navigate = useNavigate();

@@ -4,13 +4,17 @@ import Col from "react-bootstrap/Col";
 import styled from "styled-components";
 import Chat from "../components/Interview/Chat";
 import CodeEditor from "../components/Interview/CodeEditor";
+import { tempqn } from "../tempQuestion";
 
 const InterviewPage = () => {
   return (
     <StyledWrapper>
       <Row className="w-100">
-        <Col sm={6} lg={4}>
-          question
+        <Col sm={6} lg={4} className="p-3">
+          <h4>
+            <b>Ransom Note</b>
+          </h4>
+          {tempqn}
         </Col>
         <Col sm={6} lg={5}>
           <CodeEditor />
