@@ -1,23 +1,23 @@
 
 export default class Helper {
-    static save(Model, data) {
+    static async save(Model, data) {
         const collection = new Model(data);
         return collection.save();
     };
 
-    static list(Model, query) { 
+    static async list(Model, query) { 
         return Model.find(query).exec(); 
     };
 
-    static listOne(Model, query) { 
+    static async listOne(Model, query) { 
         return Model.findOne(query).exec(); 
     };
 
-    static updateOne(Model, condition, set, newDoc) { 
+    static async updateOne(Model, condition, set, newDoc) { 
         return Model.findOneAndUpdate(condition, set, newDoc).exec(); 
     };
 
-    static deleteOne(Model, query) { 
+    static async deleteOne(Model, query) { 
         return Model.deleteOne(query); 
     };
 };
