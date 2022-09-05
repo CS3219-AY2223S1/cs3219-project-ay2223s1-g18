@@ -1,11 +1,29 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import axios from "axios";
+import { URL_USER_SVC } from "../configs";
+import { saveStorage } from "../storage";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    const res = await axios
+      .post(`${URL_USER_SVC}/auth/`, { username, password })
+      .catch((err) => {
+        setError(err);
+      });
+    if (res && res.data.status) {
+      document.cookie = "token=" + res.data.response.token;
+      saveStorage("currentUsername", username);
+      navigate("/home");
+    }
+  };
 
   return (
     <CardPageWrap>
@@ -44,16 +62,28 @@ function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             style={{ width: "356px" }}
           />
-          <a>
+          <a href="/resetPassword">
             <p className="mt-2" style={{ textAlign: "end" }}>
               Forgot password?
             </p>
           </a>
 
+          {error && (
+            <p
+              style={{
+                color: "var(--red)",
+                marginBottom: "8px",
+                marginTop: "48px",
+              }}
+            >
+              {error}
+            </p>
+          )}
           <Button
             variant="primary"
             size="big"
-            style={{ marginTop: "48px", width: "100%" }}
+            style={{ width: "100%" }}
+            onClick={handleLogin}
           >
             Log in
           </Button>

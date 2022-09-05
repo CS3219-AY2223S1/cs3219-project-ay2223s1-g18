@@ -74,40 +74,42 @@ const DifficultyInfo = [
 
 const DifficultyCard = ({ difficulty }) => {
   return (
-    <StyledDifficultyCard
-      difficulty={difficulty}
-      style={{ backgroundColor: `${DifficultyInfo[difficulty].bg}` }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "28px",
-        }}
+    <a href="/loading">
+      <StyledDifficultyCard
+        difficulty={difficulty}
+        style={{ backgroundColor: `${DifficultyInfo[difficulty].bg}` }}
       >
-        <h2 style={{ color: `${DifficultyInfo[difficulty].textColor}` }}>
-          {DifficultyInfo[difficulty].text}
-        </h2>
-        <h2>{DifficultyInfo[difficulty].emoji}</h2>
-      </div>
-      <div style={{ marginBottom: "36px" }}>
-        {DifficultyInfo[difficulty].examplesArr.map((example) => {
-          return <p key={example}>{example}</p>;
-        })}
-        <p>...and more!</p>
-      </div>
-      <p>
-        <span
+        <div
           style={{
-            marginRight: "20px",
-            color: `${DifficultyInfo[difficulty].textColor}`,
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "28px",
           }}
         >
-          Join waiting room
-        </span>
-        <ArrowSvg />
-      </p>
-    </StyledDifficultyCard>
+          <h2 style={{ color: `${DifficultyInfo[difficulty].textColor}` }}>
+            {DifficultyInfo[difficulty].text}
+          </h2>
+          <h2>{DifficultyInfo[difficulty].emoji}</h2>
+        </div>
+        <div style={{ marginBottom: "36px" }}>
+          {DifficultyInfo[difficulty].examplesArr.map((example) => {
+            return <p key={example}>{example}</p>;
+          })}
+          <p>...and more!</p>
+        </div>
+        <p>
+          <span
+            style={{
+              marginRight: "20px",
+              color: `${DifficultyInfo[difficulty].textColor}`,
+            }}
+          >
+            Join waiting room
+          </span>
+          <ArrowSvg />
+        </p>
+      </StyledDifficultyCard>
+    </a>
   );
 };
 
