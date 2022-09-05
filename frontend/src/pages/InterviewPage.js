@@ -3,6 +3,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import styled from "styled-components";
 import Chat from "../components/Interview/Chat";
+import CodeEditor from "../components/Interview/CodeEditor";
 
 const InterviewPage = () => {
   return (
@@ -12,7 +13,7 @@ const InterviewPage = () => {
           question
         </Col>
         <Col sm={6} lg={5}>
-          code editor
+          <CodeEditor />
         </Col>
         <Col sm={12} lg={3}>
           <Chat />

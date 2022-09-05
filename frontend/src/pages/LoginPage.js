@@ -20,6 +20,8 @@ function LoginPage() {
       });
     if (res && res.data.status) {
       document.cookie = "token=" + res.data.response.token;
+      localStorage.setItem("currentUsername", JSON.stringify(username));
+
       if (document.cookie) {
         navigate("/home");
       }
