@@ -1,21 +1,23 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Button from "./Button";
 import logo from "../assets/Logo.svg";
+import { fetchStorage } from "../storage";
 
-const Navbar = () => {
-  const pathname = useLocation().pathname;
-  const currentUsername = JSON.parse(localStorage.getItem("currentUsername"));
+const Navbar = ({ layout }) => {
+  const currentUsername = fetchStorage("currentUsername");
 
   return (
     <StyledNav>
       <a href="/">
         <img src={logo} alt="logo" />
       </a>
-      {currentUsername && <p className="m-0">{currentUsername}</p>}
+      {layout === "protected" && currentUsername && (
+        <p className="m-0">{currentUsername}</p>
+      )}
 
-      {pathname === "/" && (
+      {layout === "public" && (
         <div className="d-flex">
           <Link to="/login">
             <Button

@@ -28,7 +28,6 @@ function SignupPage() {
           }
         });
       if (res && res.status === STATUS_CODE_CREATED) {
-        // localStorage.setItem("currentUsername", JSON.stringify(username));
         navigate("/login");
       }
     }
