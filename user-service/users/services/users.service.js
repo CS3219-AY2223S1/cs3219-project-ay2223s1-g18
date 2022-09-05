@@ -53,7 +53,9 @@ export default class UserService {
   };
 
   static async deleteUserByName(token, username) {
-    const tokenDetails = await analyseJwtToken(token, username)
-    return Helper.deleteOne(UserModel, { username })
+    const tokenData = await analyseJwtToken(token, username)
+    const deleteResult = Helper.deleteOne(UserModel, { username })
+    await blacklistJwtToken(token, tokenData);
+    return deleteResult
   };
 }
