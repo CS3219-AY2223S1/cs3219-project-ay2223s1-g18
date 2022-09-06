@@ -15,27 +15,28 @@ export default class UserService {
       throw ({ name: 'ExistingUserError' })
 
     const hashedPassword = await hashPassword(password)
-    sendValidationEmailRequest({ email, username, password: hashedPassword }, SIGNUP_MESSAGE);
+    await sendValidationEmailRequest({ email, username, password: hashedPassword }, SIGNUP_MESSAGE);
   };
 
   static async completeUserSignup(token) {
     const tokenData = await analyseJwtToken(token)
-    const saveResult = await Helper.save(UserModel, {
+    console.log(tokenData)
+    const user = await Helper.save(UserModel, {
       username: tokenData.username,
       email: tokenData.email,
       password: tokenData.password
     })
     await blacklistJwtToken(token, tokenData);
-    const sessionToken = createJwtToken({ username }, false);
-    return { ...saveResult, token: sessionToken };
+    const sessionToken = createJwtToken({ username: tokenData.username }, false);
+   return { user, token: sessionToken.token };
   }
 
   static async getResetPasswordToken(email) {
-    const user = Helper.list(UserModel, { email })
+    const user = await Helper.list(UserModel, { email })
     if (!user)
       throw ({ name: "ValidationError" })
 
-    sendValidationEmailRequest({ email, username: user.username }, RESET_PASSWORD_MESSAGE);
+    await sendValidationEmailRequest({ email, username: user.username }, RESET_PASSWORD_MESSAGE);
   }
 
   static async completePasswordReset(token, password) {
@@ -44,7 +45,7 @@ export default class UserService {
     const tokenData = await analyseJwtToken(token)
     await blacklistJwtToken(token, tokenData);
     const hashedPassword = await hashPassword(password)
-    return Helper.updateOne(UserModel, { username: tokenData.username }, { password: hashedPassword }, { new: true })
+    return await Helper.updateOne(UserModel, { email: tokenData.email }, { password: hashedPassword }, { new: true })
 
   };
 
@@ -62,35 +63,35 @@ export default class UserService {
 
 
   static async logoutUser(token) {
-    const tokenData = await analyseJwtToken(token, true);
-    await blacklistJwtToken(token, tokenData);
+    const tokenData = await analyseJwtToken(token, false);
+    await blacklistJwtToken(token, tokenData, false);
   }
 
   static async getUserByName(token, username) {
-    const tokenData = await analyseJwtToken(token)
+    const tokenData = await analyseJwtToken(token, false, username)
 
-    return Helper.list(UserModel, { username })
+    return await Helper.list(UserModel, { username })
   };
 
   static async getUsers(token) {
-    const tokenData = await analyseJwtToken(token)
+    const tokenData = await analyseJwtToken(token, false)
 
-    return Helper.list(UserModel, {})
+    return await Helper.list(UserModel, {})
   };
   
   static async updateUserByName(token, username, password) {
-    const tokenData = await analyseJwtToken(token, username)
+    const tokenData = await analyseJwtToken(token, false, username)
     if (!password)
       throw ({ name: "ValidationError" })
     const hashedPassword = await hashPassword(password)
-    const updateResult = Helper.updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
+    const updateResult = await Helper.updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
     return updateResult
   };
 
   static async deleteUserByName(token, username) {
-    const tokenData = await analyseJwtToken(token, username)
-    const deleteResult = Helper.deleteOne(UserModel, { username })
-    await blacklistJwtToken(token, tokenData);
+    const tokenData = await analyseJwtToken(token, false, username)
+    const deleteResult = await Helper.deleteOne(UserModel, { username })
+    await blacklistJwtToken(token, tokenData, false);
     return deleteResult
   };
 }

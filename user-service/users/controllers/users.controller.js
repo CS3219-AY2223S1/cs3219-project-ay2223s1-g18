@@ -36,8 +36,8 @@ const sendUserConfirmationToken = (req, res) => {
 };
 
 const completeUserSignup = (req, res) => {
-  const { email, username, password } = req.body;
-  UserService.completeUserSignup(email, username, password)
+  const token = req.headers.authorization;
+  UserService.completeUserSignup(token)
     .then((response) => {
       return res.status(HttpResponse.CREATED).json({
         status: true,
@@ -45,7 +45,18 @@ const completeUserSignup = (req, res) => {
       });
     })
     .catch((errorObject) => {
+      console.log(errorObject)
       const errorResponse = JSON.parse(serverErrorResponse);
+      if (
+        errorObject.name == "TokenExpiredError" ||
+        errorObject.name == "JsonWebTokenError"
+      ) {
+        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
+        errorResponse.response.message = "Not Authorized to use service!";
+      } else if (errorObject.name == "InvalidPrivilegesError") {
+        errorResponse.statusCode = HttpResponse.FORBIDDEN;
+        errorResponse.response.message = "Not able to perform service!";
+      }
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
 };
@@ -67,7 +78,16 @@ const sendResetPasswordToken = (req, res) => {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message =
           "No such user with email found!";
-      } 
+      } else if (
+        errorObject.name == "TokenExpiredError" ||
+        errorObject.name == "JsonWebTokenError"
+      ) {
+        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
+        errorResponse.response.message = "Not Authorized to use service!";
+      } else if (errorObject.name == "InvalidPrivilegesError") {
+        errorResponse.statusCode = HttpResponse.FORBIDDEN;
+        errorResponse.response.message = "Not able to perform service!";
+      }
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
@@ -87,6 +107,7 @@ const completePasswordReset = (req, res) => {
       });
     })
     .catch((errorObject) => {
+      console.log(errorObject)
       const errorResponse = JSON.parse(serverErrorResponse);
       if (errorObject.name == "ValidationError") {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
