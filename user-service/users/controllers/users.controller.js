@@ -8,14 +8,14 @@ const serverErrorResponse = JSON.stringify({
     message: "Error in request fulfilment!",
   },
 });
-
-const createUser = (req, res) => {
+// User signup
+const sendUserConfirmationToken = (req, res) => {
   const { email, username, password } = req.body;
-  UserService.createUser(email, username, password)
+  UserService.createUserVerificationRequest(email, username, password)
     .then(() => {
       return res.status(HttpResponse.ACCEPTED).json({
         status: true,
-        response: { message: `Successfully sent token email to ${email}!` },
+        response: { message: `Successfully sent token email!` },
       });
     })
     .catch((errorObject) => {
@@ -25,7 +25,7 @@ const createUser = (req, res) => {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message =
           "Email, Username and/or Password are missing!";
-      } else if (errorObject.code == 11000) {
+      } else if (errorObject.name == "ExistingUserError") {
         // Duplicate Error
         errorResponse.statusCode = HttpResponse.CONFLICT;
         errorResponse.response.message = "Email or username has been taken.";
@@ -35,9 +35,9 @@ const createUser = (req, res) => {
     });
 };
 
-const validateCreateUser = (req, res) => {
+const completeUserSignup = (req, res) => {
   const { email, username, password } = req.body;
-  UserService.createUser(email, username, password)
+  UserService.completeUserSignup(email, username, password)
     .then((response) => {
       return res.status(HttpResponse.CREATED).json({
         status: true,
@@ -46,20 +46,68 @@ const validateCreateUser = (req, res) => {
     })
     .catch((errorObject) => {
       const errorResponse = JSON.parse(serverErrorResponse);
+      return res.status(errorResponse.statusCode).json(errorResponse.response);
+    });
+};
+
+// User password reset
+const sendResetPasswordToken = (req, res) => {
+  const { email } = req.body;
+  UserService.getResetPasswordToken(email)
+    .then(() => {
+      return res.status(HttpResponse.ACCEPTED).json({
+        status: true,
+        response: { message: `Successfully sent token email!` },
+      });
+    })
+    .catch((errorObject) => {
+      console.log(errorObject)
+      const errorResponse = JSON.parse(serverErrorResponse);
       if (errorObject.name == "ValidationError") {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message =
-          "Email, Username and/or Password are missing!";
-      } else if (errorObject.code == 11000) {
-        // Duplicate Error
-        errorResponse.statusCode = HttpResponse.CONFLICT;
-        errorResponse.response.message = "Email or username has been taken.";
+          "No such user with email found!";
+      } 
+
+      return res.status(errorResponse.statusCode).json(errorResponse.response);
+    });
+};
+
+
+const completePasswordReset = (req, res) => {
+  const token = req.headers.authorization;
+  const { password } = req.body;
+  UserService.completePasswordReset(token, password)
+    .then((response) => {
+      if (!response) throw { name: "BadUsernameError" };
+
+      return res.status(HttpResponse.OK).json({
+        status: true,
+        response,
+      });
+    })
+    .catch((errorObject) => {
+      const errorResponse = JSON.parse(serverErrorResponse);
+      if (errorObject.name == "ValidationError") {
+        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+        errorResponse.response.message = "Password is missing!";
+      } else if (
+        errorObject.name == "TokenExpiredError" ||
+        errorObject.name == "JsonWebTokenError"
+      ) {
+        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
+        errorResponse.response.message = "Not Authorized to use service!";
+      } else if (errorObject.name == "InvalidPrivilegesError") {
+        errorResponse.statusCode = HttpResponse.FORBIDDEN;
+        errorResponse.response.message = "Not able to perform service!";
       }
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
 };
 
+
+// User authentication
 const authenticateUser = (req, res) => {
   const { username, password } = req.body;
   UserService.authenticateUser(username, password)
@@ -81,27 +129,6 @@ const authenticateUser = (req, res) => {
     });
 };
 
-const getResetPasswordToken = (req, res) => {
-  const { email } = req.body;
-  UserService.getResetPasswordToken(email)
-    .then(() => {
-      return res.status(HttpResponse.ACCEPTED).json({
-        status: true,
-        response: { message: `Successfully sent token email to ${email}!` },
-      });
-    })
-    .catch((errorObject) => {
-      console.log(errorObject)
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "ValidationError") {
-        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
-        errorResponse.response.message =
-          "No such user with email found!";
-      } 
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
 
 const logoutUser = (req, res) => {
   const token = req.headers.authorization;
@@ -114,11 +141,7 @@ const logoutUser = (req, res) => {
     })
     .catch((errorObject) => {
       const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "ValidationError") {
-        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
-        errorResponse.response.message =
-          "Username and/or Password are missing!";
-      } else if (
+       if (
         errorObject.name == "TokenExpiredError" ||
         errorObject.name == "JsonWebTokenError"
       ) {
@@ -262,10 +285,12 @@ const deleteUserByName = (req, res) => {
 };
 
 export {
-  createUser,
+  sendUserConfirmationToken,
+  completeUserSignup,
+  sendResetPasswordToken,
+  completePasswordReset,
   authenticateUser,
   logoutUser,
-  getResetPasswordToken,
   getHealthStatus,
   getUserByName,
   getUsers,
