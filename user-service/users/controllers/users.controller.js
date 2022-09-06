@@ -49,13 +49,29 @@ const authenticateUser = (req, res) => {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message =
           "Username and/or Password are missing!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      }
+      } 
+
+      return res.status(errorResponse.statusCode).json(errorResponse.response);
+    });
+};
+
+const getResetPasswordToken = (req, res) => {
+  const { email } = req.body;
+  UserService.getResetPasswordToken(email)
+    .then(() => {
+      return res.status(HttpResponse.ACCEPTED).json({
+        status: true,
+        response: { message: `Successfully sent token email to ${email}!` },
+      });
+    })
+    .catch((errorObject) => {
+      console.log(errorObject)
+      const errorResponse = JSON.parse(serverErrorResponse);
+      if (errorObject.name == "ValidationError") {
+        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+        errorResponse.response.message =
+          "No such user with email found!";
+      } 
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
@@ -64,7 +80,7 @@ const authenticateUser = (req, res) => {
 const logoutUser = (req, res) => {
   const token = req.headers.authorization;
   UserService.logoutUser(token)
-    .then((response) => {
+    .then(() => {
       return res.status(HttpResponse.OK).json({
         status: true,
         response: { message: "Successfully logged user out!" },
@@ -223,6 +239,7 @@ export {
   createUser,
   authenticateUser,
   logoutUser,
+  getResetPasswordToken,
   getHealthStatus,
   getUserByName,
   getUsers,

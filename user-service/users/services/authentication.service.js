@@ -17,13 +17,12 @@ export async function verifyHashPassword(enteredPassword, storedHashPassword) {
     return bcrypt.compare(enteredPassword, storedHashPassword);
 };
 
-export function createJwtToken(username) {
+export function createJwtToken(identifiers, isVerificationToken=true) {
     return {
         token: jwt.sign(
-            { username },
-            process.env.JWT_TOKEN_SECRET,
-            { expiresIn: process.env.JWT_TOKEN_EXPIRY }),
-        expiresIn: process.env.JWT_TOKEN_EXPIRY
+            identifiers,
+            isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_SECRET : process.env.JWT_TOKEN_SECRET,
+            { expiresIn: isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_EXPIRY : process.env.JWT_TOKEN_EXPIRY }),
     }
 };
 
@@ -47,19 +46,20 @@ export async function blacklistJwtToken(token, tokenData) {
     await JwtBlacklist.setExpiryOfObject(token, +tokenData.exp);
 }
 
-export async function sendVerificationEmail() {
-    const resetUrl = 'xxx'
+export async function sendPasswordResetRequest(email, user) {
+    const resetToken = createJwtToken({email, user})
+    const clientUrl = "http:localhost:3000"
+    const resetUrl = `${clientUrl}/passwordReset?token=${resetToken.token}`
     const message = `
         <h1>You have requested a password reset</h1>
         <p>Please go to this link to reset your password:</p>
-        <a href=${resetUrl} clicktracking=off>${resetUrl}</a>
+        <a href=${resetUrl} clicktracking=off>Reset Password</a>
       `;
     
     const emailDetails = {
-      to: "theopinto98@gmail.com",
+      to: email,
       subject: "Password Reset Request",
       text: message,
     }
-    console.log(101)
-    sendEmail(emailDetails);
+    await sendEmail(emailDetails);
   }

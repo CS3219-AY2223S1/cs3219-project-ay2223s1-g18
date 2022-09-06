@@ -1,7 +1,7 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken, blacklistJwtToken, sendVerificationEmail } from './authentication.service.js';
+import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken, blacklistJwtToken, sendPasswordResetRequest } from './authentication.service.js';
 
 export default class UserService {
 
@@ -23,8 +23,15 @@ export default class UserService {
     if (!isEnteredPasswordValid)
       throw ({ name: 'BadPasswordError' })
 
-    return createJwtToken(username);
+    return createJwtToken({username}, false);
   };
+
+  static async getResetPasswordToken(email) {
+    const user = Helper.list(UserModel, { email })
+    if(!user)
+      throw ({ name: "ValidationError" })
+    sendPasswordResetRequest(email, user.username);
+  }
 
   static async logoutUser(token) {
     const tokenData = await analyseJwtToken(token, true);

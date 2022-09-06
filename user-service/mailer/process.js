@@ -3,9 +3,7 @@ import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
 dotenv.config();
 
-export async function sendEmail(options) {
-    console.log(process.env.EMAIL_SERVICE + " " + process.env.EMAIL_USERNAME + " " + process.env.EMAIL_PASSWORD + process.env.EMAIL_FROM)
-    
+export async function sendEmail(options) {   
     const transporter = nodemailer.createTransport({
       service: process.env.EMAIL_SERVICE,
       auth: {
