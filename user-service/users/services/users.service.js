@@ -1,17 +1,20 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken, blacklistJwtToken, sendPasswordResetRequest } from './authentication.service.js';
+import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken, blacklistJwtToken, sendValidationEmailRequest } from './authentication.service.js';
+import {RESET_PASSWORD_MESSAGE, SIGNUP_MESSAGE} from '../../mailer/message.js'
 
 export default class UserService {
 
   static async createUser(email, username, password) {
     const hashedPassword = await hashPassword(password)
-    return await Helper.save(UserModel, {
-      username,
-      email,
-      password: hashedPassword
-    })
+    sendValidationEmailRequest({email, username, password: hashedPassword}, SIGNUP_MESSAGE);
+
+    // return await Helper.save(UserModel, {
+    //   username,
+    //   email,
+    //   password: hashedPassword
+    // })
   };
 
   static async authenticateUser(username, password) {
@@ -30,7 +33,8 @@ export default class UserService {
     const user = Helper.list(UserModel, { email })
     if(!user)
       throw ({ name: "ValidationError" })
-    sendPasswordResetRequest(email, user.username);
+
+    sendValidationEmailRequest({email, username: user.username}, RESET_PASSWORD_MESSAGE);
   }
 
   static async logoutUser(token) {

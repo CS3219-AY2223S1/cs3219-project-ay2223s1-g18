@@ -12,6 +12,32 @@ const serverErrorResponse = JSON.stringify({
 const createUser = (req, res) => {
   const { email, username, password } = req.body;
   UserService.createUser(email, username, password)
+    .then(() => {
+      return res.status(HttpResponse.ACCEPTED).json({
+        status: true,
+        response: { message: `Successfully sent token email to ${email}!` },
+      });
+    })
+    .catch((errorObject) => {
+      console.log(errorObject)
+      const errorResponse = JSON.parse(serverErrorResponse);
+      if (errorObject.name == "ValidationError") {
+        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+        errorResponse.response.message =
+          "Email, Username and/or Password are missing!";
+      } else if (errorObject.code == 11000) {
+        // Duplicate Error
+        errorResponse.statusCode = HttpResponse.CONFLICT;
+        errorResponse.response.message = "Email or username has been taken.";
+      }
+
+      return res.status(errorResponse.statusCode).json(errorResponse.response);
+    });
+};
+
+const validateCreateUser = (req, res) => {
+  const { email, username, password } = req.body;
+  UserService.createUser(email, username, password)
     .then((response) => {
       return res.status(HttpResponse.CREATED).json({
         status: true,
