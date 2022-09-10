@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "./Button";
 import logo from "../assets/Logo.svg";
-import { clearStorage, fetchStorage } from "../storage";
+import { clearStorage, fetchStorage } from "../utils/storage";
 import Avatar from "react-string-avatar";
 import { ReactComponent as ChevronDownIcon } from "../assets/chevron-down.svg";
 import userIcon from "../assets/user-icon.svg";
@@ -12,7 +12,6 @@ import logoutIcon from "../assets/logout-icon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
 
 const Navbar = ({ layout }) => {
-  console.log("layout: ", layout);
   const currentUsername = fetchStorage("currentUsername");
 
   return (

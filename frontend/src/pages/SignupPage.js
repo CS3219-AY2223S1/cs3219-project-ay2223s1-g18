@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState } from "react";
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
+import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../utils/constants";
 import Button from "../components/Button";
+import { POSTRequest } from "../utils/axios";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
@@ -16,10 +15,14 @@ function SignupPage() {
   const [passwordError, setPasswordError] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = async () => {
+  const handleSignup = () => {
     if (checkInputsFilled()) {
-      const res = await axios
-        .post(URL_USER_SVC, { email, username, password })
+      POSTRequest("/", { email, username, password })
+        .then((res) => {
+          if (res && res.status === STATUS_CODE_CREATED) {
+            navigate("/login");
+          }
+        })
         .catch((err) => {
           if (err.response.status === STATUS_CODE_CONFLICT) {
             setError("Username or email has already been taken.");
@@ -27,9 +30,6 @@ function SignupPage() {
             setError("Something went wrong. Please try again later");
           }
         });
-      if (res && res.status === STATUS_CODE_CREATED) {
-        navigate("/login");
-      }
     }
   };
 
@@ -100,7 +100,7 @@ function SignupPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "356px", marginBottom: "48px" }}
+              style={{ width: "356px" }}
             />
             {passwordError && (
               <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
