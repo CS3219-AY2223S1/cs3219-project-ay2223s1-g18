@@ -110,7 +110,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
             <img src={userIcon} alt="" />
             Profile
           </Dropdown.Item>
-          <Dropdown.Item eventKey="3">
+          <Dropdown.Item eventKey="3" href="/settings">
             <img src={settingsIcon} alt="" />
             Settings
           </Dropdown.Item>

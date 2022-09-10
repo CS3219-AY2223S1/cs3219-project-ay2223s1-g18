@@ -8,7 +8,7 @@ const ProtectedLayout = () => {
   const outlet = useOutlet();
 
   if (!isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/signup" />;
   }
 
   return (
