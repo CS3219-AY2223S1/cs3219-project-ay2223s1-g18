@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../components/Button";
-import { saveStorage } from "../utils/storage";
-import { POSTRequest } from "../utils/axios";
+import Button from "../../components/Button";
+import { saveStorage } from "../../utils/storage";
+import { POSTRequest } from "../../utils/axios";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
