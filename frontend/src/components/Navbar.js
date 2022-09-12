@@ -12,7 +12,6 @@ import logoutIcon from "../assets/logout-icon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
 
 const Navbar = ({ layout }) => {
-  console.log("layout: ", layout);
   const currentUsername = fetchStorage("currentUsername");
 
   return (
@@ -53,6 +52,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
       "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
     navigate("/");
+    window.location.reload();
   };
 
   return (
