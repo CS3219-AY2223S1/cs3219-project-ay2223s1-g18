@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../components/Button";
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
-import { saveStorage } from "../storage";
+import Button from "../../components/Button";
+import { saveStorage } from "../../utils/storage";
+import { POSTRequest } from "../../utils/axios";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -12,17 +11,18 @@ function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    const res = await axios
-      .post(`${URL_USER_SVC}/auth/`, { username, password })
+  const handleLogin = () => {
+    POSTRequest(`/auth/`, { username, password })
+      .then((res) => {
+        if (res.data.status && res.data.response.token) {
+          document.cookie = "token=" + res.data.response.token;
+          saveStorage("currentUsername", username);
+          navigate("/home");
+        }
+      })
       .catch((err) => {
         setError(err);
       });
-    if (res && res.data.status) {
-      document.cookie = "token=" + res.data.response.token;
-      saveStorage("currentUsername", username);
-      navigate("/home");
-    }
   };
 
   return (

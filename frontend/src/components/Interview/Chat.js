@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import arrowIcon from "../../assets/arrow-right.svg";
 import socketIO from "socket.io-client";
-import { fetchStorage } from "../../storage";
+import { fetchStorage } from "../../utils/storage";
 
 const Chat = () => {
   var socket = socketIO("http://localhost:8001/", {

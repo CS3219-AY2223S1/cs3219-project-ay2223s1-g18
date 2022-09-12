@@ -1,8 +1,8 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignupPage from "./pages/SignupPage";
-import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/auth/SignupPage";
+import LoginPage from "./pages/auth/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import CountdownPage from "./pages/CountdownPage";
@@ -10,6 +10,7 @@ import InterviewPage from "./pages/InterviewPage";
 import PublicLayout from "./layout/PublicLayout";
 import ProtectedLayout from "./layout/ProtectedLayout";
 import InterviewRoomLayout from "./layout/InterviewRoomLayout";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<ProtectedLayout />}>
             <Route path="/home" element={<HomePage />} />
             <Route path="/loading" element={<CountdownPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
 
           <Route path="/" element={<InterviewRoomLayout />}>
