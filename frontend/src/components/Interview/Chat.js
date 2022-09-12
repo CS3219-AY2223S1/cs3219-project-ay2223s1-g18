@@ -1,36 +1,73 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { SocketContext } from "../../context/socket";
 import styled from "styled-components";
 import arrowIcon from "../../assets/arrow-right.svg";
+import { fetchStorage } from "../../utils/storage";
 
 const Chat = () => {
+  const socket = useContext(SocketContext);
+
+  const [message, setMessage] = useState("");
+  const [allMessages, setAllMessages] = useState([]);
+  let currUser = fetchStorage("currentUsername");
+
+  useEffect(() => {
+    socket.on("chat message", (messageObject) => {
+      setAllMessages([...allMessages, messageObject]);
+    });
+  }, [socket, allMessages]);
+
+  var handleSendMessage = (e) => {
+    e.preventDefault();
+    if (message.trim()) {
+      let today = new Date();
+      let currTime = today.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      socket.emit("chat message", {
+        msg: message,
+        sender: currUser,
+        time: currTime,
+      });
+    }
+    setMessage("");
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleSendMessage(event);
+    }
+  };
+
   return (
     <StyledChatWrapper>
-      <div>
-        <Announcement
-          emoji="🎉"
-          message="Mickey Mouse joined the room."
-          time="00:59"
-        />
-        <ChatMessage
-          sender="Mickey Mouse"
-          message="Hello how are you today"
-          time="Today at 01:23"
-        />
-        <ChatMessage
-          sender="Minnie Mouse"
-          message="Good good good"
-          time="Today at 01:23"
-        />
-        <Announcement
-          emoji="🏁"
-          message="Mickey Mouse left the room."
-          time="01:32"
-        />
+      <div style={{ overflowY: "scroll", height: "100%" }}>
+        {allMessages.map((message, index) => {
+          if (index > 0 && message.sender === allMessages[index - 1].sender) {
+            return <SubChatMessage message={message.msg} key={index} />;
+          } else {
+            return (
+              <ChatMessage
+                sender={message.sender}
+                time={message.time}
+                message={message.msg}
+                key={index}
+              />
+            );
+          }
+        })}
       </div>
 
       <div className="d-flex">
-        <input placeholder="Type a message" />
-        <StyledSendButton>
+        <input
+          placeholder="Type a message"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+        />
+        <StyledSendButton onClick={(e) => handleSendMessage(e)}>
           <img src={arrowIcon} alt="" />
         </StyledSendButton>
       </div>
@@ -64,17 +101,33 @@ var ChatMessage = ({ sender, message, time }) => {
   );
 };
 
+var SubChatMessage = ({ message }) => {
+  return (
+    <p
+      style={{
+        color: "var(--base-500)",
+        fontSize: "14px",
+        padding: "0 8px",
+        marginBottom: "4px",
+      }}
+    >
+      {message}
+    </p>
+  );
+};
+
 const StyledChatMessage = styled.div`
   padding: 0 8px;
-  margin: 12px 0;
+  margin: 4px 0;
 
   .sender {
     font-weight: 500;
-    margin-right: 8px;
+    margin: 8px 8px 4px 0;
   }
   .time {
     font-size: 12px;
     color: var(--base-500);
+    margin-top: 8px;
   }
   .message {
     color: var(--base-500);

@@ -1,12 +1,38 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { ReactComponent as ArrowSvg } from "../assets/arrow.svg";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import CountdownPage from "./CountdownPage";
+import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../context/socket";
 
 const HomePage = () => {
-  return (
+  const socket = useContext(SocketContext);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDifficultySelection = () => {
+    setIsLoading(true);
+    sendMatchRequest();
+  };
+
+  const sendMatchRequest = () => {
+    console.log("sending mathc req");
+    socket.emit("match request", "hard", "hard", socket.id);
+  };
+
+  useEffect(() => {
+    socket.on("Welcome message to meeting room", (lastRoomId) => {
+      console.log("baabaa", lastRoomId);
+      navigate(`/interview/hard`);
+    });
+  }, [socket]);
+
+  return isLoading ? (
+    <CountdownPage />
+  ) : (
     <StyledWrapper>
       <div
         style={{ textAlign: "center", marginBottom: "32px", marginTop: "32px" }}
@@ -25,7 +51,7 @@ const HomePage = () => {
           <Col xs={12} md={4}>
             <DifficultyCard difficulty={1} />
           </Col>
-          <Col xs={12} md={4}>
+          <Col xs={12} md={4} onClick={handleDifficultySelection}>
             <DifficultyCard difficulty={2} />
           </Col>
         </Row>
@@ -74,7 +100,7 @@ const DifficultyInfo = [
 
 const DifficultyCard = ({ difficulty }) => {
   return (
-    <a href="/loading">
+    <a>
       <StyledDifficultyCard
         difficulty={difficulty}
         style={{ backgroundColor: `${DifficultyInfo[difficulty].bg}` }}
