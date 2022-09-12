@@ -62,7 +62,7 @@ function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             style={{ width: "356px" }}
           />
-          <a href="/resetPassword">
+          <a href="/forgotPassword">
             <p className="mt-2" style={{ textAlign: "end" }}>
               Forgot password?
             </p>
