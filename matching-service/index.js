@@ -40,14 +40,14 @@ io.on('connection', (socket) => {
     //socket.broadcast.emit('new user');          // In future, can add in name of user
 
     socket.on('chat message', (msg) => {
-        // if (socket.rooms.size > 1) { 
-        //     const meetingRoomId = socket.rooms.values().next().next().value;
-        //     socket.to(meetingRoomId).emit('chat message', msg);
-        // }
-        // else{
-        //     io.emit('chat message', msg);
-        // }
-        io.emit('chat message', msg);
+        if (socket.rooms.size > 1) {
+            const meetingRoomId = Array.from(socket.rooms.values())[1]
+            io.to(meetingRoomId).emit('chat message', msg);
+        }
+        else{
+            io.emit('chat message', 'This is a global message - to be removed');
+        }
+   
     });
     
 
