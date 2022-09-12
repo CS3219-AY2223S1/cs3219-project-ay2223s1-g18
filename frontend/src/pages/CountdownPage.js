@@ -2,7 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import { useState } from "react";
-import MatchNotFound from "../components/MatchNotFound";
+import MessageScreen from "../components/MessageScreen";
+import Button from "../components/Button";
 
 const renderTime = ({ remainingTime }) => {
   return <h1>{remainingTime}</h1>;
@@ -32,7 +33,22 @@ const CountdownPage = () => {
           </div>
         </StyledWrapper>
       ) : (
-        <MatchNotFound />
+        <MessageScreen
+          emoji="😢"
+          messageTitle="Match not found..."
+          description="There are no other users online now."
+        >
+          <div className="d-flex">
+            <a href="/loading">
+              <Button>Continue Waiting</Button>
+            </a>
+            <a href="/home">
+              <Button variant="secondary" style={{ marginLeft: "12px" }}>
+                Choose another difficulty
+              </Button>
+            </a>
+          </div>
+        </MessageScreen>
       )}
     </div>
   );
