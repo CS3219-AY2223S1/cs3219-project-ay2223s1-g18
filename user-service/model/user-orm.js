@@ -7,7 +7,7 @@ export async function ormCreateUser(username, password) {
         newUser.save();
         return true;
     } catch (err) {
-        console.log('ERROR: Could not create new user');
+        console.err('ERROR: Could not create new user');
         return { err };
     }
 }
