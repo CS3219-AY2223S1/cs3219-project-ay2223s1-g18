@@ -1,12 +1,34 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { ReactComponent as ArrowSvg } from "../assets/arrow.svg";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import CountdownPage from "./CountdownPage";
+import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../context/socket";
+import { fetchStorage } from "../utils/storage";
 
 const HomePage = () => {
-  return (
+  const socket = useContext(SocketContext);
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const currentUsername = fetchStorage("currentUsername");
+
+  const handleDifficultySelection = (difficulty) => {
+    setIsLoading(true);
+    socket.emit("match request", currentUsername, difficulty, socket.id);
+  };
+
+  useEffect(() => {
+    socket.on("successfulMatch", (difficulty, socketId) => {
+      navigate(`/interview/${difficulty}-${socketId}`);
+    });
+  }, [socket]);
+
+  return isLoading ? (
+    <CountdownPage />
+  ) : (
     <StyledWrapper>
       <div
         style={{ textAlign: "center", marginBottom: "32px", marginTop: "32px" }}
@@ -19,13 +41,17 @@ const HomePage = () => {
 
       <Container style={{ maxWidth: "1200px", padding: "0 32px" }}>
         <Row>
-          <Col xs={12} md={4}>
+          <Col xs={12} md={4} onClick={() => handleDifficultySelection("easy")}>
             <DifficultyCard difficulty={0} />
           </Col>
-          <Col xs={12} md={4}>
+          <Col
+            xs={12}
+            md={4}
+            onClick={() => handleDifficultySelection("medium")}
+          >
             <DifficultyCard difficulty={1} />
           </Col>
-          <Col xs={12} md={4}>
+          <Col xs={12} md={4} onClick={() => handleDifficultySelection("hard")}>
             <DifficultyCard difficulty={2} />
           </Col>
         </Row>
@@ -74,7 +100,7 @@ const DifficultyInfo = [
 
 const DifficultyCard = ({ difficulty }) => {
   return (
-    <a href="/loading">
+    <a>
       <StyledDifficultyCard
         difficulty={difficulty}
         style={{ backgroundColor: `${DifficultyInfo[difficulty].bg}` }}

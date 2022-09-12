@@ -11,17 +11,16 @@ const renderTime = ({ remainingTime }) => {
 
 const CountdownPage = () => {
   const [countingDown, setCountingDown] = useState(true);
-
+  var countdownTime = 30;
   return (
     <div>
       {countingDown ? (
         <StyledWrapper>
           <h2>Finding you a match...</h2>
           <div>
-            {/* TODO: change time to 30 secs */}
             <CountdownCircleTimer
               isPlaying
-              duration={5}
+              duration={countdownTime}
               colors="#4f46e5"
               trailColor="#E0E7FF"
               strokeWidth={20}
