@@ -1,43 +1,40 @@
-import { useState, React, useEffect } from "react";
+import { useState, React } from "react";
 import Button from "../components/Button";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { DELETERequest, GETRequest } from "../utils/axios";
+import { DELETERequest, PATCHRequest } from "../utils/axios";
 import { fetchStorage } from "../utils/storage";
 import Modal from "react-bootstrap/Modal";
 
 const SettingsPage = () => {
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState(fetchStorage("currentUsername"));
+  const username = fetchStorage("currentUsername");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [usernameError, setUsernameError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
 
   const handleCloseDeleteAccountModal = () => setShowDeleteAccountModal(false);
   const handleShowDeleteAccountModal = () => setShowDeleteAccountModal(true);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    GETRequest(`/${username}`, {})
+  //TODO: Handle this properly
+  const deleteAccount = () => {
+    // DELETERequest(`/${username}`, {}).then();
+    console.log("hehe deleting");
+    handleCloseDeleteAccountModal();
+  };
+
+  const updatePassword = () => {
+    setSuccessMsg("");
+    PATCHRequest(`/${username}`, { password })
       .then((res) => {
-        if (res.data.response) {
-          setEmail(res.data.response[0].email);
+        if (res.data.status) {
+          setPassword("");
+          setSuccessMsg("Password successfully changed.");
         }
       })
       .catch((err) => {
         setError(err);
       });
-  }, []);
-
-  //TODO: Handle this properly
-  const deleteAccount = () => {
-    // DELETERequest(`/${username}`, {}).then();
-    console.log("wheee delete");
-    handleCloseDeleteAccountModal();
   };
 
   return (
@@ -45,36 +42,6 @@ const SettingsPage = () => {
       <Header>Settings</Header>
       <CardWrap>
         <div style={{ maxWidth: "400px" }}>
-          <div style={{ width: "100%", marginBottom: "24px" }}>
-            <label>Email</label>
-            <input
-              type="email"
-              required
-              placeholder="Your email here"
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              style={{ width: "356px" }}
-            />
-            {emailError && (
-              <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
-            )}
-          </div>
-
-          <div style={{ width: "100%", marginBottom: "24px" }}>
-            <label>Username</label>
-            <input
-              type="username"
-              required
-              placeholder="Your username here"
-              onChange={(e) => setUsername(e.target.value)}
-              value={username}
-              style={{ width: "356px" }}
-            />
-            {usernameError && (
-              <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
-            )}
-          </div>
-
           <div style={{ width: "100%", marginBottom: "40px" }}>
             <label>Password</label>
             <input
@@ -85,17 +52,17 @@ const SettingsPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               style={{ width: "356px" }}
             />
-            {passwordError && (
-              <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
-            )}
           </div>
 
           {error && (
             <p style={{ color: "var(--red)", marginBottom: "8px" }}>{error}</p>
           )}
-          <Button variant="primary" size="medium">
+          <Button variant="primary" size="medium" onClick={updatePassword}>
             Save Changes
           </Button>
+          {successMsg && (
+            <p style={{ color: "green", marginTop: "12px" }}>{successMsg}</p>
+          )}
           <hr
             style={{ border: "1px solid var(--base-200)", margin: "32px 0" }}
           />
@@ -156,7 +123,6 @@ const CardPageWrap = styled.div`
   margin-left: auto;
   margin-right: auto;
   overflow: hidden !important;
-  margin-top: 60px;
 
   display: flex;
   flex-direction: column;
