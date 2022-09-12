@@ -27,8 +27,7 @@ export default class UserService {
       password: tokenData.password
     })
     await blacklistJwtToken(token, tokenData);
-    const sessionToken = createJwtToken({ username: tokenData.username }, false);
-   return { user, token: sessionToken.token };
+   return { user };
   }
 
   static async getResetPasswordToken(email) {
