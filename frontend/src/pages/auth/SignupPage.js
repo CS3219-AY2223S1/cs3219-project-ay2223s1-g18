@@ -1,15 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState } from "react";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../utils/constants";
-import Button from "../components/Button";
-import { POSTRequest } from "../utils/axios";
+import {
+  STATUS_CODE_CONFLICT,
+  STATUS_CODE_ACCEPTED,
+} from "../../utils/constants";
+import Button from "../../components/Button";
+import { POSTRequest } from "../../utils/axios";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
@@ -17,10 +21,13 @@ function SignupPage() {
 
   const handleSignup = () => {
     if (checkInputsFilled()) {
-      POSTRequest("/", { email, username, password })
+      POSTRequest("/signup", { email, username, password })
         .then((res) => {
-          if (res && res.status === STATUS_CODE_CREATED) {
-            navigate("/login");
+          console.log(res);
+          if (res && res.status === STATUS_CODE_ACCEPTED) {
+            // navigate("/login");
+            console.log("hi");
+            setIsSignedUp(true);
           }
         })
         .catch((err) => {
@@ -31,6 +38,14 @@ function SignupPage() {
           }
         });
     }
+  };
+
+  const signupVerify = () => {
+    console.log("signupVerify: ", signupVerify);
+
+    POSTRequest(`/signup-verify`, {}).then((res) => {
+      console.log("res: ", res);
+    });
   };
 
   const checkInputsFilled = () => {
@@ -57,7 +72,7 @@ function SignupPage() {
     return allInputsFilled;
   };
 
-  return (
+  return !isSignedUp ? (
     <CardPageWrap>
       <Header>Welcome to Peerprep!</Header>
       <CardWrap>
@@ -124,10 +139,16 @@ function SignupPage() {
         </div>
       </CardWrap>
     </CardPageWrap>
+  ) : (
+    <CheckEmailPage />
   );
 }
 
 export default SignupPage;
+
+const CheckEmailPage = () => {
+  return <div>check ur email lol</div>;
+};
 
 const CardPageWrap = styled.div`
   width: 100vw;
