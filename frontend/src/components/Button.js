@@ -13,7 +13,7 @@ const Button = ({
   return (
     <StyledButton
       className={`${disabled || loading ? "disabled" : ""} ${variant} ${size}`}
-      onClick={disabled ? () => {} : onClick}
+      onClick={disabled || loading ? () => {} : onClick}
       {...props}
     >
       {loading ? <Spinner animation="border" variant="light" /> : children}

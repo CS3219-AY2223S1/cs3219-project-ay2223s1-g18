@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState } from "react";
 import {
@@ -7,6 +6,7 @@ import {
 } from "../../utils/constants";
 import Button from "../../components/Button";
 import { POSTRequest } from "../../utils/axios";
+import MessageScreen from "../../components/MessageScreen";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
@@ -17,20 +17,20 @@ function SignupPage() {
   const [usernameError, setUsernameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSignup = () => {
+    setLoading(true);
     if (checkInputsFilled()) {
       POSTRequest("/signup", { email, username, password })
         .then((res) => {
-          console.log(res);
           if (res && res.status === STATUS_CODE_ACCEPTED) {
-            // navigate("/login");
-            console.log("hi");
             setIsSignedUp(true);
+            setLoading(false);
           }
         })
         .catch((err) => {
+          setLoading(false);
           if (err.response.status === STATUS_CODE_CONFLICT) {
             setError("Username or email has already been taken.");
           } else {
@@ -125,14 +125,25 @@ function SignupPage() {
           {error && (
             <p style={{ color: "var(--red)", marginBottom: "8px" }}>{error}</p>
           )}
-          <Button
-            variant="primary"
-            size="big"
-            style={{ width: "100%" }}
-            onClick={handleSignup}
-          >
-            Sign up
-          </Button>
+          {loading ? (
+            <Button
+              variant="primary"
+              size="big"
+              style={{ width: "100%" }}
+              loading
+            >
+              Sign up
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              size="big"
+              style={{ width: "100%" }}
+              onClick={handleSignup}
+            >
+              Sign up
+            </Button>
+          )}
           <p style={{ marginTop: "16px" }}>
             Already have an account? <a href="/login">Log in</a>
           </p>
@@ -140,15 +151,15 @@ function SignupPage() {
       </CardWrap>
     </CardPageWrap>
   ) : (
-    <CheckEmailPage />
+    <MessageScreen
+      emoji="💌"
+      messageTitle="Email sent!"
+      description="Didn't get the email? Check your spam folder."
+    />
   );
 }
 
 export default SignupPage;
-
-const CheckEmailPage = () => {
-  return <div>check ur email lol</div>;
-};
 
 const CardPageWrap = styled.div`
   width: 100vw;
