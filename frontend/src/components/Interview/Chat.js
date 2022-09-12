@@ -17,6 +17,12 @@ const Chat = () => {
     });
   }, [socket, allMessages]);
 
+  useEffect(() => {
+    socket.on("sendAnnouncement", (messageObject) => {
+      setAllMessages([...allMessages, messageObject]);
+    });
+  }, [socket, allMessages]);
+
   var handleSendMessage = (e) => {
     e.preventDefault();
     if (message.trim()) {
@@ -30,6 +36,7 @@ const Chat = () => {
         msg: message,
         sender: currUser,
         time: currTime,
+        type: 0,
       });
     }
     setMessage("");
@@ -45,6 +52,12 @@ const Chat = () => {
     <StyledChatWrapper>
       <div style={{ overflowY: "scroll", height: "100%" }}>
         {allMessages.map((message, index) => {
+          if (message.type === 1) {
+            // Announcement
+            return (
+              <Announcement emoji="✨" message={message.msg} key={index} />
+            );
+          }
           if (index > 0 && message.sender === allMessages[index - 1].sender) {
             return <SubChatMessage message={message.msg} key={index} />;
           } else {
@@ -77,14 +90,13 @@ const Chat = () => {
 
 export default Chat;
 
-var Announcement = ({ emoji, message, time }) => {
+var Announcement = ({ emoji, message }) => {
   return (
     <StyledAnnouncement>
       <div className="d-flex align-items-center">
         <p className="emoji">{emoji}</p>
         <p>{message}</p>
       </div>
-      <p className="time">{time}</p>
     </StyledAnnouncement>
   );
 };
@@ -158,7 +170,6 @@ const StyledAnnouncement = styled.div`
   font-size: 14px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin: 4px 0;
 
   .emoji {

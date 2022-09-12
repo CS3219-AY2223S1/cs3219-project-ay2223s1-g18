@@ -7,26 +7,22 @@ import Col from "react-bootstrap/Col";
 import CountdownPage from "./CountdownPage";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../context/socket";
+import { fetchStorage } from "../utils/storage";
 
 const HomePage = () => {
   const socket = useContext(SocketContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const currentUsername = fetchStorage("currentUsername");
 
-  const handleDifficultySelection = () => {
+  const handleDifficultySelection = (difficulty) => {
     setIsLoading(true);
-    sendMatchRequest();
-  };
-
-  const sendMatchRequest = () => {
-    console.log("sending mathc req");
-    socket.emit("match request", "hard", "hard", socket.id);
+    socket.emit("match request", currentUsername, difficulty, socket.id);
   };
 
   useEffect(() => {
-    socket.on("Welcome message to meeting room", (lastRoomId) => {
-      console.log("baabaa", lastRoomId);
-      navigate(`/interview/hard`);
+    socket.on("successfulMatch", (difficulty, socketId) => {
+      navigate(`/interview/${difficulty}-${socketId}`);
     });
   }, [socket]);
 
@@ -45,13 +41,17 @@ const HomePage = () => {
 
       <Container style={{ maxWidth: "1200px", padding: "0 32px" }}>
         <Row>
-          <Col xs={12} md={4}>
+          <Col xs={12} md={4} onClick={() => handleDifficultySelection("easy")}>
             <DifficultyCard difficulty={0} />
           </Col>
-          <Col xs={12} md={4}>
+          <Col
+            xs={12}
+            md={4}
+            onClick={() => handleDifficultySelection("medium")}
+          >
             <DifficultyCard difficulty={1} />
           </Col>
-          <Col xs={12} md={4} onClick={handleDifficultySelection}>
+          <Col xs={12} md={4} onClick={() => handleDifficultySelection("hard")}>
             <DifficultyCard difficulty={2} />
           </Col>
         </Row>

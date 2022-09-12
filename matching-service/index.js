@@ -44,6 +44,7 @@ io.on("connection", (socket) => {
         msg: messageObject.msg,
         sender: messageObject.sender,
         time: messageObject.time,
+        type: 0,
       });
     } else {
       io.emit("chat message", "This is a global message - to be removed");
@@ -95,13 +96,11 @@ io.on("connection", (socket) => {
         socket.join(meetingRoomId);
         lastRoomId = meetingRoomId;
 
-        io.to(meetingRoomId).emit(
-          "Welcome message to meeting room",
-          lastRoomId
-        );
-        console.log("meeting room emit message");
-
-        // socket.to(data[1]).to(socketId).emit('Match Found', meetingRoomId); // inform both parties
+        io.to(meetingRoomId).emit("successfulMatch", difficulty, socketId);
+        io.to(meetingRoomId).emit("sendAnnouncement", {
+          msg: `${name} has joined the room.`,
+          type: 1, // 0 – normal msg, 1 – system announcement
+        });
 
         // Delete the pending request once both users are in the room
         MatchingService.deletePendingMatch(nameOfPendingMatch).catch((err) => {
