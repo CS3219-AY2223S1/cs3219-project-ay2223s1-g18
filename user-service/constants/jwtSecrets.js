@@ -1,7 +1,5 @@
-import crypto from 'crypto'
-
 export const JwtSecrets = {
-    VERIFICATION: crypto.randomBytes(64).toString("hex"),
-    ACCESS: crypto.randomBytes(64).toString("hex"),
-    REFRESH: crypto.randomBytes(64).toString("hex"),
+    VERIFICATION: process.env.VERIFICATION_TOKEN_SECRET,
+    ACCESS: process.env.ACCESS_TOKEN_SECRET,
+    REFRESH: process.env.REFRESH_TOKEN_SECRET
 }
