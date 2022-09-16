@@ -42,7 +42,7 @@ export class TokenController {
 
   static completeUserSignup() {
     return async (req, res, next) => {
-      UserService.completeUserSignup(req.locals.tokenData)
+      UserService.completeUserSignup(res.locals.tokenData)
       .then((response) => {
         res.status(HttpResponse.CREATED).json({
           status: true,
@@ -87,7 +87,7 @@ export class TokenController {
   static completePasswordReset() {
     return async (req, res, next) => {
       const { password } = req.body;
-      UserService.completePasswordReset(req.locals.tokenData, password)
+      UserService.completePasswordReset(res.locals.tokenData, password)
         .then((response) => {
           if (!response) throw { name: "BadUsernameError" };
     
@@ -149,7 +149,7 @@ export class TokenController {
 
   static getAccessToken() {
     return async (req, res, next) => {
-      UserService.getAccessToken(req.locals.tokenData.username)
+      UserService.getAccessToken(res.locals.tokenData.username)
         .then((response) => {
           res.status(HttpResponse.OK).json({
             status: true,
@@ -158,7 +158,7 @@ export class TokenController {
           next();
         })
         .catch((errorObject) => {
-    
+          console.log(errorObject)
           const errorResponse = JSON.parse(serverErrorResponse);    
           res.status(errorResponse.statusCode).json(errorResponse.response);
         });

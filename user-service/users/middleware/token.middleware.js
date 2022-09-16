@@ -18,7 +18,6 @@ export class TokenMiddleware {
     static analyseJwtToken(secret) {
         return async (req, res, next) => {
             try {
-                console.log(secret)
                 if (req.headers.authorization == null)
                     throw ({ name: 'JsonWebTokenError' });
         
