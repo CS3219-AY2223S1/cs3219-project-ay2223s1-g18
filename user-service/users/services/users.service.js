@@ -38,8 +38,6 @@ export default class UserService {
   static async completePasswordReset(tokenData, password) {
     if (!password)
       throw ({ name: "ValidationError" })
-    // const tokenData = await analyseJwtToken(token)
-    // await blacklistJwtToken(token, tokenData);
     const hashedPassword = await hashPassword(password)
     return await Helper.updateOne(UserModel, { email: tokenData.email }, { password: hashedPassword }, { new: true })
 
@@ -55,12 +53,6 @@ export default class UserService {
       throw ({ name: 'BadPasswordError' })
     return createJwtToken({ username }, false);
   };
-
-
-  static async logoutUser(token) {
-    // const tokenData = await analyseJwtToken(token, false);
-    // await blacklistJwtToken(token, tokenData, false);
-  }
 
   static async getUserByName(username) {
     return await Helper.list(UserModel, { username })
@@ -80,7 +72,6 @@ export default class UserService {
 
   static async deleteUserByName(username) {
     const deleteResult = await Helper.deleteOne(UserModel, { username })
-    // await blacklistJwtToken(token, tokenData, false);
     return deleteResult
   };
 }
