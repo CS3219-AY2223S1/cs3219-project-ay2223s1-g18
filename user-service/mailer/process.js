@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
 dotenv.config();
 
-export async function sendEmail(options) {   
+async function sendEmail(options) {   
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: process.env.EMAIL_PORT,
@@ -22,4 +22,19 @@ export async function sendEmail(options) {
     };
   
     await transporter.sendMail(mailOptions)
+}
+export async function sendValidationEmailRequest(enclosedDetails, message, token, isSignup=false) {
+  const clientUrl = "http:localhost:3000"// to be changed later
+
+  const apiType = isSignup ? "completeSignup" : "passwordReset"
+  const urlLinkHeader = isSignup ? "Complete Signup" : "Reset Password"
+  
+  const resetUrl = `${clientUrl}/${apiType}?token=${token}`
+  
+  const emailDetails = {
+    to: enclosedDetails.email,
+    subject: "Password Reset Request",
+    text: message + `<a href=${resetUrl} clicktracking=off>${urlLinkHeader}</a>`,
+  }
+  await sendEmail(emailDetails);
 }

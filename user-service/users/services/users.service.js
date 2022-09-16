@@ -1,7 +1,8 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-import { hashPassword, verifyHashPassword, createJwtToken, sendValidationEmailRequest } from './authentication.service.js';
+import { sendValidationEmailRequest } from '../../mailer/process.js'
+import { hashPassword, verifyHashPassword, createJwtToken } from './authentication.service.js';
 import { RESET_PASSWORD_MESSAGE, SIGNUP_MESSAGE } from '../../mailer/message.js'
 
 export default class UserService {
@@ -15,7 +16,10 @@ export default class UserService {
       throw ({ name: 'ExistingUserError' })
 
     const hashedPassword = await hashPassword(password)
-    await sendValidationEmailRequest({ email, username, password: hashedPassword }, SIGNUP_MESSAGE, true);
+    const tokenDetails = { email, username, password: hashedPassword }
+    const tempToken = createJwtToken(tokenDetails)
+
+    await sendValidationEmailRequest(tokenDetails, SIGNUP_MESSAGE, tempToken, true);
   };
 
   static async completeUserSignup(tokenData) {
@@ -32,7 +36,10 @@ export default class UserService {
     if (!user)
       throw ({ name: "ValidationError" })
 
-    await sendValidationEmailRequest({ email, username: user.username }, RESET_PASSWORD_MESSAGE);
+    const tokenDetails = { email, username: user.username }
+    const tempToken = createJwtToken(tokenDetails)
+
+    await sendValidationEmailRequest(tokenDetails, RESET_PASSWORD_MESSAGE, tempToken);
   }
 
   static async completePasswordReset(tokenData, password) {

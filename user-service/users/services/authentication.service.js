@@ -1,7 +1,6 @@
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { sendEmail } from '../../mailer/process.js'
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -23,19 +22,4 @@ export function createJwtToken(identifiers, isVerificationToken=true) {
     }
 };
 
-export async function sendValidationEmailRequest(enclosedDetails, message, isSignup=false) {
-    const resetToken = createJwtToken(enclosedDetails)
-    const clientUrl = "http:localhost:3000"// to be changed later
 
-    const apiType = isSignup ? "completeSignup" : "passwordReset"
-    const urlLinkHeader = isSignup ? "Complete Signup" : "Reset Password"
-    
-    const resetUrl = `${clientUrl}/${apiType}?token=${resetToken.token}`
-    
-    const emailDetails = {
-      to: enclosedDetails.email,
-      subject: "Password Reset Request",
-      text: message + `<a href=${resetUrl} clicktracking=off>${urlLinkHeader}</a>`,
-    }
-    await sendEmail(emailDetails);
-  }
