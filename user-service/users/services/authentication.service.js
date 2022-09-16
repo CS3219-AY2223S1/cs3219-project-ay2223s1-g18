@@ -8,7 +8,6 @@ dotenv.config();
 
 const JwtBlacklist = new RedisInstance();
 const KEY_VALUE = "invalid"
-const KEY_VERIFICATION_VALUE = "invalid_verify"
 
 export async function hashPassword(password) {
     return bcrypt.hash(password, parseInt(process.env.HASH_SALT_ROUNDS));
@@ -42,9 +41,8 @@ export async function analyseJwtToken(token, isVerificationToken=true, targetUse
     return decodedToken;
 }
 
-export async function blacklistJwtToken(token, tokenData, isVerificationToken=true) {
-    const insertionStatus = await JwtBlacklist.createObject(token, 
-        isVerificationToken ? KEY_VERIFICATION_VALUE : KEY_VALUE);
+export async function blacklistJwtToken(token, tokenData) {
+    const insertionStatus = await JwtBlacklist.createObject(token, KEY_VALUE);
     await JwtBlacklist.setExpiryOfObject(token, +tokenData.exp);
 }
 
