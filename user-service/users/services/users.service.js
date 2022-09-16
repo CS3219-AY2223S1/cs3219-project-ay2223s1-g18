@@ -15,7 +15,7 @@ export default class UserService {
       throw ({ name: 'ExistingUserError' })
 
     const hashedPassword = await hashPassword(password)
-    await sendValidationEmailRequest({ email, username, password: hashedPassword }, SIGNUP_MESSAGE);
+    await sendValidationEmailRequest({ email, username, password: hashedPassword }, SIGNUP_MESSAGE, true);
   };
 
   static async completeUserSignup(token) {

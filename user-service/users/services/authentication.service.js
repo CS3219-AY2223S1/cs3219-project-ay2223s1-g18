@@ -48,15 +48,19 @@ export async function blacklistJwtToken(token, tokenData, isVerificationToken=tr
     await JwtBlacklist.setExpiryOfObject(token, +tokenData.exp);
 }
 
-export async function sendValidationEmailRequest(enclosedDetails, message) {
+export async function sendValidationEmailRequest(enclosedDetails, message, isSignup=false) {
     const resetToken = createJwtToken(enclosedDetails)
-    const clientUrl = "http:localhost:3000"
-    const resetUrl = `${clientUrl}/passwordReset?token=${resetToken.token}`
+    const clientUrl = "http:localhost:3000"// to be changed later
+
+    const apiType = isSignup ? "completeSignup" : "passwordReset"
+    const urlLinkHeader = isSignup ? "Complete Signup" : "Reset Password"
+    
+    const resetUrl = `${clientUrl}/${apiType}?token=${resetToken.token}`
     
     const emailDetails = {
       to: enclosedDetails.email,
       subject: "Password Reset Request",
-      text: message + `<a href=${resetUrl} clicktracking=off>Reset Password</a>`,
+      text: message + `<a href=${resetUrl} clicktracking=off>${urlLinkHeader}</a>`,
     }
     await sendEmail(emailDetails);
   }
