@@ -147,6 +147,25 @@ export class TokenController {
     }
   }
 
+  static getAccessToken() {
+    return async (req, res, next) => {
+      UserService.getAccessToken(req.locals.tokenData.username)
+        .then((response) => {
+          res.status(HttpResponse.OK).json({
+            status: true,
+            response,
+          });
+          next();
+        })
+        .catch((errorObject) => {
+    
+          const errorResponse = JSON.parse(serverErrorResponse);    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+      
+    }
+  }
+
   static getUserByName() {
     return async (req, res, next) => {
       const { username } = req.params;

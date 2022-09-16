@@ -66,6 +66,12 @@ export default class UserService {
     }
   };
 
+
+  static async getAccessToken(username) {
+    return {
+      accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+    }
+  };
   static async getUserByName(username) {
     return await Helper.list(UserModel, { username })
   };
