@@ -28,7 +28,7 @@ export function sendUserConfirmationToken(req, res) {
           "Email, Username and/or Password are missing!";
       } else if (errorObject.name == "ExistingUserError") {
         // Duplicate Error
-        errorResponse.statusCode = HttpResponse.CONFLICT;
+        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message = "Email or username has been taken.";
       }
 

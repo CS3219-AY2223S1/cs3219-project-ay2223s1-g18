@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
+import { startMongoDatabase } from "../../database/setup.js";
 
+startMongoDatabase(mongoose)
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
