@@ -14,8 +14,7 @@ const serverErrorResponse = JSON.stringify({
     },
 });
 
-export class Token {
-
+export class TokenMiddleware {
     static analyseJwtToken(secret) {
         return async (req, res, next) => {
             try {
