@@ -6,6 +6,7 @@ import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
 import { sendValidationEmailRequest } from '../../mailer/process.js'
 import { RESET_PASSWORD_MESSAGE, SIGNUP_MESSAGE } from '../../mailer/message.js'
+import { JwtSecrets } from '../../constants/jwtSecrets.js';
 
 export default class UserService {
 
@@ -17,18 +18,17 @@ export default class UserService {
     if (matchingUser)
       throw ({ name: 'ExistingUserError' })
 
-    const hashedPassword = await hashPassword(password)
-    const tokenDetails = { email, username, password: hashedPassword }
-    const tempToken = createJwtToken(tokenDetails)
+    const tokenDetails = { email, username, password }
+    const verificationToken = createJwtToken(tokenDetails, JwtSecrets.VERIFICATION, process.env.VERIFICATION_TOKEN_EXPIRY)
 
-    await sendValidationEmailRequest(tokenDetails, SIGNUP_MESSAGE, tempToken, true);
+    await sendValidationEmailRequest(tokenDetails, SIGNUP_MESSAGE, verificationToken, true);
   };
 
   static async completeUserSignup(tokenData) {
     const user = await Helper.save(UserModel, {
       username: tokenData.username,
       email: tokenData.email,
-      password: tokenData.password
+      password: await hashPassword(tokenData.password)
     })
     return { user };
   }
@@ -39,9 +39,9 @@ export default class UserService {
       throw ({ name: "ValidationError" })
 
     const tokenDetails = { email, username: user.username }
-    const tempToken = createJwtToken(tokenDetails)
+    const verificationToken = createJwtToken(tokenDetails, JwtSecrets.VERIFICATION, process.env.VERIFICATION_TOKEN_EXPIRY)
 
-    await sendValidationEmailRequest(tokenDetails, RESET_PASSWORD_MESSAGE, tempToken);
+    await sendValidationEmailRequest(tokenDetails, RESET_PASSWORD_MESSAGE, verificationToken);
   }
 
   static async completePasswordReset(tokenData, password) {
@@ -60,7 +60,10 @@ export default class UserService {
     const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
     if (!isEnteredPasswordValid)
       throw ({ name: 'BadPasswordError' })
-    return createJwtToken({ username }, false);
+    return {
+      refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
+      accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+    }
   };
 
   static async getUserByName(username) {
@@ -94,11 +97,6 @@ async function verifyHashPassword(enteredPassword, storedHashPassword) {
   return bcrypt.compare(enteredPassword, storedHashPassword);
 };
 
-function createJwtToken(identifiers, isVerificationToken=true) {
-  return {
-      token: jwt.sign(
-          identifiers,
-          isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_SECRET : process.env.JWT_TOKEN_SECRET,
-          { expiresIn: isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_EXPIRY : process.env.JWT_TOKEN_EXPIRY }),
-  }
+function createJwtToken(identifiers, tokenSecret, tokenExpiry) {
+  return jwt.sign(identifiers, tokenSecret, { expiresIn: tokenExpiry })
 };
