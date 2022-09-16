@@ -9,7 +9,7 @@ const serverErrorResponse = JSON.stringify({
   },
 });
 // User signup
-const sendUserConfirmationToken = (req, res) => {
+export function sendUserConfirmationToken(req, res) {
   const { email, username, password } = req.body;
   UserService.createUserVerificationRequest(email, username, password)
     .then(() => {
@@ -35,7 +35,7 @@ const sendUserConfirmationToken = (req, res) => {
     });
 };
 
-const completeUserSignup = (req, res) => {
+export function completeUserSignup (req, res) {
   const token = req.headers.authorization;
   UserService.completeUserSignup(token)
     .then((response) => {
@@ -62,7 +62,7 @@ const completeUserSignup = (req, res) => {
 };
 
 // User password reset
-const sendResetPasswordToken = (req, res) => {
+export function  sendResetPasswordToken(req, res) {
   const { email } = req.body;
   UserService.getResetPasswordToken(email)
     .then(() => {
@@ -94,7 +94,7 @@ const sendResetPasswordToken = (req, res) => {
 };
 
 
-const completePasswordReset = (req, res) => {
+export function  completePasswordReset(req, res) {
   const token = req.headers.authorization;
   const { password } = req.body;
   UserService.completePasswordReset(token, password)
@@ -129,7 +129,7 @@ const completePasswordReset = (req, res) => {
 
 
 // User authentication
-const authenticateUser = (req, res) => {
+export function  authenticateUser(req, res) {
   const { username, password } = req.body;
   UserService.authenticateUser(username, password)
     .then((response) => {
@@ -151,7 +151,7 @@ const authenticateUser = (req, res) => {
 };
 
 
-const logoutUser = (req, res) => {
+export function logoutUser (req, res) {
   const token = req.headers.authorization;
   UserService.logoutUser(token)
     .then(() => {
@@ -174,14 +174,14 @@ const logoutUser = (req, res) => {
     });
 };
 
-const getHealthStatus = (req, res) => {
+export function getHealthStatus(req, res) {
   res.status(HttpResponse.OK).json({
     status: "true",
     response: "operational",
   });
 };
 
-const getUserByName = (req, res) => {
+export function getUserByName(req, res) {
   const { username } = req.params;
   const token = req.headers.authorization;
   UserService.getUserByName(token, username)
@@ -210,7 +210,7 @@ const getUserByName = (req, res) => {
     });
 };
 
-const getUsers = (req, res) => {
+export function getUsers(req, res) {
   const token = req.headers.authorization;
   UserService.getUsers(token)
     .then((response) => {
@@ -237,7 +237,7 @@ const getUsers = (req, res) => {
     });
 };
 
-const updateUserByName = (req, res) => {
+export function  updateUserByName (req, res) {
   const { username } = req.params;
   const { password } = req.body;
   const token = req.headers.authorization;
@@ -273,7 +273,7 @@ const updateUserByName = (req, res) => {
     });
 };
 
-const deleteUserByName = (req, res) => {
+export function deleteUserByName(req, res) {
   const { username } = req.params;
   const token = req.headers.authorization;
   UserService.deleteUserByName(token, username)
@@ -305,16 +305,3 @@ const deleteUserByName = (req, res) => {
     });
 };
 
-export {
-  sendUserConfirmationToken,
-  completeUserSignup,
-  sendResetPasswordToken,
-  completePasswordReset,
-  authenticateUser,
-  logoutUser,
-  getHealthStatus,
-  getUserByName,
-  getUsers,
-  updateUserByName,
-  deleteUserByName,
-};
