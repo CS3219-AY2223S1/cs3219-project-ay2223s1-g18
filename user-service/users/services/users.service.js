@@ -1,8 +1,10 @@
 
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
 import { sendValidationEmailRequest } from '../../mailer/process.js'
-import { hashPassword, verifyHashPassword, createJwtToken } from './authentication.service.js';
 import { RESET_PASSWORD_MESSAGE, SIGNUP_MESSAGE } from '../../mailer/message.js'
 
 export default class UserService {
@@ -81,4 +83,22 @@ export default class UserService {
     const deleteResult = await Helper.deleteOne(UserModel, { username })
     return deleteResult
   };
+
 }
+
+async function hashPassword(password) {
+  return bcrypt.hash(password, parseInt(process.env.HASH_SALT_ROUNDS));
+};
+
+async function verifyHashPassword(enteredPassword, storedHashPassword) {
+  return bcrypt.compare(enteredPassword, storedHashPassword);
+};
+
+function createJwtToken(identifiers, isVerificationToken=true) {
+  return {
+      token: jwt.sign(
+          identifiers,
+          isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_SECRET : process.env.JWT_TOKEN_SECRET,
+          { expiresIn: isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_EXPIRY : process.env.JWT_TOKEN_EXPIRY }),
+  }
+};
