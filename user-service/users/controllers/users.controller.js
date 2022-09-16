@@ -21,6 +21,7 @@ export function sendUserConfirmationToken(req, res) {
     .catch((errorObject) => {
       console.log(errorObject)
       const errorResponse = JSON.parse(serverErrorResponse);
+
       if (errorObject.name == "ValidationError") {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message =
@@ -35,9 +36,8 @@ export function sendUserConfirmationToken(req, res) {
     });
 };
 
-export function completeUserSignup (req, res) {
-  const token = req.headers.authorization;
-  UserService.completeUserSignup(token)
+export function completeUserSignup(req, res) {
+  UserService.completeUserSignup(req.locale.tokenData)
     .then((response) => {
       return res.status(HttpResponse.CREATED).json({
         status: true,
@@ -45,18 +45,9 @@ export function completeUserSignup (req, res) {
       });
     })
     .catch((errorObject) => {
+      // TODO: user already added
       console.log(errorObject)
       const errorResponse = JSON.parse(serverErrorResponse);
-      if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
 };
@@ -64,7 +55,7 @@ export function completeUserSignup (req, res) {
 // User password reset
 export function  sendResetPasswordToken(req, res) {
   const { email } = req.body;
-  UserService.getResetPasswordToken(email)
+  UserService.createResetVerificationRequest(email)
     .then(() => {
       return res.status(HttpResponse.ACCEPTED).json({
         status: true,
@@ -74,30 +65,19 @@ export function  sendResetPasswordToken(req, res) {
     .catch((errorObject) => {
       console.log(errorObject)
       const errorResponse = JSON.parse(serverErrorResponse);
+
       if (errorObject.name == "ValidationError") {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message =
           "No such user with email found!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
-
+      } 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
 };
 
-
-export function  completePasswordReset(req, res) {
-  const token = req.headers.authorization;
+export function completePasswordReset(req, res) {
   const { password } = req.body;
-  UserService.completePasswordReset(token, password)
+  UserService.completePasswordReset(req.locale.tokenData, password)
     .then((response) => {
       if (!response) throw { name: "BadUsernameError" };
 
@@ -107,21 +87,12 @@ export function  completePasswordReset(req, res) {
       });
     })
     .catch((errorObject) => {
-      console.log(errorObject)
       const errorResponse = JSON.parse(serverErrorResponse);
+
       if (errorObject.name == "ValidationError") {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message = "Password is missing!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
+      } 
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
@@ -139,6 +110,7 @@ export function  authenticateUser(req, res) {
       });
     })
     .catch((errorObject) => {
+
       const errorResponse = JSON.parse(serverErrorResponse);
       if (errorObject.name == "ValidationError") {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
@@ -151,9 +123,9 @@ export function  authenticateUser(req, res) {
 };
 
 
-export function logoutUser (req, res) {
-  const token = req.headers.authorization;
-  UserService.logoutUser(token)
+export function logoutUser(req, res) {
+  console.log(req.locale.tokenData)
+  UserService.logoutUser()
     .then(() => {
       return res.status(HttpResponse.OK).json({
         status: true,
@@ -162,13 +134,6 @@ export function logoutUser (req, res) {
     })
     .catch((errorObject) => {
       const errorResponse = JSON.parse(serverErrorResponse);
-       if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      }
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
@@ -183,8 +148,7 @@ export function getHealthStatus(req, res) {
 
 export function getUserByName(req, res) {
   const { username } = req.params;
-  const token = req.headers.authorization;
-  UserService.getUserByName(token, username)
+  UserService.getUserByName(username)
     .then((response) => {
       if (response.length == 0) throw { name: "BadUsernameError" };
       return res.status(HttpResponse.OK).json({
@@ -198,21 +162,14 @@ export function getUserByName(req, res) {
       if (errorObject.name == "BadUsernameError") {
         errorResponse.statusCode = HttpResponse.NOT_FOUND;
         errorResponse.response.message = "No such Username found for update!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      }
+      } 
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
 };
 
 export function getUsers(req, res) {
-  const token = req.headers.authorization;
-  UserService.getUsers(token)
+  UserService.getUsers()
     .then((response) => {
       return res.status(HttpResponse.OK).json({
         status: true,
@@ -220,18 +177,13 @@ export function getUsers(req, res) {
       });
     })
     .catch((errorObject) => {
-      console.log(errorObject);
+
       const errorResponse = JSON.parse(serverErrorResponse);
+
       if (errorObject.name == "BadUsernameError") {
         errorResponse.statusCode = HttpResponse.NOT_FOUND;
         errorResponse.response.message = "No such Username found for update!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      }
+      } 
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
@@ -240,8 +192,7 @@ export function getUsers(req, res) {
 export function  updateUserByName (req, res) {
   const { username } = req.params;
   const { password } = req.body;
-  const token = req.headers.authorization;
-  UserService.updateUserByName(token, username, password)
+  UserService.updateUserByName(username, password)
     .then((response) => {
       if (!response) throw { name: "BadUsernameError" };
 
@@ -252,22 +203,14 @@ export function  updateUserByName (req, res) {
     })
     .catch((errorObject) => {
       const errorResponse = JSON.parse(serverErrorResponse);
+      
       if (errorObject.name == "ValidationError") {
         errorResponse.statusCode = HttpResponse.BAD_REQUEST;
         errorResponse.response.message = "Password is missing!";
       } else if (errorObject.name == "BadUsernameError") {
         errorResponse.statusCode = HttpResponse.NOT_FOUND;
         errorResponse.response.message = "No such Username found for update!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
+      } 
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
@@ -275,8 +218,7 @@ export function  updateUserByName (req, res) {
 
 export function deleteUserByName(req, res) {
   const { username } = req.params;
-  const token = req.headers.authorization;
-  UserService.deleteUserByName(token, username)
+  UserService.deleteUserByName(username)
     .then((response) => {
       if (response.deletedCount == 0) throw { name: "BadUsernameError" };
       return res.status(HttpResponse.OK).json({
@@ -286,20 +228,12 @@ export function deleteUserByName(req, res) {
     })
     .catch((errorObject) => {
       const errorResponse = JSON.parse(serverErrorResponse);
+      
       if (errorObject.name == "BadUsernameError") {
         errorResponse.statusCode = HttpResponse.NOT_FOUND;
         errorResponse.response.message =
           "Invalid username supplied for deletion!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
+      } 
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });

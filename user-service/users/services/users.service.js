@@ -1,7 +1,7 @@
 
 import Helper from '../../database/helper.js'
 import UserModel from '../models/users.model.js'
-import { hashPassword, verifyHashPassword, createJwtToken, analyseJwtToken, blacklistJwtToken, sendValidationEmailRequest } from './authentication.service.js';
+import { hashPassword, verifyHashPassword, createJwtToken, sendValidationEmailRequest } from './authentication.service.js';
 import { RESET_PASSWORD_MESSAGE, SIGNUP_MESSAGE } from '../../mailer/message.js'
 
 export default class UserService {
@@ -18,19 +18,16 @@ export default class UserService {
     await sendValidationEmailRequest({ email, username, password: hashedPassword }, SIGNUP_MESSAGE, true);
   };
 
-  static async completeUserSignup(token) {
-    const tokenData = await analyseJwtToken(token)
-    console.log(tokenData)
+  static async completeUserSignup(tokenData) {
     const user = await Helper.save(UserModel, {
       username: tokenData.username,
       email: tokenData.email,
       password: tokenData.password
     })
-    await blacklistJwtToken(token, tokenData);
-   return { user };
+    return { user };
   }
 
-  static async getResetPasswordToken(email) {
+  static async createResetVerificationRequest(email) {
     const user = await Helper.list(UserModel, { email })
     if (!user)
       throw ({ name: "ValidationError" })
@@ -38,11 +35,11 @@ export default class UserService {
     await sendValidationEmailRequest({ email, username: user.username }, RESET_PASSWORD_MESSAGE);
   }
 
-  static async completePasswordReset(token, password) {
+  static async completePasswordReset(tokenData, password) {
     if (!password)
       throw ({ name: "ValidationError" })
-    const tokenData = await analyseJwtToken(token)
-    await blacklistJwtToken(token, tokenData);
+    // const tokenData = await analyseJwtToken(token)
+    // await blacklistJwtToken(token, tokenData);
     const hashedPassword = await hashPassword(password)
     return await Helper.updateOne(UserModel, { email: tokenData.email }, { password: hashedPassword }, { new: true })
 
@@ -56,30 +53,25 @@ export default class UserService {
     const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
     if (!isEnteredPasswordValid)
       throw ({ name: 'BadPasswordError' })
-
+    console.log('hello')
     return createJwtToken({ username }, false);
   };
 
 
   static async logoutUser(token) {
-    const tokenData = await analyseJwtToken(token, false);
-    await blacklistJwtToken(token, tokenData, false);
+    // const tokenData = await analyseJwtToken(token, false);
+    // await blacklistJwtToken(token, tokenData, false);
   }
 
-  static async getUserByName(token, username) {
-    const tokenData = await analyseJwtToken(token, false, username)
-
+  static async getUserByName(username) {
     return await Helper.list(UserModel, { username })
   };
 
-  static async getUsers(token) {
-    const tokenData = await analyseJwtToken(token, false)
-
+  static async getUsers() {
     return await Helper.list(UserModel, {})
   };
   
-  static async updateUserByName(token, username, password) {
-    const tokenData = await analyseJwtToken(token, false, username)
+  static async updateUserByName(username, password) {
     if (!password)
       throw ({ name: "ValidationError" })
     const hashedPassword = await hashPassword(password)
@@ -87,10 +79,9 @@ export default class UserService {
     return updateResult
   };
 
-  static async deleteUserByName(token, username) {
-    const tokenData = await analyseJwtToken(token, false, username)
+  static async deleteUserByName(username) {
     const deleteResult = await Helper.deleteOne(UserModel, { username })
-    await blacklistJwtToken(token, tokenData, false);
+    // await blacklistJwtToken(token, tokenData, false);
     return deleteResult
   };
 }
