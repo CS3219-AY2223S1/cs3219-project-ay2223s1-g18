@@ -53,7 +53,6 @@ export default class UserService {
     const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
     if (!isEnteredPasswordValid)
       throw ({ name: 'BadPasswordError' })
-    console.log('hello')
     return createJwtToken({ username }, false);
   };
 

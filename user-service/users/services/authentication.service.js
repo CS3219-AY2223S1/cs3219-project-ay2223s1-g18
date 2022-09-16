@@ -1,13 +1,10 @@
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import RedisInstance from '../../cache/instance.js';
 import { sendEmail } from '../../mailer/process.js'
 import dotenv from 'dotenv';
 dotenv.config();
 
-const JwtBlacklist = new RedisInstance();
-const KEY_VALUE = "invalid"
 
 export async function hashPassword(password) {
     return bcrypt.hash(password, parseInt(process.env.HASH_SALT_ROUNDS));
@@ -25,26 +22,6 @@ export function createJwtToken(identifiers, isVerificationToken=true) {
             { expiresIn: isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_EXPIRY : process.env.JWT_TOKEN_EXPIRY }),
     }
 };
-
-export async function analyseJwtToken(token, isVerificationToken=true, targetUser = null) {
-    if (token == null)
-        throw ({ name: 'JsonWebTokenError' });
-    const decodedToken = jwt.verify(token.split(' ')[1], 
-    isVerificationToken ? process.env.JWT_VERIFICATION_TOKEN_SECRET : process.env.JWT_TOKEN_SECRET);
-    const status = await JwtBlacklist.getObject(token)
-    if (status)
-        throw ({ name: 'JsonWebTokenError' });
-
-    if (!isVerificationToken && targetUser && targetUser != decodedToken.username)
-        throw ({ name: 'InvalidPrivilegesError' });
-
-    return decodedToken;
-}
-
-export async function blacklistJwtToken(token, tokenData) {
-    const insertionStatus = await JwtBlacklist.createObject(token, KEY_VALUE);
-    await JwtBlacklist.setExpiryOfObject(token, +tokenData.exp);
-}
 
 export async function sendValidationEmailRequest(enclosedDetails, message, isSignup=false) {
     const resetToken = createJwtToken(enclosedDetails)

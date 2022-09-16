@@ -1,6 +1,10 @@
 
-import { HttpResponse } from "../../constants/httpResponse.js";
 import jwt from 'jsonwebtoken';
+import { HttpResponse } from "../../constants/httpResponse.js";
+import RedisInstance from '../../cache/instance.js';
+
+const JwtBlacklist = new RedisInstance();
+const KEY_VALUE = "invalid"
 
 
 const serverErrorResponse = JSON.stringify({
@@ -13,7 +17,6 @@ const serverErrorResponse = JSON.stringify({
 
 export async function analyseJwtToken(req, res, next) {
     try {
-        console.log(req.headers)
         if (req.headers.authorization == null)
             throw ({ name: 'JsonWebTokenError' });
 
@@ -21,10 +24,9 @@ export async function analyseJwtToken(req, res, next) {
             req.headers.authorization.split(' ')[1], 
             process.env.JWT_TOKEN_SECRET);
 
-        // TODO: Validate blacklist status
-        // const status = await JwtBlacklist.getObject(token)
-        // if (status)
-        //     throw ({ name: 'JsonWebTokenError' });
+        const status = await JwtBlacklist.getObject(req.headers.authorization)
+        if (status)
+            throw ({ name: 'JsonWebTokenError' });
 
         // To be moved to access control
         // if (!isVerificationToken && targetUser && targetUser != decodedToken.username)
@@ -47,11 +49,13 @@ export async function analyseJwtToken(req, res, next) {
         return res.status(errorResponse.statusCode).json(errorResponse.response);
     }
 
-
-    // return decodedToken;
 }
 // Blacklist impln to be revised
-// export async function blacklistJwtToken(token, tokenData) {
-//     const insertionStatus = await JwtBlacklist.createObject(token, KEY_VALUE);
-//     await JwtBlacklist.setExpiryOfObject(token, +tokenData.exp);
-// }
+export async function blacklistJwtToken(req, res) {
+    const insertionStatus = await JwtBlacklist.createObject(req.headers.authorization, KEY_VALUE);
+    await JwtBlacklist.setExpiryOfObject(req.headers.authorization, +res.locals.tokenData.exp);
+    res.status(HttpResponse.OK).json({
+        status: true,
+        response: "Successfully logged user out!",
+    });
+}

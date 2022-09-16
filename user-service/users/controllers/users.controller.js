@@ -37,7 +37,7 @@ export function sendUserConfirmationToken(req, res) {
 };
 
 export function completeUserSignup(req, res) {
-  UserService.completeUserSignup(req.locale.tokenData)
+  UserService.completeUserSignup(req.locals.tokenData)
     .then((response) => {
       return res.status(HttpResponse.CREATED).json({
         status: true,
@@ -77,7 +77,7 @@ export function  sendResetPasswordToken(req, res) {
 
 export function completePasswordReset(req, res) {
   const { password } = req.body;
-  UserService.completePasswordReset(req.locale.tokenData, password)
+  UserService.completePasswordReset(req.locals.tokenData, password)
     .then((response) => {
       if (!response) throw { name: "BadUsernameError" };
 
@@ -117,23 +117,6 @@ export function  authenticateUser(req, res) {
         errorResponse.response.message =
           "Username and/or Password are missing!";
       } 
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-
-export function logoutUser(req, res) {
-  console.log(req.locale.tokenData)
-  UserService.logoutUser()
-    .then(() => {
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response: { message: "Successfully logged user out!" },
-      });
-    })
-    .catch((errorObject) => {
-      const errorResponse = JSON.parse(serverErrorResponse);
 
       return res.status(errorResponse.statusCode).json(errorResponse.response);
     });
