@@ -13,6 +13,7 @@ import InterviewRoomLayout from "./layout/InterviewRoomLayout";
 import SettingsPage from "./pages/SettingsPage";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import CompleteSignup from "./pages/auth/CompleteSignup";
 import { SocketContext, socket } from "./context/socket";
 
 function App() {
@@ -25,6 +26,10 @@ function App() {
               <Route exact path="/" element={<LandingPage />}></Route>
               <Route path="/login" element={<LoginPage />}></Route>
               <Route path="/signup" element={<SignupPage />}></Route>
+              <Route
+                path="/completeSignup"
+                element={<CompleteSignup />}
+              ></Route>
               <Route
                 path="/forgotPassword"
                 element={<ForgotPassword />}
