@@ -13,7 +13,6 @@ export default class RedisInstance {
     } 
 
     async createObject(key, value) {
-        console.log("ll", this.redisClient)
         return await this.redisClient.SET(key, value);
     } 
 

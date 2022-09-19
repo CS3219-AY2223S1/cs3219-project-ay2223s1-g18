@@ -1,10 +1,10 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+
+import dotenv from "dotenv";
 dotenv.config();
 
 const databaseUri = process.env.ENV == "PROD" ? process.env.DB_CLOUD_URI : process.env.DB_LOCAL_URI;
-const connect = async () => {
 
+export async function startMongoDatabase(mongoose) {
     mongoose.connect(databaseUri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -19,7 +19,5 @@ const connect = async () => {
         throw new Error("Failed to connect to MongoDB database!");
     });
 
-    return mongoose;
 };
 
-export default connect;
