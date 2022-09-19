@@ -40,14 +40,6 @@ function SignupPage() {
     }
   };
 
-  const signupVerify = () => {
-    console.log("signupVerify: ", signupVerify);
-
-    POSTRequest(`/signup-verify`, {}).then((res) => {
-      console.log("res: ", res);
-    });
-  };
-
   const checkInputsFilled = () => {
     setError("");
     var allInputsFilled = true;

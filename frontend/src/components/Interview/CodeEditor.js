@@ -1,18 +1,28 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import CodeMirror from "@uiw/react-codemirror";
+import { SocketContext } from "../../context/socket";
 
 const CodeEditor = () => {
+  const socket = useContext(SocketContext);
+  const [code, setCode] = useState("");
+
+  useEffect(() => {
+    socket.on("code editor", (code) => {
+      setCode(code.code);
+    });
+  }, [socket, code]);
+
   const handleChange = (editor, data, value) => {
-    // console.log("value: ", value);
-    // console.log("data: ", data);
-    // console.log("editor: ", editor);
+    socket.emit("code editor", {
+      code: editor,
+    });
   };
 
   return (
     <StyledEditorWrapper>
       <CodeMirror
-        value="hello"
+        value={code}
         options={{
           mode: "jsx",
         }}
