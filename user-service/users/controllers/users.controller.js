@@ -8,313 +8,272 @@ const serverErrorResponse = JSON.stringify({
     message: "Error in request fulfilment!",
   },
 });
-// User signup
-const sendUserConfirmationToken = (req, res) => {
-  const { email, username, password } = req.body;
-  UserService.createUserVerificationRequest(email, username, password)
-    .then(() => {
-      return res.status(HttpResponse.ACCEPTED).json({
-        status: true,
-        response: { message: `Successfully sent token email!` },
+
+export class TokenController {
+  static sendUserConfirmationToken() {
+    return async (req, res, next) => {
+      const { email, username, password } = req.body;
+      UserService.createUserVerificationRequest(email, username, password)
+        .then(() => {
+          res.status(HttpResponse.ACCEPTED).json({
+            status: true,
+            response: { message: `Successfully sent token email!` },
+          });
+          next();
+        })
+        .catch((errorObject) => {
+          console.log(errorObject)
+          const errorResponse = JSON.parse(serverErrorResponse);
+    
+          if (errorObject.name == "ValidationError") {
+            errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+            errorResponse.response.message =
+              "Email, Username and/or Password are missing!";
+          } else if (errorObject.name == "ExistingUserError") {
+            // Duplicate Error
+            errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+            errorResponse.response.message = "Email or username has been taken.";
+          }
+    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+    }
+  }
+
+  static completeUserSignup() {
+    return async (req, res, next) => {
+      UserService.completeUserSignup(res.locals.tokenData)
+      .then((response) => {
+        res.status(HttpResponse.CREATED).json({
+          status: true,
+          response,
+        });
+        next();
+      })
+      .catch((errorObject) => {
+        // TODO: user already added
+        console.log(errorObject)
+        const errorResponse = JSON.parse(serverErrorResponse);
+        return res.status(errorResponse.statusCode).json(errorResponse.response);
       });
-    })
-    .catch((errorObject) => {
-      console.log(errorObject)
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "ValidationError") {
-        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
-        errorResponse.response.message =
-          "Email, Username and/or Password are missing!";
-      } else if (errorObject.name == "ExistingUserError") {
-        // Duplicate Error
-        errorResponse.statusCode = HttpResponse.CONFLICT;
-        errorResponse.response.message = "Email or username has been taken.";
-      }
+    }
+  }
 
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
+  static sendResetPasswordToken() {
+    return async (req, res, next) => {
+      const { email } = req.body;
+      UserService.createResetVerificationRequest(email)
+        .then(() => {
+          res.status(HttpResponse.ACCEPTED).json({
+            status: true,
+            response: { message: `Successfully sent token email!` },
+          });
+          next();
+        })
+        .catch((errorObject) => {
+          console.log(errorObject)
+          const errorResponse = JSON.parse(serverErrorResponse);
+    
+          if (errorObject.name == "ValidationError") {
+            errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+            errorResponse.response.message =
+              "No such user with email found!";
+          } 
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+    }
+  }
 
-const completeUserSignup = (req, res) => {
-  const token = req.headers.authorization;
-  UserService.completeUserSignup(token)
-    .then((response) => {
-      return res.status(HttpResponse.CREATED).json({
-        status: true,
-        response,
+  static completePasswordReset() {
+    return async (req, res, next) => {
+      const { password } = req.body;
+      UserService.completePasswordReset(res.locals.tokenData, password)
+        .then((response) => {
+          if (!response) throw { name: "BadUsernameError" };
+    
+          res.status(HttpResponse.OK).json({
+            status: true,
+            response,
+          });
+          next();
+        })
+        .catch((errorObject) => {
+          const errorResponse = JSON.parse(serverErrorResponse);
+    
+          if (errorObject.name == "ValidationError") {
+            errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+            errorResponse.response.message = "Password is missing!";
+          } 
+    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+      
+    }
+  }
+
+  static authenticateUser() {
+    return async (req, res, next) => {
+      const { username, password } = req.body;
+      UserService.authenticateUser(username, password)
+        .then((response) => {
+          res.status(HttpResponse.OK).json({
+            status: true,
+            response,
+          });
+          next();
+        })
+        .catch((errorObject) => {
+    
+          const errorResponse = JSON.parse(serverErrorResponse);
+          if (errorObject.name == "ValidationError") {
+            errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+            errorResponse.response.message =
+              "Username and/or Password are missing!";
+          } 
+    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+      
+    }
+  }
+
+  static getHealthStatus() {
+    return async (req, res, next) => {
+      res.status(HttpResponse.OK).json({
+        status: "true",
+        response: "operational",
       });
-    })
-    .catch((errorObject) => {
-      console.log(errorObject)
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
+      next();
+    }
+  }
 
-// User password reset
-const sendResetPasswordToken = (req, res) => {
-  const { email } = req.body;
-  UserService.getResetPasswordToken(email)
-    .then(() => {
-      return res.status(HttpResponse.ACCEPTED).json({
-        status: true,
-        response: { message: `Successfully sent token email!` },
+  static getAccessToken() {
+    return async (req, res, next) => {
+      UserService.getAccessToken(res.locals.tokenData.username)
+        .then((response) => {
+          res.status(HttpResponse.OK).json({
+            status: true,
+            response,
+          });
+          next();
+        })
+        .catch((errorObject) => {
+          console.log(errorObject)
+          const errorResponse = JSON.parse(serverErrorResponse);    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+      
+    }
+  }
+
+  static getUserByName() {
+    return async (req, res, next) => {
+      const { username } = req.params;
+      UserService.getUserByName(username)
+        .then((response) => {
+          if (response.length == 0) throw { name: "BadUsernameError" };
+          res.status(HttpResponse.OK).json({
+            status: true,
+            response,
+          });
+          next();
+        })
+        .catch((errorObject) => {
+          const errorResponse = JSON.parse(serverErrorResponse);
+    
+          if (errorObject.name == "BadUsernameError") {
+            errorResponse.statusCode = HttpResponse.NOT_FOUND;
+            errorResponse.response.message = "No such Username found for update!";
+          } 
+    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+      
+    }
+  }
+
+  static getUsers() {
+    return async (req, res, next) => {
+      UserService.getUsers()
+      .then((response) => {
+        res.status(HttpResponse.OK).json({
+          status: true,
+          response,
+        });
+        next();
+      })
+      .catch((errorObject) => {
+  
+        const errorResponse = JSON.parse(serverErrorResponse);
+  
+        if (errorObject.name == "BadUsernameError") {
+          errorResponse.statusCode = HttpResponse.NOT_FOUND;
+          errorResponse.response.message = "No such Username found for update!";
+        } 
+  
+        res.status(errorResponse.statusCode).json(errorResponse.response);
       });
-    })
-    .catch((errorObject) => {
-      console.log(errorObject)
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "ValidationError") {
-        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
-        errorResponse.response.message =
-          "No such user with email found!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
+      
+    }
+  }
+  
+  static updateUserByName() {
+    return async (req, res, next) => {
+      const { username } = req.params;
+      const { password } = req.body;
+      UserService.updateUserByName(username, password)
+        .then((response) => {
+          if (!response) throw { name: "BadUsernameError" };
+    
+          res.status(HttpResponse.OK).json({
+            status: true,
+            response,
+          });
+          next();
+        })
+        .catch((errorObject) => {
+          const errorResponse = JSON.parse(serverErrorResponse);
+          
+          if (errorObject.name == "ValidationError") {
+            errorResponse.statusCode = HttpResponse.BAD_REQUEST;
+            errorResponse.response.message = "Password is missing!";
+          } else if (errorObject.name == "BadUsernameError") {
+            errorResponse.statusCode = HttpResponse.NOT_FOUND;
+            errorResponse.response.message = "No such Username found for update!";
+          } 
+    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+      
+    }
+  }
 
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
+  static deleteUserByName() {
+    return async (req, res, next) => {
+      const { username } = req.params;
+      UserService.deleteUserByName(username)
+        .then((response) => {
+          if (response.deletedCount == 0) throw { name: "BadUsernameError" };
+          res.status(HttpResponse.OK).json({
+            status: true,
+            response,
+          });
+          next();
+        })
+        .catch((errorObject) => {
+          const errorResponse = JSON.parse(serverErrorResponse);
+          
+          if (errorObject.name == "BadUsernameError") {
+            errorResponse.statusCode = HttpResponse.NOT_FOUND;
+            errorResponse.response.message =
+              "Invalid username supplied for deletion!";
+          } 
+    
+          res.status(errorResponse.statusCode).json(errorResponse.response);
+        });
+      
+    }
+  }
 
+}
 
-const completePasswordReset = (req, res) => {
-  const token = req.headers.authorization;
-  const { password } = req.body;
-  UserService.completePasswordReset(token, password)
-    .then((response) => {
-      if (!response) throw { name: "BadUsernameError" };
-
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response,
-      });
-    })
-    .catch((errorObject) => {
-      console.log(errorObject)
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "ValidationError") {
-        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
-        errorResponse.response.message = "Password is missing!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-
-// User authentication
-const authenticateUser = (req, res) => {
-  const { username, password } = req.body;
-  UserService.authenticateUser(username, password)
-    .then((response) => {
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response,
-      });
-    })
-    .catch((errorObject) => {
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "ValidationError") {
-        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
-        errorResponse.response.message =
-          "Username and/or Password are missing!";
-      } 
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-
-const logoutUser = (req, res) => {
-  const token = req.headers.authorization;
-  UserService.logoutUser(token)
-    .then(() => {
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response: { message: "Successfully logged user out!" },
-      });
-    })
-    .catch((errorObject) => {
-      const errorResponse = JSON.parse(serverErrorResponse);
-       if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      }
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-const getHealthStatus = (req, res) => {
-  res.status(HttpResponse.OK).json({
-    status: "true",
-    response: "operational",
-  });
-};
-
-const getUserByName = (req, res) => {
-  const { username } = req.params;
-  const token = req.headers.authorization;
-  UserService.getUserByName(token, username)
-    .then((response) => {
-      if (response.length == 0) throw { name: "BadUsernameError" };
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response,
-      });
-    })
-    .catch((errorObject) => {
-      const errorResponse = JSON.parse(serverErrorResponse);
-
-      if (errorObject.name == "BadUsernameError") {
-        errorResponse.statusCode = HttpResponse.NOT_FOUND;
-        errorResponse.response.message = "No such Username found for update!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      }
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-const getUsers = (req, res) => {
-  const token = req.headers.authorization;
-  UserService.getUsers(token)
-    .then((response) => {
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response,
-      });
-    })
-    .catch((errorObject) => {
-      console.log(errorObject);
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "BadUsernameError") {
-        errorResponse.statusCode = HttpResponse.NOT_FOUND;
-        errorResponse.response.message = "No such Username found for update!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      }
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-const updateUserByName = (req, res) => {
-  const { username } = req.params;
-  const { password } = req.body;
-  const token = req.headers.authorization;
-  UserService.updateUserByName(token, username, password)
-    .then((response) => {
-      if (!response) throw { name: "BadUsernameError" };
-
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response,
-      });
-    })
-    .catch((errorObject) => {
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "ValidationError") {
-        errorResponse.statusCode = HttpResponse.BAD_REQUEST;
-        errorResponse.response.message = "Password is missing!";
-      } else if (errorObject.name == "BadUsernameError") {
-        errorResponse.statusCode = HttpResponse.NOT_FOUND;
-        errorResponse.response.message = "No such Username found for update!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-const deleteUserByName = (req, res) => {
-  const { username } = req.params;
-  const token = req.headers.authorization;
-  UserService.deleteUserByName(token, username)
-    .then((response) => {
-      if (response.deletedCount == 0) throw { name: "BadUsernameError" };
-      return res.status(HttpResponse.OK).json({
-        status: true,
-        response,
-      });
-    })
-    .catch((errorObject) => {
-      const errorResponse = JSON.parse(serverErrorResponse);
-      if (errorObject.name == "BadUsernameError") {
-        errorResponse.statusCode = HttpResponse.NOT_FOUND;
-        errorResponse.response.message =
-          "Invalid username supplied for deletion!";
-      } else if (
-        errorObject.name == "TokenExpiredError" ||
-        errorObject.name == "JsonWebTokenError"
-      ) {
-        errorResponse.statusCode = HttpResponse.UNAUTHORIZED;
-        errorResponse.response.message = "Not Authorized to use service!";
-      } else if (errorObject.name == "InvalidPrivilegesError") {
-        errorResponse.statusCode = HttpResponse.FORBIDDEN;
-        errorResponse.response.message = "Not able to perform service!";
-      }
-
-      return res.status(errorResponse.statusCode).json(errorResponse.response);
-    });
-};
-
-export {
-  sendUserConfirmationToken,
-  completeUserSignup,
-  sendResetPasswordToken,
-  completePasswordReset,
-  authenticateUser,
-  logoutUser,
-  getHealthStatus,
-  getUserByName,
-  getUsers,
-  updateUserByName,
-  deleteUserByName,
-};
