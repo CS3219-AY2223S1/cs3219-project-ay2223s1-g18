@@ -51,6 +51,16 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("code editor", (code) => {
+    if (socket.rooms.size > 1) {
+      const meetingRoomId = Array.from(socket.rooms.values())[1];
+
+      io.to(meetingRoomId).emit("code editor", {
+        code: code.code,
+      });
+    }
+  });
+
   socket.on("match request", (name, difficulty, socketId) => {
     latestDifficulty = difficulty;
     // Receive this event, check DB for a match
