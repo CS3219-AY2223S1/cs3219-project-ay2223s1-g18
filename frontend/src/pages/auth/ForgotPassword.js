@@ -1,13 +1,28 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { POSTRequest } from "../../utils/axios";
 import Button from "../../components/Button";
+import MessageScreen from "../../components/MessageScreen";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const [sentEmail, setSentEmail] = useState(false);
 
-  const handleSendResetPasswordEmail = () => {};
+  const handleSendResetPasswordEmail = () => {
+    POSTRequest("/password-reset", { email }).then((res) => {
+      if (res.data.status) {
+        setSentEmail(true);
+      }
+    });
+  };
 
-  return (
+  return sentEmail ? (
+    <MessageScreen
+      emoji="💌"
+      messageTitle="Email sent!"
+      description="Follow the instructions in the email to reset your password."
+    />
+  ) : (
     <CardPageWrap>
       <Header>Reset your password</Header>
       <CardWrap>

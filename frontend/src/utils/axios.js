@@ -1,9 +1,15 @@
 import axios from "axios";
 import { URL_USER_SVC } from "../utils/configs";
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 const getToken = () => {
-  var jsonToken = JSON.stringify(document.cookie);
-  return jsonToken.substring(7, jsonToken.length - 1);
+  var jsonToken = JSON.stringify(getCookie("AccessToken"));
+  return jsonToken.substring(1, jsonToken.length - 1);
 };
 
 const injectToken = async (req) => {

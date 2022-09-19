@@ -34,10 +34,7 @@ function App() {
                 path="/forgotPassword"
                 element={<ForgotPassword />}
               ></Route>
-              <Route
-                path="/resetPassword/:token"
-                element={<ResetPassword />}
-              ></Route>
+              <Route path="/passwordReset" element={<ResetPassword />}></Route>
             </Route>
             <Route path="/" element={<ProtectedLayout />}>
               <Route path="/home" element={<HomePage />} />

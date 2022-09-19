@@ -1,23 +1,43 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "../../components/Button";
-import { useParams } from "react-router-dom";
-
+import { useLocation } from "react-router-dom";
+import { clearCookies } from "../../utils/storage";
 import { PATCHRequest } from "../../utils/axios";
+import MessageScreen from "../../components/MessageScreen";
 
 const ResetPassword = () => {
-  const { token } = useParams();
+  const token = new URLSearchParams(useLocation().search).get("token");
+  document.cookie = "AccessToken=" + token;
   const [password, setPassword] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
+  const [successfullyReset, setSuccessfullyReset] = useState(false);
 
   const handleResetPassword = () => {
-    PATCHRequest(`/password-reset-verify/${token}`, { password }).then(
-      (res) => {
-        console.log(res);
-      }
-    );
+    setPasswordErr("");
+    if (password) {
+      PATCHRequest(`/password-reset-verify`, { password }).then((res) => {
+        if (res.data.status) {
+          clearCookies();
+          setSuccessfullyReset(true);
+        }
+      });
+    } else {
+      setPasswordErr("Please enter a new password.");
+    }
   };
 
-  return (
+  return successfullyReset ? (
+    <MessageScreen
+      emoji="🎉"
+      messageTitle="Password successfully reset!"
+      description="Try logging in again with your new password."
+    >
+      <a href="/login">
+        <Button>Back to sign in</Button>
+      </a>
+    </MessageScreen>
+  ) : (
     <CardPageWrap>
       <Header>Reset your password</Header>
       <CardWrap>
@@ -32,6 +52,17 @@ const ResetPassword = () => {
               value={password}
               style={{ width: "356px", marginTop: "8px" }}
             />
+            {passwordErr && (
+              <p
+                style={{
+                  color: "var(--red)",
+                  fontWeight: "600",
+                  marginTop: "8px",
+                }}
+              >
+                {passwordErr}
+              </p>
+            )}
           </div>
 
           <Button
