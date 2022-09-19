@@ -22,7 +22,7 @@ async function sendEmail(options) {
     await transporter.sendMail(mailOptions)
 }
 export async function sendValidationEmailRequest(enclosedDetails, message, token, isSignup=false) {
-  const clientUrl = "http:localhost:3000"// to be changed later
+  const clientUrl = "http://localhost:3000"// to be changed later
 
   const apiType = isSignup ? "completeSignup" : "passwordReset"
   const urlLinkHeader = isSignup ? "Complete Signup" : "Reset Password"
