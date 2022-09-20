@@ -9,7 +9,7 @@ const serverErrorResponse = JSON.stringify({
   },
 });
 
-export class TokenController {
+export class UserController {
   static sendUserConfirmationToken() {
     return async (req, res, next) => {
       const { email, username, password } = req.body;
