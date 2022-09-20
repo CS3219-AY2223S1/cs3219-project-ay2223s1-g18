@@ -24,7 +24,6 @@ export class TokenMiddleware {
                 const decodedToken = jwt.verify(
                     req.headers.authorization.split(' ')[1],
                     secret);
-        
                 const status = await JwtBlacklist.getObject(req.headers.authorization)
                 if (status)
                     throw ({ name: 'JsonWebTokenError' });
@@ -32,7 +31,8 @@ export class TokenMiddleware {
                 // To be moved to access control
                 // if (!isVerificationToken && targetUser && targetUser != decodedToken.username)
                 //     throw ({ name: 'InvalidPrivilegesError' });
-                res.locals.tokenData = decodedToken;
+
+                res.locals.tokenData = decodedToken;                
                 next();
             } catch (errorObject) {
                 console.log(errorObject)
@@ -51,16 +51,16 @@ export class TokenMiddleware {
         }
     }
 
-    static blacklistJwtToken() {
+    static blacklistJwtToken(isLogout=false) {
         return async (req, res, next) => {
             try {
-                console.log(101)
                 const insertionStatus = await JwtBlacklist.createObject(req.headers.authorization, KEY_VALUE);
                 await JwtBlacklist.setExpiryOfObject(req.headers.authorization, +res.locals.tokenData.exp);
-                res.status(HttpResponse.OK).json({
-                    status: true,
-                    response: "Successfully logged user out!",
-                });
+                if (isLogout)
+                    res.status(HttpResponse.OK).json({
+                        status: true,
+                        response: "Successfully logged user out!",
+                    });
             } catch (errorObject) {
                 console.log(errorObject)
                 const errorResponse = JSON.parse(serverErrorResponse);
