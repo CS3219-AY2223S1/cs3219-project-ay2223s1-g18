@@ -4,7 +4,7 @@ export async function sendValidationEmailRequest(enclosedDetails, message, token
   const clientUrl = "http://localhost:3000"// to be changed later
 
   const apiType = isSignup ? "completeSignup" : "passwordReset"
-  const emailSubject = isSignup ? "Welcome to Peerprep" : "Password Reset Request"
+  const emailSubject = isSignup ? "Welcome to PeerPrep!" : "Password Reset Request"
   const urlLinkHeader = isSignup ? "Complete Signup" : "Reset Password"
   
   const resetUrl = `${clientUrl}/${apiType}?token=${token}`
