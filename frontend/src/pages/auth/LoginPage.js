@@ -12,6 +12,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
+    setError("");
     POSTRequest(`/auth/`, { username, password })
       .then((res) => {
         if (res.data.status && res.data.response) {
@@ -21,10 +22,13 @@ function LoginPage() {
 
           saveStorage("currentUsername", username);
           navigate("/home");
+        } else if (res.status === 500) {
+          setError("Wrong username or password!");
         }
       })
       .catch((err) => {
-        setError(err);
+        // setError(err);
+        setError("Wrong username or password!");
       });
   };
 
@@ -43,17 +47,6 @@ function LoginPage() {
               value={username}
               style={{ width: "356px" }}
             />
-            {error && (
-              <p
-                style={{
-                  color: "var(--red)",
-                  fontWeight: "600",
-                  marginTop: "8px",
-                }}
-              >
-                {error}
-              </p>
-            )}
           </div>
 
           <label>Password</label>
