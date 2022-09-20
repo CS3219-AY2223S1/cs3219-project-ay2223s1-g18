@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "./Button";
 import logo from "../assets/Logo.svg";
-import { clearStorage, fetchStorage } from "../storage";
-import Avatar from "react-string-avatar";
+import { clearStorage, fetchStorage } from "../utils/storage";
 import { ReactComponent as ChevronDownIcon } from "../assets/chevron-down.svg";
 import userIcon from "../assets/user-icon.svg";
 import settingsIcon from "../assets/settings-icon.svg";
 import logoutIcon from "../assets/logout-icon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
+import PlaceholderDp from "./PlaceholderDp";
 
 const Navbar = ({ layout }) => {
   const currentUsername = fetchStorage("currentUsername");
@@ -64,15 +64,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
       <Dropdown>
         <Dropdown.Toggle className="remove-styling">
           <div className="userInfo">
-            <Avatar
-              initials={currentUsername.charAt(0).toUpperCase()}
-              roundShape
-              bgColor="#EEF2FF"
-              textColor="#4F46E5"
-              width={36}
-              pictureResolution={512}
-              fontWeight={500}
-            />
+            <PlaceholderDp initial={currentUsername} />
             <p className="m-0 mx-2">{currentUsername}</p>
             <ChevronDownIcon />
           </div>
@@ -81,16 +73,8 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
         <Dropdown.Menu className="dropdown-menu" style={{ marginTop: "16px" }}>
           <Dropdown.Item eventKey="1">
             <div className="d-flex align-items-center">
-              <Avatar
-                initials={currentUsername.charAt(0).toUpperCase()}
-                roundShape
-                bgColor="#EEF2FF"
-                textColor="#4F46E5"
-                width={36}
-                pictureResolution={512}
-                fontWeight={500}
-              />
-              <div className="d-flex flex-column">
+              <PlaceholderDp initial={currentUsername} />
+              <div className="d-flex flex-column px-2">
                 <p className="m-0">{currentUsername}</p>
                 <p
                   style={{
@@ -111,7 +95,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
             <img src={userIcon} alt="" />
             Profile
           </Dropdown.Item>
-          <Dropdown.Item eventKey="3">
+          <Dropdown.Item eventKey="3" href="/settings">
             <img src={settingsIcon} alt="" />
             Settings
           </Dropdown.Item>

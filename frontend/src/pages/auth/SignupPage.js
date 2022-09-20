@@ -1,36 +1,51 @@
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState } from "react";
-import axios from "axios";
-import { URL_USER_SVC } from "../configs";
-import { STATUS_CODE_CONFLICT, STATUS_CODE_CREATED } from "../constants";
-import Button from "../components/Button";
+import {
+  STATUS_CODE_CONFLICT,
+  STATUS_CODE_ACCEPTED,
+} from "../../utils/constants";
+import Button from "../../components/Button";
+import { POSTRequest } from "../../utils/axios";
+import MessageScreen from "../../components/MessageScreen";
 
 function SignupPage() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSignedUp, setIsSignedUp] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleSignup = async () => {
+  const handleSignup = () => {
+    setLoading(true);
     if (checkInputsFilled()) {
-      const res = await axios
-        .post(URL_USER_SVC, { email, username, password })
+      POSTRequest("/signup", { email, username, password })
+        .then((res) => {
+          if (res && res.status === STATUS_CODE_ACCEPTED) {
+            setIsSignedUp(true);
+            setLoading(false);
+          }
+        })
         .catch((err) => {
+          setLoading(false);
           if (err.response.status === STATUS_CODE_CONFLICT) {
             setError("Username or email has already been taken.");
           } else {
             setError("Something went wrong. Please try again later");
           }
         });
-      if (res && res.status === STATUS_CODE_CREATED) {
-        navigate("/login");
-      }
     }
+  };
+
+  const signupVerify = () => {
+    console.log("signupVerify: ", signupVerify);
+
+    POSTRequest(`/signup-verify`, {}).then((res) => {
+      console.log("res: ", res);
+    });
   };
 
   const checkInputsFilled = () => {
@@ -57,7 +72,7 @@ function SignupPage() {
     return allInputsFilled;
   };
 
-  return (
+  return !isSignedUp ? (
     <CardPageWrap>
       <Header>Welcome to Peerprep!</Header>
       <CardWrap>
@@ -100,7 +115,7 @@ function SignupPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "356px", marginBottom: "48px" }}
+              style={{ width: "356px" }}
             />
             {passwordError && (
               <p style={{ color: "var(--red)", marginTop: "8px" }}>Required</p>
@@ -110,20 +125,37 @@ function SignupPage() {
           {error && (
             <p style={{ color: "var(--red)", marginBottom: "8px" }}>{error}</p>
           )}
-          <Button
-            variant="primary"
-            size="big"
-            style={{ width: "100%" }}
-            onClick={handleSignup}
-          >
-            Sign up
-          </Button>
+          {loading ? (
+            <Button
+              variant="primary"
+              size="big"
+              style={{ width: "100%" }}
+              loading
+            >
+              Sign up
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              size="big"
+              style={{ width: "100%" }}
+              onClick={handleSignup}
+            >
+              Sign up
+            </Button>
+          )}
           <p style={{ marginTop: "16px" }}>
             Already have an account? <a href="/login">Log in</a>
           </p>
         </div>
       </CardWrap>
     </CardPageWrap>
+  ) : (
+    <MessageScreen
+      emoji="💌"
+      messageTitle="Email sent!"
+      description="Didn't get the email? Check your spam folder."
+    />
   );
 }
 

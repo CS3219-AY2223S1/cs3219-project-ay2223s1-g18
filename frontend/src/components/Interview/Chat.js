@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { SocketContext } from "../../context/socket";
 import styled from "styled-components";
 import arrowIcon from "../../assets/arrow-right.svg";
-import socketIO from "socket.io-client";
-import { fetchStorage } from "../../storage";
+import { fetchStorage } from "../../utils/storage";
 
 const Chat = () => {
-  var socket = socketIO("http://localhost:8001/", {
-    transports: ["websocket"],
-  });
-  socket.on("connection", () => {
-    console.log(`I'm connected with the back-end`);
-  });
+  const socket = useContext(SocketContext);
 
   const [message, setMessage] = useState("");
   const [allMessages, setAllMessages] = useState([]);
@@ -18,6 +13,12 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on("chat message", (messageObject) => {
+      setAllMessages([...allMessages, messageObject]);
+    });
+  }, [socket, allMessages]);
+
+  useEffect(() => {
+    socket.on("sendAnnouncement", (messageObject) => {
       setAllMessages([...allMessages, messageObject]);
     });
   }, [socket, allMessages]);
@@ -35,6 +36,7 @@ const Chat = () => {
         msg: message,
         sender: currUser,
         time: currTime,
+        type: 0,
       });
     }
     setMessage("");
@@ -48,8 +50,14 @@ const Chat = () => {
 
   return (
     <StyledChatWrapper>
-      <div>
+      <div style={{ overflowY: "scroll", height: "100%" }}>
         {allMessages.map((message, index) => {
+          if (message.type === 1) {
+            // Announcement
+            return (
+              <Announcement emoji="✨" message={message.msg} key={index} />
+            );
+          }
           if (index > 0 && message.sender === allMessages[index - 1].sender) {
             return <SubChatMessage message={message.msg} key={index} />;
           } else {
@@ -82,14 +90,13 @@ const Chat = () => {
 
 export default Chat;
 
-var Announcement = ({ emoji, message, time }) => {
+var Announcement = ({ emoji, message }) => {
   return (
     <StyledAnnouncement>
       <div className="d-flex align-items-center">
         <p className="emoji">{emoji}</p>
         <p>{message}</p>
       </div>
-      <p className="time">{time}</p>
     </StyledAnnouncement>
   );
 };
@@ -163,7 +170,6 @@ const StyledAnnouncement = styled.div`
   font-size: 14px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin: 4px 0;
 
   .emoji {
