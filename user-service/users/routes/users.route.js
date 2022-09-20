@@ -6,10 +6,10 @@ import { TokenMiddleware } from '../middleware/token.middleware.js';
 import { JwtSecrets } from '../../constants/jwtSecrets.js';
 
 router.route("/signup").post(UserController.sendUserConfirmationToken());
-router.route("/signup-verify").post(TokenMiddleware.analyseJwtToken(JwtSecrets.VERIFICATION), UserController.completeUserSignup(), TokenMiddleware.blacklistJwtToken);
+router.route("/signup-verify").post(TokenMiddleware.analyseJwtToken(JwtSecrets.VERIFICATION), UserController.completeUserSignup(), TokenMiddleware.blacklistJwtToken());
 
 router.route("/password-reset").post(UserController.sendResetPasswordToken());
-router.route("/password-reset-verify").patch(TokenMiddleware.analyseJwtToken(JwtSecrets.VERIFICATION), UserController.completePasswordReset(), TokenMiddleware.blacklistJwtToken);
+router.route("/password-reset-verify").patch(TokenMiddleware.analyseJwtToken(JwtSecrets.VERIFICATION), UserController.completePasswordReset(), TokenMiddleware.blacklistJwtToken());
 
 router.route("/auth").post(UserController.authenticateUser());
 router.route("/logout").post(TokenMiddleware.analyseJwtToken(JwtSecrets.REFRESH), TokenMiddleware.blacklistJwtToken());
