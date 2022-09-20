@@ -1,0 +1,40 @@
+version: '3'
+services:
+  redis_user:
+    container_name: redis_user
+    image: redis:latest
+    ports:
+      - 6379
+
+  mongodb:
+    container_name: mongodb  
+    image: mongo:latest
+    ports:
+      - 27017
+
+  frontend-service:
+    container_name: frontend-service
+    build: ./frontend
+    ports:
+      - 3000:3000
+
+  user-service:
+    env_file: # To be deleted
+      - ./user-service/.env
+    container_name: user-service
+    build: ./user-service
+    depends_on:
+      - redis_jwt
+      - mongodb
+
+
+  matching-service:
+    env_file: # To be deleted
+      - ./matching-service/.env
+    container_name: matching-service
+    build: ./matching-service
+    depends_on:
+      - mongodb
+
+  
+
