@@ -12,17 +12,17 @@ router.route("/password-reset").post(UserController.sendResetPasswordToken());
 router.route("/password-reset-verify").patch(TokenMiddleware.analyseJwtToken(JwtSecrets.VERIFICATION), UserController.completePasswordReset(), TokenMiddleware.blacklistJwtToken());
 
 router.route("/auth").post(UserController.authenticateUser());
-router.route("/logout").post(TokenMiddleware.analyseJwtToken(JwtSecrets.REFRESH), TokenMiddleware.blacklistJwtToken());
+router.route("/logout").post(TokenMiddleware.analyseJwtToken(JwtSecrets.REFRESH), TokenMiddleware.blacklistJwtToken(true));
 
 
 router.route("/health").get(UserController.getHealthStatus());
 router.route("/accesstoken").get(TokenMiddleware.analyseJwtToken(JwtSecrets.REFRESH), UserController.getAccessToken());
 
-router.route("/:username").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUserByName());
-router.route("/").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUsers());
+router.route("/accounts/:username").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUserAccountByName());
+router.route("/accounts").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUserAccounts());
 
-router.route("/:username").patch(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.updateUserByName());
+router.route("/accounts/:username").patch(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.updateUserAccountByName());
 
-router.route("/:username").delete(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.deleteUserByName(), TokenMiddleware.blacklistJwtToken());
+router.route("/accounts/:username").delete(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.deleteUserAccountByName(), TokenMiddleware.blacklistJwtToken()); // to update when self is deleted
 
 export default router;
