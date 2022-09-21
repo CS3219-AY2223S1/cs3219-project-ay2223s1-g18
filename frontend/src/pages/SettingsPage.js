@@ -2,8 +2,9 @@ import { useState, React } from "react";
 import Button from "../components/Button";
 import styled from "styled-components";
 import { DELETERequest, PATCHRequest } from "../utils/axios";
-import { fetchStorage } from "../utils/storage";
+import { fetchStorage, clearStorage, clearCookies } from "../utils/storage";
 import Modal from "react-bootstrap/Modal";
+import { useNavigate } from "react-router-dom";
 
 const SettingsPage = () => {
   const username = fetchStorage("currentUsername");
@@ -15,17 +16,30 @@ const SettingsPage = () => {
 
   const handleCloseDeleteAccountModal = () => setShowDeleteAccountModal(false);
   const handleShowDeleteAccountModal = () => setShowDeleteAccountModal(true);
+  const navigate = useNavigate();
 
   //TODO: Handle this properly
   const deleteAccount = () => {
-    // DELETERequest(`/${username}`, {}).then();
+    setError("");
+
+    DELETERequest(`accounts/${username}`, {}).then((res) => {
+      if (res.data.status) {
+        clearStorage("currentUsername");
+        clearCookies();
+        handleCloseDeleteAccountModal();
+        navigate("/");
+        window.location.reload();
+      } else {
+        setError("Unable to delete account. Please try again later.");
+      }
+    });
     console.log("hehe deleting");
-    handleCloseDeleteAccountModal();
   };
 
   const updatePassword = () => {
     setSuccessMsg("");
-    PATCHRequest(`/${username}`, { password })
+    setError("");
+    PATCHRequest(`accounts/${username}`, { password })
       .then((res) => {
         if (res.data.status) {
           setPassword("");
@@ -33,7 +47,7 @@ const SettingsPage = () => {
         }
       })
       .catch((err) => {
-        setError(err);
+        setError("Something went wrong. Please try again later.");
       });
   };
 

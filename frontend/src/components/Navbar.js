@@ -10,6 +10,7 @@ import settingsIcon from "../assets/settings-icon.svg";
 import logoutIcon from "../assets/logout-icon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
 import PlaceholderDp from "./PlaceholderDp";
+import { clearCookies } from "../utils/storage";
 
 const Navbar = ({ layout }) => {
   const currentUsername = fetchStorage("currentUsername");
@@ -46,10 +47,10 @@ var InterviewRoomNav = () => {
 
 var ProtectedLayoutNav = ({ currentUsername }) => {
   const navigate = useNavigate();
+
   var handleLogout = () => {
     clearStorage("currentUsername");
-    document.cookie =
-      "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    clearCookies();
 
     navigate("/");
     window.location.reload();
