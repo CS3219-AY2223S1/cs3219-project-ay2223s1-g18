@@ -27,6 +27,8 @@ jobs:
           mongodb-version: ${{ matrix.mongodb-version }}
           mongodb-port: 27017
     - run: npm ci
+        working-directory: ./user-service
     - run: npm test
+        working-directory: ./user-service
         env:
-            MONGODB_URI: ${{ secrets.MONGODB_URI }}
+            DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
