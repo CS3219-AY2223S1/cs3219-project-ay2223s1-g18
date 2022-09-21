@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchStorage } from "../utils/storage";
+import { fetchStorage } from "../utils/LocalStorageService";
 import { Navigate, useOutlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
 

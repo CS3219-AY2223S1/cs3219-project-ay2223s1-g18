@@ -7,7 +7,7 @@ import Col from "react-bootstrap/Col";
 import CountdownPage from "./CountdownPage";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../context/socket";
-import { fetchStorage } from "../utils/storage";
+import { fetchStorage } from "../utils/LocalStorageService";
 
 const HomePage = () => {
   const socket = useContext(SocketContext);

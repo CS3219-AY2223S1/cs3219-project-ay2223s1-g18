@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
-import { saveStorage } from "../../utils/storage";
+import { saveStorage } from "../../utils/LocalStorageService";
 import { POSTRequest } from "../../utils/axios";
 
 function LoginPage() {
@@ -12,17 +12,30 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
+    setError("");
     POSTRequest(`/auth/`, { username, password })
       .then((res) => {
-        if (res.data.status && res.data.response.token) {
-          document.cookie = "token=" + res.data.response.token;
+        if (res.data.status && res.data.response) {
+          document.cookie = `RefreshToken=${res.data.response.refreshToken}`;
+          document.cookie = `AccessToken=${res.data.response.accessToken}`;
+          console.log("document.cookie: ", document.cookie);
+
           saveStorage("currentUsername", username);
           navigate("/home");
+        } else if (res.status === 500) {
+          setError("Wrong username or password!");
         }
       })
       .catch((err) => {
-        setError(err);
+        // setError(err);
+        setError("Wrong username or password!");
       });
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin(event);
+    }
   };
 
   return (
@@ -40,17 +53,6 @@ function LoginPage() {
               value={username}
               style={{ width: "356px" }}
             />
-            {error && (
-              <p
-                style={{
-                  color: "var(--red)",
-                  fontWeight: "600",
-                  marginTop: "8px",
-                }}
-              >
-                {error}
-              </p>
-            )}
           </div>
 
           <label>Password</label>
@@ -61,6 +63,7 @@ function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={{ width: "356px" }}
+            onKeyDown={handleKeyDown}
           />
           <a href="/forgotPassword">
             <p className="mt-2" style={{ textAlign: "end" }}>

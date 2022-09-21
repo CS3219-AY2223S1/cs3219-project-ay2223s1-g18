@@ -1,13 +1,38 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { POSTRequest } from "../../utils/axios";
 import Button from "../../components/Button";
+import MessageScreen from "../../components/MessageScreen";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const [sentEmail, setSentEmail] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSendResetPasswordEmail = () => {};
+  const handleSendResetPasswordEmail = () => {
+    setLoading(true);
+    POSTRequest("/password-reset", { email })
+      .then((res) => {
+        if (res.data.status) {
+          setSentEmail(true);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.log("err: ", err);
+        setError("Something went wrong.");
+        setLoading(false);
+      });
+  };
 
-  return (
+  return sentEmail ? (
+    <MessageScreen
+      emoji="💌"
+      messageTitle="Email sent!"
+      description="Follow the instructions in the email to reset your password."
+    />
+  ) : (
     <CardPageWrap>
       <Header>Reset your password</Header>
       <CardWrap>
@@ -23,10 +48,21 @@ const ForgotPassword = () => {
               style={{ width: "356px", marginTop: "8px" }}
             />
           </div>
-
+          {error && (
+            <p
+              style={{
+                color: "var(--red)",
+                marginBottom: "8px",
+                marginTop: "48px",
+              }}
+            >
+              {error}
+            </p>
+          )}
           <Button
             variant="primary"
             size="big"
+            loading={loading}
             style={{ width: "100%", marginBottom: "24px" }}
             onClick={handleSendResetPasswordEmail}
           >

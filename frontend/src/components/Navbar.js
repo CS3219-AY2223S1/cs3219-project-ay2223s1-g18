@@ -3,13 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "./Button";
 import logo from "../assets/Logo.svg";
-import { clearStorage, fetchStorage } from "../utils/storage";
+import { clearStorage, fetchStorage } from "../utils/LocalStorageService";
 import { ReactComponent as ChevronDownIcon } from "../assets/chevron-down.svg";
 import userIcon from "../assets/user-icon.svg";
 import settingsIcon from "../assets/settings-icon.svg";
 import logoutIcon from "../assets/logout-icon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
 import PlaceholderDp from "./PlaceholderDp";
+import { clearCookies } from "../utils/TokenService";
 
 const Navbar = ({ layout }) => {
   const currentUsername = fetchStorage("currentUsername");
@@ -46,10 +47,10 @@ var InterviewRoomNav = () => {
 
 var ProtectedLayoutNav = ({ currentUsername }) => {
   const navigate = useNavigate();
+
   var handleLogout = () => {
     clearStorage("currentUsername");
-    document.cookie =
-      "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    clearCookies();
 
     navigate("/");
     window.location.reload();

@@ -2,26 +2,24 @@ import React, { useEffect, useState } from "react";
 import MessageScreen from "../../components/MessageScreen";
 import Button from "../../components/Button";
 import { POSTRequest } from "../../utils/axios";
+import { clearCookies } from "../../utils/TokenService";
 import { useLocation } from "react-router-dom";
 
 const CompleteSignup = () => {
   const token = new URLSearchParams(useLocation().search).get("token");
-
+  document.cookie = "AccessToken=" + token;
   const [signupSucceeded, setSignupSucceeded] = useState(false);
 
   useEffect(() => {
-    console.log("token: ", token);
-    document.cookie = "token=" + token;
-
     signupVerify();
   }, []);
 
-  const signupVerify = async () => {
+  const signupVerify = () => {
     POSTRequest("/signup-verify").then((res) => {
-      console.log("res: ", res);
-      setSignupSucceeded(true);
-      document.cookie =
-        "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      if (res.data.status) {
+        setSignupSucceeded(true);
+        clearCookies();
+      }
     });
   };
 

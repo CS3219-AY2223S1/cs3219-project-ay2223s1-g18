@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../../context/socket";
 import styled from "styled-components";
 import arrowIcon from "../../assets/arrow-right.svg";
-import { fetchStorage } from "../../utils/storage";
+import { fetchStorage } from "../../utils/LocalStorageService";
 
 const Chat = () => {
   const socket = useContext(SocketContext);
