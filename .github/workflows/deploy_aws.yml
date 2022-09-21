@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:      
       - name: Create Docker Containers
-      - run: echo "Create Docker Containers" # TODO: Modify flow
+        run: echo "Create Docker Containers" # TODO: Modify flow
       # - uses: actions/checkout@v2
       # - name: Build Docker Image for User Service
       #   run: docker build ./user-service --file Dockerfile --tag user:$(git rev-parse --short "$GITHUB_SHA")
@@ -25,4 +25,4 @@ jobs:
     runs-on: ubuntu-18.04
     steps:      
       - name: Deploy to AWS
-      - run: echo "Able to deploy to AWS" # TODO: Modify flow
+        run: echo "Able to deploy to AWS" # TODO: Modify flow
