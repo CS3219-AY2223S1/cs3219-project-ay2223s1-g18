@@ -166,10 +166,10 @@ export class UserController {
     }
   }
 
-  static getUserByName() {
+  static getUserAccountByName() {
     return async (req, res, next) => {
       const { username } = req.params;
-      UserService.getUserByName(username)
+      UserService.getUserAccountByName(username)
         .then((response) => {
           if (response.length == 0) throw { name: "BadUsernameError" };
           res.status(HttpResponse.OK).json({
@@ -192,9 +192,9 @@ export class UserController {
     }
   }
 
-  static getUsers() {
+  static getUserAccounts() {
     return async (req, res, next) => {
-      UserService.getUsers()
+      UserService.getUserAccounts()
       .then((response) => {
         res.status(HttpResponse.OK).json({
           status: true,
@@ -217,11 +217,11 @@ export class UserController {
     }
   }
   
-  static updateUserByName() {
+  static updateUserAccountByName() {
     return async (req, res, next) => {
       const { username } = req.params;
       const { password } = req.body;
-      UserService.updateUserByName(username, password)
+      UserService.updateUserAccountByName(username, password)
         .then((response) => {
           if (!response) throw { name: "BadUsernameError" };
     
@@ -239,7 +239,7 @@ export class UserController {
             errorResponse.response.message = "Password is missing!";
           } else if (errorObject.name == "BadUsernameError") {
             errorResponse.statusCode = HttpResponse.NOT_FOUND;
-            errorResponse.response.message = "No such Username found for update!";
+            errorResponse.response.message = "No such Username found!";
           } 
     
           res.status(errorResponse.statusCode).json(errorResponse.response);
@@ -248,10 +248,10 @@ export class UserController {
     }
   }
 
-  static deleteUserByName() {
+  static deleteUserAccountByName() {
     return async (req, res, next) => {
       const { username } = req.params;
-      UserService.deleteUserByName(username)
+      UserService.deleteUserAccountByName(username)
         .then((response) => {
           if (response.deletedCount == 0) throw { name: "BadUsernameError" };
           res.status(HttpResponse.OK).json({

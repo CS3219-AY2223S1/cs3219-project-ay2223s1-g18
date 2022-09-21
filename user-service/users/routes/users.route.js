@@ -18,11 +18,11 @@ router.route("/logout").post(TokenMiddleware.analyseJwtToken(JwtSecrets.REFRESH)
 router.route("/health").get(UserController.getHealthStatus());
 router.route("/accesstoken").get(TokenMiddleware.analyseJwtToken(JwtSecrets.REFRESH), UserController.getAccessToken());
 
-router.route("/:username").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUserByName());
-router.route("/").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUsers());
+router.route("/accounts/:username").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUserAccountByName());
+router.route("/accounts").get(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.getUserAccounts());
 
-router.route("/:username").patch(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.updateUserByName());
+router.route("/accounts/:username").patch(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.updateUserAccountByName());
 
-router.route("/:username").delete(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.deleteUserByName(), TokenMiddleware.blacklistJwtToken()); // to update when self is deleted
+router.route("/accounts/:username").delete(TokenMiddleware.analyseJwtToken(JwtSecrets.ACCESS), UserController.deleteUserAccountByName(), TokenMiddleware.blacklistJwtToken()); // to update when self is deleted
 
 export default router;
