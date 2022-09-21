@@ -1,0 +1,28 @@
+name: Build Docker Images and Deploy to AWS
+
+on:
+ pull_request:
+   branches: 
+     - main
+   types: 
+     - closed
+
+jobs:
+  build_docker:
+    runs-on: ubuntu-18.04
+    steps:      
+      - name: Create Docker Containers
+      - run: echo "Create Docker Containers" # TODO: Modify flow
+      # - uses: actions/checkout@v2
+      # - name: Build Docker Image for User Service
+      #   run: docker build ./user-service --file Dockerfile --tag user:$(git rev-parse --short "$GITHUB_SHA")
+      # - name: Build Docker Image for User Service
+      #   run: docker build ./matching-service --file Dockerfile --tag matching:$(git rev-parse --short "$GITHUB_SHA")
+      # - name: Build Docker Image for User Service
+      #   run: docker build ./frontend --file Dockerfile --tag frontend:$(git rev-parse --short "$GITHUB_SHA")
+  deploy_aws:
+    needs: build_docker
+    runs-on: ubuntu-18.04
+    steps:      
+      - name: Deploy to AWS
+      - run: echo "Able to deploy to AWS" # TODO: Modify flow
