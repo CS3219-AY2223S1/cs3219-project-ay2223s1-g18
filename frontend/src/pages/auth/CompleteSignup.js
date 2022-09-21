@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import MessageScreen from "../../components/MessageScreen";
 import Button from "../../components/Button";
 import { POSTRequest } from "../../utils/axios";
-import { clearCookies } from "../../utils/storage";
+import { clearCookies } from "../../utils/TokenService";
 import { useLocation } from "react-router-dom";
 
 const CompleteSignup = () => {

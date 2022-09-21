@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "../../components/Button";
 import { useLocation } from "react-router-dom";
-import { clearCookies } from "../../utils/storage";
+import { clearCookies } from "../../utils/TokenService";
 import { PATCHRequest } from "../../utils/axios";
 import MessageScreen from "../../components/MessageScreen";
 

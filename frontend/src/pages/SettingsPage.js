@@ -2,7 +2,8 @@ import { useState, React } from "react";
 import Button from "../components/Button";
 import styled from "styled-components";
 import { DELETERequest, PATCHRequest } from "../utils/axios";
-import { fetchStorage, clearStorage, clearCookies } from "../utils/storage";
+import { fetchStorage, clearStorage } from "../utils/LocalStorageService";
+import { clearCookies } from "../utils/TokenService";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate } from "react-router-dom";
 

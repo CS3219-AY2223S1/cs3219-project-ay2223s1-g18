@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
-import { saveStorage } from "../../utils/storage";
+import { saveStorage } from "../../utils/LocalStorageService";
 import { POSTRequest } from "../../utils/axios";
 
 function LoginPage() {
@@ -32,6 +32,12 @@ function LoginPage() {
       });
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleLogin(event);
+    }
+  };
+
   return (
     <CardPageWrap>
       <Header>Hey, welcome back!</Header>
@@ -57,6 +63,7 @@ function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={{ width: "356px" }}
+            onKeyDown={handleKeyDown}
           />
           <a href="/forgotPassword">
             <p className="mt-2" style={{ textAlign: "end" }}>
