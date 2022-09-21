@@ -15,21 +15,33 @@ jobs:
       matrix:
         node-version: [14.x, 16.x]
         mongodb-version: ['5.0']
+        redis-version: [4]
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.8.0
       with:
           mongodb-version: ${{ matrix.mongodb-version }}
           mongodb-port: 27017
-    - run: npm ci
+    
+    - name: Start Redis v${{ matrix.redis-version }}
+      uses: superchargejs/redis-github-action@1.1.0
+      with:
+          redis-version: ${{ matrix.redis-version }}
+
+    - name: Test User Service API
       working-directory: ./user-service
-    # - run: npm test
-    #   working-directory: ./user-service
-    #   env:
-    #     DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+      run: npm ci
+      # TODO: Enable below when testing is set up,  add secrets on github repo
+      # - run: |
+      #   npm ci
+      #   npm test
+      # env:
+      #   DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
