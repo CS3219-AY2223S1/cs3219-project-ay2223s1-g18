@@ -71,15 +71,15 @@ export default class UserService {
       accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
     }
   };
-  static async getUserByName(username) {
+  static async getUserAccountByName(username) {
     return await Helper.list(UserModel, { username })
   };
 
-  static async getUsers() {
+  static async getUserAccounts() {
     return await Helper.list(UserModel, {})
   };
   
-  static async updateUserByName(username, password) {
+  static async updateUserAccountByName(username, password) {
     if (!password)
       throw ({ name: "ValidationError" })
     const hashedPassword = await hashPassword(password)
@@ -87,7 +87,7 @@ export default class UserService {
     return updateResult
   };
 
-  static async deleteUserByName(username) {
+  static async deleteUserAccountByName(username) {
     const deleteResult = await Helper.deleteOne(UserModel, { username })
     return deleteResult
   };
