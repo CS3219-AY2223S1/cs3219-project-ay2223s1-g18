@@ -1,25 +1,16 @@
 import axios from "axios";
 import { URL_USER_SVC } from "../utils/configs";
+import { clearStorage } from "./LocalStorageService";
+import { clearCookies, getToken, setAccessToken } from "./TokenService";
 
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(";").shift();
-}
-
-const getToken = () => {
-  var jsonToken = JSON.stringify(getCookie("AccessToken"));
-  return jsonToken.substring(1, jsonToken.length - 1);
-};
-
-const injectToken = async (req) => {
+const requestInterceptor = (req) => {
   try {
-    var token = getToken();
-    req.headers.Authorization = `Bearer ${token}`;
+    var accessToken = getToken("AccessToken");
+    req.headers.Authorization = `Bearer ${accessToken}`;
+    return req;
   } catch (err) {
     console.error(err);
   }
-  return req;
 };
 
 const instance = axios.create({
@@ -27,7 +18,44 @@ const instance = axios.create({
   timeout: 5000,
 });
 
-instance.interceptors.request.use(injectToken);
+instance.interceptors.request.use(requestInterceptor);
+
+instance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async function (error) {
+    const originalRequest = error.config;
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const refreshToken = getToken("RefreshToken");
+
+      return axios
+        .get(`${URL_USER_SVC}/accesstoken`, {
+          headers: { Authorization: `token ${refreshToken}` },
+        })
+        .then((res) => {
+          if (res.data.status) {
+            const newAccessToken = res.data.response.accessToken;
+            setAccessToken(newAccessToken);
+
+            instance.defaults.headers.common["Authorization"] =
+              "Bearer " + newAccessToken;
+            return instance(originalRequest);
+          }
+        })
+        .catch((err) => {
+          if (err.response.status === 401) {
+            clearCookies();
+            clearStorage("currentUsername");
+            window.location.reload();
+          }
+        });
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const GETRequest = (url, params = {}) => {
   return instance.get(url, { params });
