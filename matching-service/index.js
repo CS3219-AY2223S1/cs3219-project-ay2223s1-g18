@@ -8,9 +8,17 @@ import MatchingRouter from "./matching.route.js";
 import { createPendingMatch } from "./matching.controller.js";
 import MatchingService from "./matching.service.js";
 
+import { ExpressPeerServer } from "peer";
+import { PeerServer } from "peer";
+
+
+
+
 const port = process.env.SERVICE_PORT || 8001;
 
 const app = express();
+
+
 
 app.use(cors()); // config cors so that front-end can use
 app.use(express.json());
@@ -20,18 +28,35 @@ app.options("*", cors());
 
 app.use("/matching", MatchingRouter);
 
+const httpServer = createServer(app);
+const io = new Server(httpServer);
+
+// start of Video chat
+const peerApp = express();
+const peerServer = createServer(peerApp);
+var peerPort = 9000;
+
+const expresspeerServer = ExpressPeerServer(peerServer, {
+  debug: true,
+});
+peerApp.use("/peerjs", expresspeerServer);
+peerServer.listen(peerPort);
+// End of video chat
+
 app.get("/", (req, res) => {
   res.sendFile("/temp_matching_service_file.html", { root: "." });
 });
 
-const httpServer = createServer(app);
-const io = new Server(httpServer);
+
+
+
 
 // References cache
 var latestDifficulty;
 var lastRoomId;
 
 io.on("connection", (socket) => {
+
   console.log("a user connected with socket id: ", socket.id);
 
   //socket.broadcast.emit('new user');          // In future, can add in name of user
@@ -41,7 +66,7 @@ io.on("connection", (socket) => {
       const meetingRoomId = Array.from(socket.rooms.values())[1];
 
       io.to(meetingRoomId).emit("chat message", {
-        msg: messageObject.msg,
+        msg: messageObject,
         sender: messageObject.sender,
         time: messageObject.time,
         type: 0,
@@ -61,7 +86,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("match request", (name, difficulty, socketId) => {
+  socket.on("match request", (name, difficulty, socketId, peerId) => {
     latestDifficulty = difficulty;
     // Receive this event, check DB for a match
     const pendingMatch = MatchingService.getPendingMatches(difficulty).catch(
@@ -82,7 +107,7 @@ io.on("connection", (socket) => {
         io.to(socketId).emit("initiate match"); // Acknowledgement message to the user
         console.log(socket.rooms);
         //console.log(socket.in(meetingRoomId));
-        //io.to(meetingRoomId).emit('create room', meetingRoomId);    // Test: if user has join the room - to be Deleted
+        io.to(meetingRoomId).emit('create room', meetingRoomId);    // Test: if user has join the room - to be Deleted
 
         // Create a match request in the DB
         MatchingService.createPendingMatch(name, difficulty, socketId).catch(
@@ -111,6 +136,10 @@ io.on("connection", (socket) => {
           msg: `${name} has joined the room.`,
           type: 1, // 0 – normal msg, 1 – system announcement
         });
+
+        // call him at his userID number.
+        socket.to(meetingRoomId).emit("video-call-me", peerId);
+        console.log(peerId);
 
         // Delete the pending request once both users are in the room
         MatchingService.deletePendingMatch(nameOfPendingMatch).catch((err) => {
