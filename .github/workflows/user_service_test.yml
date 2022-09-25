@@ -9,11 +9,16 @@ on:
       - ./user-service/**
 
 jobs:
-  build:
+  test_user_service:
+
+    defaults:
+      run:
+        working-directory: ./user-service
+
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.x, 16.x]
+        node-version: [14.x]
         mongodb-version: ['5.0']
         redis-version: [4]
 
@@ -36,12 +41,15 @@ jobs:
       with:
           redis-version: ${{ matrix.redis-version }}
 
-    - name: Test User Service API
-      working-directory: ./user-service
+    - name: Install Node dependencies
       run: npm ci
-      # TODO: Enable below when testing is set up,  add secrets on github repo
-      # - run: |
-      #   npm ci
-      #   npm test
-      # env:
-      #   DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+
+    - name: Lint User Service Code
+      run: npm lint -- if present
+      env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
+    - name: Test User Service
+      run: npm test -- if present
+      env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
