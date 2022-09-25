@@ -6,7 +6,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import PlaceholderDp from "../components/PlaceholderDp";
 import Button from "../components/Button";
-import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
   const currentUsername = fetchStorage("currentUsername");
@@ -30,7 +29,7 @@ const ProfilePage = () => {
               <p className="mb-0">📊 23 sessions joined</p>
             </div>
             <p>🗓 Member since 25 Aug</p>
-            <Link to="settings">
+            <a href="settings">
               <Button
                 variant="secondary"
                 size="small"
@@ -38,16 +37,16 @@ const ProfilePage = () => {
               >
                 Edit Profile
               </Button>
-            </Link>
+            </a>
           </UserInfoContainer>
         </Col>
         <Col xs={12} md={8}>
           <SubmissionHistoryContainer>
             <div className="emoji">⛺️</div>
             <h4 className="mb-5">No recent submissions!</h4>
-            <Link to="/">
+            <a href="/">
               <Button size="small">Do some practice</Button>
-            </Link>
+            </a>
           </SubmissionHistoryContainer>
         </Col>
       </Row>
