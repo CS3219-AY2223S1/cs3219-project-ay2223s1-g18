@@ -19,7 +19,6 @@ const SettingsPage = () => {
   const handleShowDeleteAccountModal = () => setShowDeleteAccountModal(true);
   const navigate = useNavigate();
 
-  //TODO: Handle this properly
   const deleteAccount = () => {
     setError("");
 
@@ -34,7 +33,6 @@ const SettingsPage = () => {
         setError("Unable to delete account. Please try again later.");
       }
     });
-    console.log("hehe deleting");
   };
 
   const updatePassword = () => {
