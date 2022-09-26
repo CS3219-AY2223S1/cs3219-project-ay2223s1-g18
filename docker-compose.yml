@@ -24,7 +24,7 @@ services:
     container_name: user-service
     build: ./user-service
     depends_on:
-      - redis_jwt
+      - redis_user
       - mongodb
 
 
