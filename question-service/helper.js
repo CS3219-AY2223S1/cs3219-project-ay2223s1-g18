@@ -1,6 +1,3 @@
-
-
-
 class Helper {
     static async save(Model, data) {
         const collection = new Model(data);

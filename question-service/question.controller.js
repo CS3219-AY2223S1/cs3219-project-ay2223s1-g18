@@ -1,5 +1,5 @@
-Question = require("./question.model");
-Helper = require("./helper");
+const Question = require("./question.model");
+const Helper = require("./helper");
 
 exports.getQuestion = async function(req, res) {
     var difficulty = req.query.difficulty
@@ -13,26 +13,3 @@ exports.getQuestion = async function(req, res) {
 
     }) 
 }
-
-// function x(questions) {
-//     Question.count().exec(function (err, count) {
-        
-      
-//         questions.findOne().skip(random).exec(
-//           function (err, result) {
-//             if (err) {
-//                 res.status(404);
-//                 res.json({
-//                     status: "failed",
-//                     message: err
-//                 })
-//             } 
-//             else {
-//                 res.json({
-//                     status: 'success',
-//                     question: result
-//                 }) 
-//             }
-//         })
-//     })
-// }
