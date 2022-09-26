@@ -35,8 +35,9 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         IMAGE_TAG: ${{ steps.pr_commit.outputs.sha_short }}
       run: |
-        docker build ./user-service -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:user_$IMAGE_TAG ./user-service 
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:user_$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:user_$IMAGE_TAG"
 
     - name: Log out of Amazon ECR
       if: always() 
