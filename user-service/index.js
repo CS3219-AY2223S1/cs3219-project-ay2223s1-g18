@@ -16,7 +16,6 @@ app.options("*", cors());
 
 app.use("/api/user", UserRouter);
 
-// const router = express.Router();
 // router.post('/', createUser)
 // app.use('/api/user', router).all((_, res) => {
 //   res.setHeader('content-type', 'application/json')
