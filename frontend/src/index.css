@@ -15,28 +15,32 @@ code {
 
 @font-face {
   font-family: "Circular";
-  src: local("Circular"), url(./fonts/circular-book.ttf) format("truetype");
+  src: local("Circular"),
+    url(./assets/fonts/circular-book.ttf) format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Circular";
-  src: local("Circular"), url(./fonts/circular-medium.ttf) format("truetype");
+  src: local("Circular"),
+    url(./assets/fonts/circular-medium.ttf) format("truetype");
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Circular";
-  src: local("Circular"), url(./fonts/circular-bold.ttf) format("truetype");
+  src: local("Circular"),
+    url(./assets/fonts/circular-bold.ttf) format("truetype");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Circular";
-  src: local("Circular"), url(./fonts/circular-black.ttf) format("truetype");
+  src: local("Circular"),
+    url(./assets/fonts/circular-black.ttf) format("truetype");
   font-weight: 800;
   font-style: normal;
 }
