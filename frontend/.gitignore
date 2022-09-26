@@ -6,6 +6,7 @@ npm-debug.log
 /public
 
 .env
+.env.prod
 .passport.js
 .DS_Store
 
