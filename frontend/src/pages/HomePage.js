@@ -8,6 +8,8 @@ import CountdownPage from "./CountdownPage";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../context/socket";
 import { fetchStorage } from "../utils/LocalStorageService";
+import { QuestionSvcGETRequest } from "../utils/QuestionService";
+import { STATUS_CODE_OK } from "../utils/constants";
 
 const HomePage = () => {
   const socket = useContext(SocketContext);
@@ -17,12 +19,22 @@ const HomePage = () => {
 
   const handleDifficultySelection = (difficulty) => {
     setIsLoading(true);
-    socket.emit("match request", currentUsername, difficulty, socket.id);
+    QuestionSvcGETRequest("/", { difficulty: difficulty }).then((res) => {
+      if (res.status === STATUS_CODE_OK) {
+        socket.emit(
+          "match request",
+          currentUsername,
+          difficulty,
+          res.data.question.question_id,
+          socket.id
+        );
+      }
+    });
   };
 
   useEffect(() => {
-    socket.on("successfulMatch", (difficulty, socketId) => {
-      navigate(`/interview/${difficulty}-${socketId}`);
+    socket.on("successfulMatch", (difficulty, question_id, socketId) => {
+      navigate(`/interview/${difficulty}-${socketId}-${question_id}`);
     });
   }, [socket]);
 
