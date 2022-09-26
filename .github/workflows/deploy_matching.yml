@@ -2,8 +2,7 @@ name: Build and Deploy Matching Service to AWS
 
 on:
  pull_request:
-    branches: 
-      - main
+    branches: [ main ]
     types: 
       - closed
     paths:
