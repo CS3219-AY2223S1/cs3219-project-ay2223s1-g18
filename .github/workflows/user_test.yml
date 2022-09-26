@@ -9,7 +9,7 @@ on:
       - ./user-service/**
 
 jobs:
-  build:
+  build :
     defaults:
       run:
         working-directory: ./user-service
