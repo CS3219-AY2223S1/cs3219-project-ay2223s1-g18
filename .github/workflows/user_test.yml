@@ -9,7 +9,7 @@ on:
       - ./user-service/**
 
 jobs:
-  build:
+  test_user:
     defaults:
       run:
         working-directory: ./user-service
@@ -22,33 +22,33 @@ jobs:
         redis-version: [4]
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Start MongoDB
-      uses: supercharge/mongodb-github-action@1.8.0
-      with:
-          mongodb-version: ${{ matrix.mongodb-version }}
-          mongodb-port: 27017
-    
-    - name: Start Redis v${{ matrix.redis-version }}
-      uses: superchargejs/redis-github-action@1.1.0
-      with:
-          redis-version: ${{ matrix.redis-version }}
+      - name: Start MongoDB
+        uses: supercharge/mongodb-git hub-action@1.8.0
+        with:
+            mongodb-version: ${{ matrix.mongodb-version }}
+            mongodb-port: 27017
+      
+      - name: Start Redis v${{ matrix.redis-version }}
+        uses: superchargejs/redis-github-action@1.1.0
+        with:
+            redis-version: ${{ matrix.redis-version }}
 
-    - name: Install Node dependencies
-      run: npm ci
+      - name: Install Node dependencies
+        run: npm ci
 
-    - name: Lint User Service Code
-      run: npm lint -- if present
-      env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      - name: Lint User Service Code
+        run: npm lint -- if present
+        env:
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
-    - name: Test User Service
-      run: npm test -- if present
-      env:
-          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      - name: Test User Service
+        run: npm test -- if present
+        env:
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
