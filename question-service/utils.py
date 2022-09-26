@@ -10,7 +10,7 @@ def update_tracker(file_name, problem_num):
 
 
 # Reset count of problems downloaded to potentially restart the download
-# May be configured to reset our MongoDB data as well
+# May be configured to reset our MongoDB data as well 
 def reset_configuration(file_name):
     update_tracker(file_name, -1)
 
