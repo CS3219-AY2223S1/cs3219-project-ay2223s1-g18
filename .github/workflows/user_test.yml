@@ -9,8 +9,7 @@ on:
       - ./user-service/**
 
 jobs:
-  test_user_service:
-
+  build:
     defaults:
       run:
         working-directory: ./user-service
