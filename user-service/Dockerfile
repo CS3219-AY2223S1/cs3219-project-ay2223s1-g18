@@ -5,9 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Bundle app source
 COPY . .
 
-# Expose Port 8000         
 EXPOSE 8000
 CMD [ "npm", "start" ]
