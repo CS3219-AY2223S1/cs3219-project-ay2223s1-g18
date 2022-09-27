@@ -42,11 +42,11 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      # TODO: Enable once implemented
-      # - name: Lint User Service Code
-      #   run: npm lint -- if present
-      #   env:
-      #       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      TODO: Enable once implemented
+      - name: Lint User Service Code
+        run: npm run lint
+        env:
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
 
       # - name: Test User Service
       #   run: npm test -- if present
