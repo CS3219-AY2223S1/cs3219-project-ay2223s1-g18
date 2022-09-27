@@ -18,7 +18,6 @@ function LoginPage() {
         if (res.data.status && res.data.response) {
           document.cookie = `RefreshToken=${res.data.response.refreshToken}`;
           document.cookie = `AccessToken=${res.data.response.accessToken}`;
-          console.log("document.cookie: ", document.cookie);
 
           saveStorage("currentUsername", username);
           navigate("/home");

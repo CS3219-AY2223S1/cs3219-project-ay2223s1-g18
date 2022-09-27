@@ -2,8 +2,6 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledDp = styled.div`
-  width: 36px;
-  height: 36px;
   background-color: #eef2ff;
   color: #4f46e5;
   font-weight: 500;
@@ -14,6 +12,16 @@ const StyledDp = styled.div`
   user-select: none;
 `;
 
-export default function PlaceholderDp({ initial }) {
-  return <StyledDp>{initial.charAt(0).toUpperCase()}</StyledDp>;
+export default function PlaceholderDp({ initial, size = 36 }) {
+  return (
+    <StyledDp
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        fontSize: `${size / 2.25}px`,
+      }}
+    >
+      {initial.charAt(0).toUpperCase()}
+    </StyledDp>
+  );
 }

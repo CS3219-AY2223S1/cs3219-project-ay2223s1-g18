@@ -72,7 +72,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="dropdown-menu" style={{ marginTop: "16px" }}>
-          <Dropdown.Item eventKey="1">
+          <Dropdown.Item eventKey="1" href="/profile">
             <div className="d-flex align-items-center">
               <PlaceholderDp initial={currentUsername} />
               <div className="d-flex flex-column px-2">
@@ -92,7 +92,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
           <Dropdown.Divider
             style={{ borderTop: "1px solid var(--base-100)" }}
           />
-          <Dropdown.Item eventKey="2">
+          <Dropdown.Item eventKey="2" href="/profile">
             <img src={userIcon} alt="" />
             Profile
           </Dropdown.Item>
@@ -202,5 +202,9 @@ const StyledNav = styled.nav`
     img {
       margin-right: 18px;
     }
+  }
+
+  .dropdown-item:active {
+    background-color: var(--base-300);
   }
 `;
