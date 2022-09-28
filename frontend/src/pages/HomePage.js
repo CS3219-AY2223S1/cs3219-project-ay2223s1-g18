@@ -14,10 +14,17 @@ const HomePage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const currentUsername = fetchStorage("currentUsername");
+  var peerID = "default"; //Video Chat
 
   const handleDifficultySelection = (difficulty) => {
     setIsLoading(true);
-    socket.emit("match request", currentUsername, difficulty, socket.id);
+    socket.emit(
+      "match request",
+      currentUsername,
+      difficulty,
+      socket.id,
+      peerID
+    );
   };
 
   useEffect(() => {

@@ -11,14 +11,9 @@ import MatchingService from "./matching.service.js";
 import { ExpressPeerServer } from "peer";
 import { PeerServer } from "peer";
 
-
-
-
 const port = process.env.SERVICE_PORT || 8001;
 
 const app = express();
-
-
 
 app.use(cors()); // config cors so that front-end can use
 app.use(express.json());
@@ -32,32 +27,41 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 
 // start of Video chat
-const peerApp = express();
-const peerServer = createServer(peerApp);
-var peerPort = 9000;
+// const peerApp = express();
+// const peerServer = createServer(peerApp);
+// var peerPort = 9000;
 
-const expresspeerServer = ExpressPeerServer(peerServer, {
-  debug: true,
-});
-peerApp.use("/peerjs", expresspeerServer);
-peerServer.listen(peerPort);
-// End of video chat
+// const expresspeerServer = ExpressPeerServer(peerServer, {
+//   debug: true,
+// });
+// peerApp.use("/peerjs", expresspeerServer);
+// peerServer.listen(peerPort, () => {
+//   console.log("Peer server listening on port ", peerPort);
+// });
+// // End of video chat
 
-app.get("/", (req, res) => {
-  res.sendFile("/temp_matching_service_file.html", { root: "." });
-});
-
-
-
-
+// app.get("/", (req, res) => {
+//   res.sendFile("/temp_matching_service_file.html", { root: "." });
+// });
 
 // References cache
 var latestDifficulty;
 var lastRoomId;
 
 io.on("connection", (socket) => {
-
   console.log("a user connected with socket id: ", socket.id);
+
+  socket.on("calluser", ({ signalData, name }) => {
+    const meetingRoomId = Array.from(socket.rooms.values())[1];
+
+    io.to(meetingRoomId).emit("calluser", { signal: signalData, name });
+  });
+
+  socket.on("answercall", ({ signal }) => {
+    const meetingRoomId = Array.from(socket.rooms.values())[1];
+
+    io.to(meetingRoomId).emit("callaccepted", { signal: signal });
+  });
 
   //socket.broadcast.emit('new user');          // In future, can add in name of user
 
@@ -87,8 +91,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("match request", (name, difficulty, socketId, peerId) => {
+    console.log("peerId: ", peerId);
     latestDifficulty = difficulty;
-    // Receive this event, check DB for a match
+
     const pendingMatch = MatchingService.getPendingMatches(difficulty).catch(
       (err) => {
         console.log(err);
@@ -107,7 +112,11 @@ io.on("connection", (socket) => {
         io.to(socketId).emit("initiate match"); // Acknowledgement message to the user
         console.log(socket.rooms);
         //console.log(socket.in(meetingRoomId));
-        io.to(meetingRoomId).emit('create room', meetingRoomId);    // Test: if user has join the room - to be Deleted
+        io.to(meetingRoomId).emit("create room", meetingRoomId); // Test: if user has join the room - to be Deleted
+        io.to(meetingRoomId).emit("sendAnnouncement", {
+          msg: `${name} has joined the room.`,
+          type: 1, // 0 – normal msg, 1 – system announcement
+        });
 
         // Create a match request in the DB
         MatchingService.createPendingMatch(name, difficulty, socketId).catch(
@@ -137,10 +146,10 @@ io.on("connection", (socket) => {
           type: 1, // 0 – normal msg, 1 – system announcement
         });
 
-        // call him at his userID number.
-        socket.to(meetingRoomId).emit("video-call-me", peerId);
-        console.log(peerId);
+        // socket.to(meetingRoomId).emit("video-call-me", peerId);
+        socket.to(meetingRoomId).emit("test", meetingRoomId, peerId);
 
+        socket.to(meetingRoomId);
         // Delete the pending request once both users are in the room
         MatchingService.deletePendingMatch(nameOfPendingMatch).catch((err) => {
           console.log(err);
@@ -153,15 +162,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected"); // user leaves all rooms he is in on disconnection
-    //console.log(socket.rooms);
+    console.log("user disconnected");
 
-    // Delete any pending room that the user may have when disconnected
     deleteUserPendingRequest(latestDifficulty, socket.id, lastRoomId);
   });
 
-  // checks the DB for user's created pending request and delete it if it exists
-  // user will leave the room as well
+  // checks the DB for user's created pending request and delete it if it exists. user will leave the room as well
   function deleteUserPendingRequest(difficulty, socketId, meetingRoomId) {
     const userPendingMatch = MatchingService.getPendingMatches(
       difficulty
@@ -183,13 +189,11 @@ io.on("connection", (socket) => {
           });
 
           // User leaves the room
-          console.log(socket.rooms);
           socket.leave(meetingRoomId);
-          console.log(socket.rooms);
           console.log(
             "Timeout case: deleted pending request and left the room"
           );
-          io.to(socketId).emit("match fail"); // Match fail message to the user
+          io.to(socketId).emit("match fail");
         }
         console.log("Pending room not user's case: Other user's pending rooms");
       }
