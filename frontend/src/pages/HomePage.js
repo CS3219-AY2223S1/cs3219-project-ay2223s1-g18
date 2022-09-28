@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
-import { ReactComponent as ArrowSvg } from "../assets/arrow.svg";
+import { ReactComponent as ArrowSvg } from "../assets/icons/arrow.svg";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
