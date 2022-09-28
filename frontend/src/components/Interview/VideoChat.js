@@ -1,95 +1,66 @@
-import React, { useContext, useState, useEffect } from "react";
-import styled, { css } from "styled-components";
-import Peer from "simple-peer";
+import React, { useContext, useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import Peer from "peerjs";
 import { SocketContext } from "../../context/socket";
-import { useRef } from "react";
+import { ReactComponent as MicIcon } from "../../assets/icons/MicIcon.svg";
+import { ReactComponent as MicOffIcon } from "../../assets/icons/MicOffIcon.svg";
+import { ReactComponent as VideocamIcon } from "../../assets/icons/VideocamIcon.svg";
+import { ReactComponent as VideocamOffIcon } from "../../assets/icons/VideocamOffIcon.svg";
 
-const VideoChat = () => {
+const VideoChat = ({ peerType, guestSocketId }) => {
   const socket = useContext(SocketContext);
-  const [stream, setStream] = useState(null);
-  const [receivingCall, setReceivingCall] = useState(false);
-  const [callerSignal, setCallerSignal] = useState();
-  const [callAccepted, setCallAccepted] = useState(false);
-  const [callEnded, setCallEnded] = useState(false);
-
-  const [name, setName] = useState("");
-  const [mute, setMute] = useState(true);
+  const [stream, setStream] = useState();
+  const [mute, setMute] = useState();
   const [stopVideo, setStopVideo] = useState(false);
+  const remoteVideoRef = useRef(null);
+  const currentUserVideoRef = useRef(null);
+  const peerInstance = useRef(null);
 
-  const myVideo = useRef();
-  const userVideo = useRef();
-  const connectionRef = useRef();
-
-  //   var peer = new Peer(undefined, {
-  //     path: "/peerjs",
-  //     host: "localhost",
-  //     port: "9000",
-  //   });
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream);
-        if (myVideo.current) {
-          myVideo.current.srcObject = currentStream;
-        }
-      });
-    socket.on("calluser", ({ name, signal }) => {
-      setReceivingCall(true);
-      setName(name);
-      setCallerSignal(signal);
+    const peer = new Peer();
+
+    peer.on("open", (peerId) => {
+      if (peerType === "0") {
+        socket.emit("host peer id", {
+          guestSocketId: guestSocketId,
+          hostPeerId: peerId,
+        });
+      }
     });
+
+    socket.on("host peer id", ({ hostPeerId }) => {
+      if (peerType === "1") {
+        call(hostPeerId);
+      }
+    });
+
+    peer.on("call", (call) => {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((currentStream) => {
+          setStream(currentStream);
+          currentUserVideoRef.current.srcObject = currentStream;
+          currentUserVideoRef.current.play();
+          call.answer(currentStream);
+          call.on("stream", function (remoteStream) {
+            remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current.play();
+          });
+        });
+    });
+
+    peerInstance.current = peer;
   }, []);
 
-  const callUser = () => {
-    const peer = new Peer({
-      initiator: true,
-      trickle: false,
-      stream: stream,
-    });
-
-    peer.on("signal", (data) => {
-      socket.emit("calluser", {
-        signalData: data,
-        name: name,
-      });
-    });
-
-    peer.on("stream", (stream) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = stream;
-      }
-    });
-
-    socket.on("callaccepted", ({ signal }) => {
-      setCallAccepted(true);
-      peer.signal(signal);
-    });
-
-    connectionRef.current = peer;
-  };
-
-  const answerCall = () => {
-    setCallAccepted(true);
-
-    const peer = new Peer({
-      initiator: false,
-      trickle: false,
-      stream: stream,
-    });
-
-    peer.on("signal", (data) => {
-      socket.emit("answercall", { signal: data });
-    });
-
-    peer.on("stream", (stream) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = stream;
-      }
-    });
-
-    peer.signal(callerSignal);
-    connectionRef.current = peer;
+  const muteUnmute = () => {
+    const enabled = stream.getAudioTracks()[0].enabled;
+    if (enabled) {
+      stream.getAudioTracks()[0].enabled = false;
+      setMute(true);
+    } else {
+      stream.getAudioTracks()[0].enabled = true;
+      setMute(false);
+    }
   };
 
   const playStopVideo = () => {
@@ -103,78 +74,96 @@ const VideoChat = () => {
     }
   };
 
-  const muteUnmute = () => {
-    const enabled = stream.getAudioTracks()[0].enabled;
-    if (enabled) {
-      stream.getAudioTracks()[0].enabled = false;
-      setMute(true);
-    } else {
-      stream.getAudioTracks()[0].enabled = true;
-      setMute(false);
-    }
+  const call = (remotePeerId) => {
+    var getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia;
+
+    getUserMedia({ video: true, audio: true }, (mediaStream) => {
+      setStream(mediaStream);
+      currentUserVideoRef.current.srcObject = mediaStream;
+      currentUserVideoRef.current.play();
+
+      const call = peerInstance.current.call(remotePeerId, mediaStream);
+
+      call.on("stream", (remoteStream) => {
+        remoteVideoRef.current.srcObject = remoteStream;
+        remoteVideoRef.current.play();
+      });
+    });
   };
 
   return (
     <div>
       <div style={{ display: "flex" }}>
-        {/* {stream && ( */}
-        <video
-          playsInline
-          ref={myVideo}
-          muted
-          autoPlay
-          style={{ width: "50%", borderRadius: "50%" }}
-        />
-        {/* )} */}
-        {/* {callAccepted && !callEnded && ( */}
-        <video
-          playsInline
-          ref={userVideo}
-          muted
-          autoPlay
-          style={{ width: "50%", borderRadius: "50%" }}
-        />
-        {/* )} */}
+        <VideoWrapper>
+          <video playsInline ref={currentUserVideoRef} muted autoPlay />
+        </VideoWrapper>
+        <VideoWrapper>
+          <video playsInline ref={remoteVideoRef} autoPlay />
+        </VideoWrapper>
       </div>
 
-      <button onClick={playStopVideo}>
-        {stopVideo ? (
-          <span style={{ color: "#d40303" }}>Play Video</span>
-        ) : (
-          <span>Stop Video</span>
-        )}
-      </button>
-
-      <button onClick={muteUnmute}>
-        {mute ? (
-          <span style={{ color: "#d40303" }}>Unmute</span>
-        ) : (
-          <span>Mute</span>
-        )}
-      </button>
-
-      <button onClick={() => callUser()}>Join</button>
-
-      {receivingCall && !callAccepted && (
-        <button onClick={answerCall}>Accept</button>
-      )}
+      <div
+        style={{
+          display: "flex",
+          position: "relative",
+          bottom: "45px",
+          justifyContent: "center",
+        }}
+      >
+        <ControlButton onClick={muteUnmute}>
+          {mute ? (
+            <MicOffIcon style={{ fill: "#d40303" }} />
+          ) : (
+            <MicIcon style={{ fill: "var(--green)" }} />
+          )}
+        </ControlButton>
+        <ControlButton onClick={playStopVideo}>
+          {stopVideo ? (
+            <VideocamOffIcon style={{ fill: "#d40303" }} />
+          ) : (
+            <VideocamIcon style={{ fill: "var(--green)" }} />
+          )}
+        </ControlButton>
+      </div>
     </div>
   );
 };
 
 export default VideoChat;
 
-const VideoContainer = styled.div`
-  flex-grow: 1;
-  background-color: black;
-  border: 1px solid green;
+const VideoWrapper = styled.div`
+  width: 50%;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  border-radius: 50%;
+
+  > video {
+    height: 100%;
+  }
+`;
+
+const ControlButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0.6rem;
+  width: min-content;
+  cursor: pointer;
+  margin: 0 4px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 0.4rem;
 
-  > video {
-    max-width: 30rem;
-    max-height: 22rem;
-    border: 1px solid red;
+  :hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  svg {
+    height: 20px;
+  }
+  svg path {
+    stroke: white;
   }
 `;

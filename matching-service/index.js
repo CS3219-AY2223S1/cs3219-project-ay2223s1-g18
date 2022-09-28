@@ -49,18 +49,8 @@ var latestDifficulty;
 var lastRoomId;
 
 io.on("connection", (socket) => {
-  console.log("a user connected with socket id: ", socket.id);
-
-  socket.on("calluser", ({ signalData, name }) => {
-    const meetingRoomId = Array.from(socket.rooms.values())[1];
-
-    io.to(meetingRoomId).emit("calluser", { signal: signalData, name });
-  });
-
-  socket.on("answercall", ({ signal }) => {
-    const meetingRoomId = Array.from(socket.rooms.values())[1];
-
-    io.to(meetingRoomId).emit("callaccepted", { signal: signal });
+  socket.on("host peer id", ({ guestSocketId, hostPeerId }) => {
+    io.to(guestSocketId).emit("host peer id", { hostPeerId: hostPeerId });
   });
 
   //socket.broadcast.emit('new user');          // In future, can add in name of user
@@ -90,8 +80,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("match request", (name, difficulty, socketId, peerId) => {
-    console.log("peerId: ", peerId);
+  socket.on("match request", (name, difficulty, socketId) => {
     latestDifficulty = difficulty;
 
     const pendingMatch = MatchingService.getPendingMatches(difficulty).catch(
@@ -109,7 +98,7 @@ io.on("connection", (socket) => {
         const meetingRoomId = "Room: " + socketId; // Create a room with user's Id
         socket.join(meetingRoomId); // User waits in room while waiting for a match
         lastRoomId = meetingRoomId;
-        io.to(socketId).emit("initiate match"); // Acknowledgement message to the user
+        io.to(socketId).emit("initiate match", socketId);
         console.log(socket.rooms);
         //console.log(socket.in(meetingRoomId));
         io.to(meetingRoomId).emit("create room", meetingRoomId); // Test: if user has join the room - to be Deleted
@@ -136,6 +125,8 @@ io.on("connection", (socket) => {
         const nameOfPendingMatch = data[0];
         console.log("Match Found with ", nameOfPendingMatch);
 
+        io.to(socketId).emit("match found", socketId);
+
         const meetingRoomId = "Room: " + data[1]; // New user joins the waiting user in his room
         socket.join(meetingRoomId);
         lastRoomId = meetingRoomId;
@@ -145,9 +136,6 @@ io.on("connection", (socket) => {
           msg: `${name} has joined the room.`,
           type: 1, // 0 – normal msg, 1 – system announcement
         });
-
-        // socket.to(meetingRoomId).emit("video-call-me", peerId);
-        socket.to(meetingRoomId).emit("test", meetingRoomId, peerId);
 
         socket.to(meetingRoomId);
         // Delete the pending request once both users are in the room

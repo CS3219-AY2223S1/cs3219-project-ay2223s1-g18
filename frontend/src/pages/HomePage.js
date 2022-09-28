@@ -13,25 +13,29 @@ const HomePage = () => {
   const socket = useContext(SocketContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [peerType, setPeerType] = useState("");
   const currentUsername = fetchStorage("currentUsername");
-  var peerID = "default"; //Video Chat
 
   const handleDifficultySelection = (difficulty) => {
     setIsLoading(true);
-    socket.emit(
-      "match request",
-      currentUsername,
-      difficulty,
-      socket.id,
-      peerID
-    );
+    socket.emit("match request", currentUsername, difficulty, socket.id);
   };
 
   useEffect(() => {
-    socket.on("successfulMatch", (difficulty, socketId) => {
-      navigate(`/interview/${difficulty}-${socketId}`);
+    socket.on("initiate match", (socketId) => {
+      setPeerType(0);
+    });
+
+    socket.on("match found", (socketId) => {
+      setPeerType(1);
     });
   }, [socket]);
+
+  useEffect(() => {
+    socket.on("successfulMatch", (difficulty, socketId) => {
+      navigate(`/interview/${difficulty}-${peerType}-${socketId}`);
+    });
+  }, [peerType]);
 
   return isLoading ? (
     <CountdownPage />
