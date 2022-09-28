@@ -80,7 +80,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("match request", (name, difficulty, socketId) => {
+  socket.on("match request", (name, difficulty, questionId, socketId) => {
     latestDifficulty = difficulty;
 
     const pendingMatch = MatchingService.getPendingMatches(difficulty).catch(
@@ -90,7 +90,6 @@ io.on("connection", (socket) => {
     );
 
     pendingMatch.then((data) => {
-      console.log(data);
       if (data.length === 0) {
         // No match found, user will create a room as he initiates a match
         console.log("Match requested", name, difficulty, socketId);
@@ -131,7 +130,12 @@ io.on("connection", (socket) => {
         socket.join(meetingRoomId);
         lastRoomId = meetingRoomId;
 
-        io.to(meetingRoomId).emit("successfulMatch", difficulty, socketId);
+        io.to(meetingRoomId).emit(
+          "successfulMatch",
+          difficulty,
+          questionId,
+          socketId
+        );
         io.to(meetingRoomId).emit("sendAnnouncement", {
           msg: `${name} has joined the room.`,
           type: 1, // 0 – normal msg, 1 – system announcement
@@ -143,7 +147,6 @@ io.on("connection", (socket) => {
           console.log(err);
         });
       } else {
-        console.log("User", socketId, "is finding match again");
         io.to(socketId).emit("matching");
       }
     });
@@ -181,7 +184,7 @@ io.on("connection", (socket) => {
           console.log(
             "Timeout case: deleted pending request and left the room"
           );
-          io.to(socketId).emit("match fail");
+          io.to(socketId).emit("match fail"); // Match fail message to the user
         }
         console.log("Pending room not user's case: Other user's pending rooms");
       }

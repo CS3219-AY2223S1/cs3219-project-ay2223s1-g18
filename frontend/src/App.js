@@ -5,6 +5,7 @@ import SignupPage from "./pages/auth/SignupPage";
 import LoginPage from "./pages/auth/LoginPage";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 import CountdownPage from "./pages/CountdownPage";
 import InterviewPage from "./pages/InterviewPage";
 import PublicLayout from "./layout/PublicLayout";
@@ -38,6 +39,7 @@ function App() {
             </Route>
             <Route path="/" element={<ProtectedLayout />}>
               <Route path="/home" element={<HomePage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/loading" element={<CountdownPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>

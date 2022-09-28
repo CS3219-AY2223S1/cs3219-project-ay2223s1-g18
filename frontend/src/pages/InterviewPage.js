@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Chat from "../components/Interview/Chat";
 import CodeEditor from "../components/Interview/CodeEditor";
 import VideoChat from "../components/Interview/VideoChat";
+import Question from "../components/Interview/Question";
 import { useParams } from "react-router-dom";
 
 const InterviewPage = () => {
@@ -12,11 +13,14 @@ const InterviewPage = () => {
   let difficulty = paramArr[0];
   let peerType = paramArr[1];
   let guestSocketId = paramArr[2];
+  let question_id = paramArr[3];
 
   return (
     <StyledWrapper>
       <Row className="w-100">
-        <Col sm={6} lg={4} className="p-3"></Col>
+        <Col sm={6} lg={4}>
+          <Question difficulty={difficulty} question_id={question_id} />
+        </Col>
         <Col sm={6} lg={5}>
           <CodeEditor />
         </Col>

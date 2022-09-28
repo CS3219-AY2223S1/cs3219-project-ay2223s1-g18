@@ -1,0 +1,54 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+
+name: User Service CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+  test_user:
+    defaults:
+      run:
+        working-directory: ./user-service
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        mongodb-version: ['5.0']
+        redis-version: [4]
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+            mongodb-version: ${{ matrix.mongodb-version }}
+            mongodb-port: 27017
+      
+      - name: Start Redis v${{ matrix.redis-version }}
+        uses: superchargejs/redis-github-action@1.1.0
+        with:
+            redis-version: ${{ matrix.redis-version }}
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      # TODO: Enable once implemented
+      # - name: Lint User Service Code
+      #   run: npm lint -- if present
+      #   env:
+      #       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+
+      # - name: Test User Service
+      #   run: npm test -- if present
+      #   env:
+      #       MONGODB_URI: ${{ secrets.MONGODB_URI }}
