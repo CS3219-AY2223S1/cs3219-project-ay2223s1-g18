@@ -1,23 +1,23 @@
 import { startRedisClient } from './setup.js'
 
 export default class RedisInstance {
-    constructor() {
-        this.getRedisClient()
-    }
+  constructor () {
+    this.getRedisClient()
+  }
 
-    async getRedisClient() {
-        this.redisClient = await startRedisClient()
-    }
-    async getObject(key) {
-        return await this.redisClient.GET(key);
-    } 
+  async getRedisClient () {
+    this.redisClient = await startRedisClient()
+  }
 
-    async createObject(key, value) {
-        return await this.redisClient.SET(key, value);
-    } 
+  async getObject (key) {
+    return await this.redisClient.GET(key)
+  }
 
-    async setExpiryOfObject(key, value) {
-        return await this.redisClient.EXPIREAT(key, value);
-    } 
+  async createObject (key, value) {
+    return await this.redisClient.SET(key, value)
+  }
 
+  async setExpiryOfObject (key, value) {
+    return await this.redisClient.EXPIREAT(key, value)
+  }
 }
