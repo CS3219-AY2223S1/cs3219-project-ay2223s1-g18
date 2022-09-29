@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
-import { ReactComponent as ArrowSvg } from "../assets/arrow.svg";
+import { ReactComponent as ArrowSvg } from "../assets/icons/arrow.svg";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,6 +15,7 @@ const HomePage = () => {
   const socket = useContext(SocketContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [peerType, setPeerType] = useState("");
   const currentUsername = fetchStorage("currentUsername");
 
   const handleDifficultySelection = (difficulty) => {
@@ -33,10 +34,22 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    socket.on("successfulMatch", (difficulty, question_id, socketId) => {
-      navigate(`/interview/${difficulty}-${socketId}-${question_id}`);
+    socket.on("initiate match", (socketId) => {
+      setPeerType(0);
+    });
+
+    socket.on("match found", (socketId) => {
+      setPeerType(1);
     });
   }, [socket]);
+
+  useEffect(() => {
+    socket.on("successfulMatch", (difficulty, questionId, socketId) => {
+      navigate(
+        `/interview/${difficulty}-${peerType}-${socketId}-${questionId}`
+      );
+    });
+  }, [peerType]);
 
   return isLoading ? (
     <CountdownPage />

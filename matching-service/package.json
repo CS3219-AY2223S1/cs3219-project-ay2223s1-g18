@@ -13,13 +13,14 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.19"
+    "nodemon": "^2.0.20"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "mongoose": "^6.4.5",
+    "peer": "^0.6.1",
     "sequelize": "^6.21.3",
     "socket.io": "^4.5.1",
     "sqlite3": "^5.0.10",

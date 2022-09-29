@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from "../../context/socket";
 import styled from "styled-components";
-import arrowIcon from "../../assets/arrow-right.svg";
+import arrowIcon from "../../assets/icons/ArrowRightIcon.svg";
 import { fetchStorage } from "../../utils/LocalStorageService";
 
 const Chat = () => {
@@ -108,7 +108,7 @@ var ChatMessage = ({ sender, message, time }) => {
         <p className="sender">{sender}</p>
         <p className="time">{time}</p>
       </div>
-      <p className="message">{message}</p>
+      <p className="message">{message.msg}</p>
     </StyledChatMessage>
   );
 };
@@ -123,7 +123,7 @@ var SubChatMessage = ({ message }) => {
         marginBottom: "4px",
       }}
     >
-      {message}
+      {message.msg}
     </p>
   );
 };
@@ -188,7 +188,7 @@ const StyledAnnouncement = styled.div`
 const StyledChatWrapper = styled.div`
   padding: 8px;
   border-left: 1px solid var(--base-200);
-  height: calc(100vh - 68px);
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -4,10 +4,10 @@ import styled from "styled-components";
 import Button from "./Button";
 import logo from "../assets/Logo.svg";
 import { clearStorage, fetchStorage } from "../utils/LocalStorageService";
-import { ReactComponent as ChevronDownIcon } from "../assets/chevron-down.svg";
-import userIcon from "../assets/user-icon.svg";
-import settingsIcon from "../assets/settings-icon.svg";
-import logoutIcon from "../assets/logout-icon.svg";
+import { ReactComponent as ChevronDownIcon } from "../assets/icons/ChevronDownIcon.svg";
+import UserIcon from "../assets/icons/UserIcon.svg";
+import SettingsIcon from "../assets/icons/SettingsIcon.svg";
+import LogoutIcon from "../assets/icons/LogoutIcon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
 import PlaceholderDp from "./PlaceholderDp";
 import { clearCookies } from "../utils/TokenService";
@@ -93,15 +93,15 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
             style={{ borderTop: "1px solid var(--base-100)" }}
           />
           <Dropdown.Item eventKey="2" href="/profile">
-            <img src={userIcon} alt="" />
+            <img src={UserIcon} alt="" />
             Profile
           </Dropdown.Item>
           <Dropdown.Item eventKey="3" href="/settings">
-            <img src={settingsIcon} alt="" />
+            <img src={SettingsIcon} alt="" />
             Settings
           </Dropdown.Item>
           <Dropdown.Item eventKey="4" onClick={() => handleLogout()}>
-            <img src={logoutIcon} alt="" />
+            <img src={LogoutIcon} alt="" />
             Logout
           </Dropdown.Item>
         </Dropdown.Menu>

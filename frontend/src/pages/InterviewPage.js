@@ -4,13 +4,16 @@ import Col from "react-bootstrap/Col";
 import styled from "styled-components";
 import Chat from "../components/Interview/Chat";
 import CodeEditor from "../components/Interview/CodeEditor";
+import VideoChat from "../components/Interview/VideoChat";
 import Question from "../components/Interview/Question";
 import { useParams } from "react-router-dom";
 
 const InterviewPage = () => {
   let paramArr = useParams().name.split("-");
   let difficulty = paramArr[0];
-  let question_id = paramArr[2];
+  let peerType = paramArr[1];
+  let guestSocketId = paramArr[2];
+  let question_id = paramArr[3];
 
   return (
     <StyledWrapper>
@@ -22,7 +25,17 @@ const InterviewPage = () => {
           <CodeEditor />
         </Col>
         <Col sm={12} lg={3}>
-          <Chat />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              height: "calc(100vh - 68px)",
+            }}
+          >
+            <VideoChat peerType={peerType} guestSocketId={guestSocketId} />
+            <Chat />
+          </div>
         </Col>
       </Row>
     </StyledWrapper>
