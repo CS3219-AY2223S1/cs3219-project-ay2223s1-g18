@@ -32,11 +32,15 @@ export default Navbar;
 var InterviewRoomNav = () => {
   return (
     <StyledNav>
-      <Link to="/home">
+      <a
+        onClick={() => {
+          window.location.href = "/home";
+        }}
+      >
         <Button variant="secondary" size="small">
-          Leave Room
+          End Session
         </Button>
-      </Link>
+      </a>
       <h3 className="m-0">Practice</h3>
       <Button variant="secondary" size="small">
         Next Question
