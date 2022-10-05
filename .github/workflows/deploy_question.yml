@@ -1,15 +1,15 @@
-name: Build and Deploy User Service to GCP
+name: Build and Deploy Question Service to GCP
+
 on:
  push:
     branches: [ main ]
     paths: 
-      - 'user-service/**'
-      - '.github/workflows/deploy_user.yml'
-
+      - 'question-service/**'
+      - '.github/workflows/deploy_question.yml'
 
 
 jobs:
-  deploy_user_gcp:
+  deploy_question_gcp:
     runs-on: ubuntu-latest
     steps:      
 
@@ -19,7 +19,7 @@ jobs:
     - name: Obtain PR commit SHA
       id: pr_commit
       run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-    
+      
     # Build the Docker image
     - name: Build & Publish
       uses: RafikFarhad/push-to-gcr-github-action@v4.1
@@ -27,9 +27,9 @@ jobs:
         gcloud_service_key: ${{ secrets.GCP_CREDENTIALS }}
         registry: gcr.io
         project_id: ${{ secrets.GCP_PROJECT_ID }}
-        image_name: user
+        image_name: question
         image_tag: ${{ steps.pr_commit.outputs.sha_short }}
-        context: ./user-service
+        context: ./question-service
 
     - name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0'
@@ -39,6 +39,6 @@ jobs:
     - name: Deploy latest image
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
-        service: user
-        image: 'gcr.io/${{ secrets.GCP_PROJECT_ID }}/user:${{ steps.pr_commit.outputs.sha_short }}'
+        service: question
+        image: 'gcr.io/${{ secrets.GCP_PROJECT_ID }}/question:${{ steps.pr_commit.outputs.sha_short }}'
         region: ${{ secrets.GCP_SERVICE_REGION }}
