@@ -20,8 +20,7 @@ jobs:
       id: pr_commit
       run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
     
-    # Build the Docker image
-    - name: Build & Publish
+    - name: Build & Publish Docker Image to GCR
       uses: RafikFarhad/push-to-gcr-github-action@v4.1
       with:
         gcloud_service_key: ${{ secrets.GCP_CREDENTIALS }}
@@ -36,7 +35,7 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    - name: Deploy latest image
+    - name: Deploy latest image to Cloud Run
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
         service: user
