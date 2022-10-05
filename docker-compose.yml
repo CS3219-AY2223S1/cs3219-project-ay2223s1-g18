@@ -3,14 +3,12 @@ services:
   redis_user:
     container_name: redis_user
     image: redis:latest
-    ports:
-      - 6379
+
 
   mongodb:
     container_name: mongodb  
     image: mongo:latest
-    ports:
-      - 27017
+
 
   frontend-service:
     container_name: frontend-service
@@ -20,7 +18,7 @@ services:
 
   user-service:
     env_file: # To be deleted
-      - ./user-service/.env
+      - ./user-service/.env.prod
     container_name: user-service
     build: ./user-service
     depends_on:
@@ -30,11 +28,16 @@ services:
 
   matching-service:
     env_file: # To be deleted
-      - ./matching-service/.env
+      - ./matching-service/.env.prod
     container_name: matching-service
     build: ./matching-service
     depends_on:
       - mongodb
 
-  
-
+  question-service:
+    env_file: # To be deleted
+      - ./question-service/.env.prod
+    container_name: question-service
+    build: ./question-service
+    depends_on:
+      - mongodb
