@@ -22,32 +22,12 @@ const Navbar = ({ layout }) => {
       )}
 
       {layout === "public" && <PublicLayoutNav />}
-      {layout === "interviewRoom" && <InterviewRoomNav />}
+      {/* {layout === "interviewRoom" && <InterviewRoomNav />} */}
     </>
   );
 };
 
 export default Navbar;
-
-var InterviewRoomNav = () => {
-  return (
-    <StyledNav>
-      <a
-        onClick={() => {
-          window.location.href = "/home";
-        }}
-      >
-        <Button variant="secondary" size="small">
-          End Session
-        </Button>
-      </a>
-      <h3 className="m-0">Practice</h3>
-      <Button variant="secondary" size="small">
-        Next Question
-      </Button>
-    </StyledNav>
-  );
-};
 
 var ProtectedLayoutNav = ({ currentUsername }) => {
   const navigate = useNavigate();
