@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import Button from "../Button";
 import StarIcon from "../../assets/icons/StarIcon.svg";
+import { SocketContext } from "../../context/socket";
+import { fetchStorage } from "../../utils/LocalStorageService";
 
-const FeedbackForm = () => {
+const FeedbackForm = ({ partnerSocketId, question }) => {
+  console.log("question: ", question);
   const [selectedRating, setSelectedRating] = useState(0);
   const [comments, setComments] = useState("");
+  const socket = useContext(SocketContext);
+  const currentUsername = fetchStorage("currentUsername");
 
   var selectionOptions = [
     "Terrible",
@@ -14,6 +19,36 @@ const FeedbackForm = () => {
     "Clear",
     "Very Clear",
   ];
+
+  useEffect(() => {
+    console.log("OMG IT'S IN THE FORM PARTNER ", partnerSocketId);
+  }, [partnerSocketId]);
+
+  useEffect(() => {
+    socket.on("rating received", (rating, comments, senderName) => {
+      var session = {
+        partnerUsername: senderName,
+        questionId: question._id,
+        questionDifficultyIndex: question.difficulty_index,
+        questionTitle: question.title,
+        answerProvided: "TODO",
+        ratingReceived: rating,
+        commentsReceived: comments,
+      };
+      console.log(`POSTing Session now: `, session);
+    });
+  }, [socket]);
+
+  var onSubmit = () => {
+    socket.emit(
+      "partner rating",
+      selectedRating,
+      comments,
+      partnerSocketId,
+      currentUsername
+    );
+    // window.location.href = "/home";
+  };
 
   return (
     <CardPageWrap>
@@ -27,8 +62,7 @@ const FeedbackForm = () => {
             <div style={{ width: "100%", marginBottom: "48px" }}>
               <h4>Rate your partner</h4>
               <p style={{ color: "var(--base-500)" }}>
-                How correct and clear do you feel your partner’s explanation
-                was?
+                How correct and clear do you feel your partner was?
               </p>
               <div
                 className="d-flex"
@@ -51,17 +85,17 @@ const FeedbackForm = () => {
                 value={comments}
                 onChange={(e) => setComments(e.target.value)}
                 style={{ width: "100%", marginTop: "8px" }}
-                placeholder="Add more specific comments..."
-                rows={5}
+                placeholder="What did your partner do well? What could they improve on?"
+                rows={4}
               />
             </div>
           </div>
 
           <Button
             disabled={!selectedRating}
-            size="big"
-            style={{ marginTop: "80px", width: "60%" }}
-            onClick={() => {}}
+            size="medium"
+            style={{ marginTop: "60px", width: "60%" }}
+            onClick={onSubmit}
           >
             Submit Rating
           </Button>
@@ -133,6 +167,7 @@ const StyledSelectionTile = styled.div`
 const CardPageWrap = styled.div`
   width: 100vw;
   height: 100vh;
+  padding-top: 64px;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;

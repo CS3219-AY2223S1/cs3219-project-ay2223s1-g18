@@ -8,9 +8,6 @@ import MatchingRouter from "./matching.route.js";
 import { createPendingMatch } from "./matching.controller.js";
 import MatchingService from "./matching.service.js";
 
-import { ExpressPeerServer } from "peer";
-import { PeerServer } from "peer";
-
 const port = process.env.SERVICE_PORT || 8001;
 
 const app = express();
@@ -35,12 +32,30 @@ io.on("connection", (socket) => {
     io.to(guestSocketId).emit("host peer id", { hostPeerId: hostPeerId });
   });
 
-  socket.on("end session", (currentUsername) => {
+  socket.on("end session", () => {
     const meetingRoomId = Array.from(socket.rooms.values())[1];
     console.log("receive end session", meetingRoomId);
+    io.to(meetingRoomId).emit("end session for all");
 
-    io.to(meetingRoomId).emit("end session for all", currentUsername);
+    io.in(meetingRoomId)
+      .fetchSockets()
+      .then((socks) => {
+        var sock1 = socks[0].id;
+        var sock2 = socks[1].id;
+
+        io.to(sock2).emit("partner socketId", sock1);
+        io.to(sock1).emit("partner socketId", sock2);
+      });
   });
+
+  socket.on(
+    "partner rating",
+    (rating, comments, receiverSocket, senderName) => {
+      socket
+        .to(receiverSocket)
+        .emit("rating received", rating, comments, senderName);
+    }
+  );
 
   //socket.broadcast.emit('new user');          // In future, can add in name of user
 
@@ -125,8 +140,9 @@ io.on("connection", (socket) => {
           questionId,
           socketId
         );
+
         io.to(meetingRoomId).emit("sendAnnouncement", {
-          msg: `${name} has joined the room.`,
+          msg: `${name} and ${nameOfPendingMatch} have joined the room.`,
           type: 1, // 0 – normal msg, 1 – system announcement
         });
 

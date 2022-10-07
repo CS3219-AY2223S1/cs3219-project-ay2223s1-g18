@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { STATUS_CODE_OK } from "../../utils/constants";
 import { QuestionSvcGETRequest } from "../../utils/QuestionService";
 
-const Question = ({ difficulty, question_id }) => {
-  const [question, setQuestion] = useState();
-  useEffect(() => {
-    QuestionSvcGETRequest(`/${question_id}`).then((res) => {
-      if (res.status == STATUS_CODE_OK) {
-        setQuestion(res.data.data);
-      }
-    });
-  }, []);
+const Question = ({ difficulty, question }) => {
+  // const [question, setQuestion] = useState();
+  // useEffect(() => {
+  //   QuestionSvcGETRequest(`/${question_id}`).then((res) => {
+  //     if (res.status == STATUS_CODE_OK) {
+  //       setQuestion(res.data.data);
+  //     }
+  //   });
+  // }, []);
 
   return (
     question && (
