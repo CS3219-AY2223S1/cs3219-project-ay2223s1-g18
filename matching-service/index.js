@@ -26,24 +26,6 @@ app.use("/matching", MatchingRouter);
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-// start of Video chat
-// const peerApp = express();
-// const peerServer = createServer(peerApp);
-// var peerPort = 9000;
-
-// const expresspeerServer = ExpressPeerServer(peerServer, {
-//   debug: true,
-// });
-// peerApp.use("/peerjs", expresspeerServer);
-// peerServer.listen(peerPort, () => {
-//   console.log("Peer server listening on port ", peerPort);
-// });
-// // End of video chat
-
-// app.get("/", (req, res) => {
-//   res.sendFile("/temp_matching_service_file.html", { root: "." });
-// });
-
 // References cache
 var latestDifficulty;
 var lastRoomId;
@@ -51,6 +33,13 @@ var lastRoomId;
 io.on("connection", (socket) => {
   socket.on("host peer id", ({ guestSocketId, hostPeerId }) => {
     io.to(guestSocketId).emit("host peer id", { hostPeerId: hostPeerId });
+  });
+
+  socket.on("end session", (currentUsername) => {
+    const meetingRoomId = Array.from(socket.rooms.values())[1];
+    console.log("receive end session", meetingRoomId);
+
+    io.to(meetingRoomId).emit("end session for all", currentUsername);
   });
 
   //socket.broadcast.emit('new user');          // In future, can add in name of user
@@ -155,6 +144,10 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected");
 
+    io.to(lastRoomId).emit("sendAnnouncement", {
+      msg: `Your partner has left the room. You are now alone.`,
+      type: 1, // 0 – normal msg, 1 – system announcement
+    });
     deleteUserPendingRequest(latestDifficulty, socket.id, lastRoomId);
   });
 
