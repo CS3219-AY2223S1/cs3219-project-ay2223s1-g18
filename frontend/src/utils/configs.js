@@ -7,3 +7,5 @@ export const URL_USER_SVC = URI_USER_SVC + PREFIX_USER_SVC;
 export const SOCKET_URL = "http://localhost:8001/";
 
 export const URL_QUESTION_SVC = "http://localhost:8002/api/questions";
+
+export const URL_USER_HISTORY_SVC = "http://localhost:8003/api/user-history";

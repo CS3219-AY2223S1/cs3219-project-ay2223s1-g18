@@ -1,5 +1,5 @@
 import axios from "axios";
-import { URL_QUESTION_SVC } from "../utils/configs";
+import { URL_QUESTION_SVC } from "./configs";
 
 const instance = axios.create({
   baseURL: `${URL_QUESTION_SVC}`,
