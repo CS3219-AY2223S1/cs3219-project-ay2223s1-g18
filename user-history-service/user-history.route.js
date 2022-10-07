@@ -3,11 +3,11 @@ const UserHistory = require("./user-history.controller");
 
 router.get("/", UserHistory.getAllUserHistory);
 router.post("/", UserHistory.addUserHistory);
+router.patch("/", UserHistory.updateUserHistoryById);
+router.delete("/", UserHistory.deleteUserHistoryById);
 
 router.get("/:username", UserHistory.getUserHistoryByName);
 
-router.patch("/:id", UserHistory.updateUserHistoryById);
-router.delete("/:id", UserHistory.deleteUserHistoryById);
 
 
 module.exports = router;
