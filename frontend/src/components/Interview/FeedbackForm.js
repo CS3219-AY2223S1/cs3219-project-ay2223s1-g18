@@ -4,6 +4,8 @@ import Button from "../Button";
 import StarIcon from "../../assets/icons/StarIcon.svg";
 import { SocketContext } from "../../context/socket";
 import { fetchStorage } from "../../utils/LocalStorageService";
+import { addUserHistory } from "../../utils/UserHistoryService";
+import { STATUS_CODE_OK } from "../../utils/constants";
 
 const FeedbackForm = ({ partnerSocketId, question }) => {
   const [selectedRating, setSelectedRating] = useState(0);
@@ -22,16 +24,20 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
   useEffect(() => {
     socket.on("rating received", (rating, comments, senderName) => {
       var session = {
-        partnerUsername: senderName,
-        questionId: question._id,
-        questionDifficultyIndex: question.difficulty_index,
-        questionTitle: question.title,
-        answerProvided: "TODO",
-        ratingReceived: rating,
-        commentsReceived: comments,
+        username: currentUsername,
+        partner_username: senderName,
+        question_id: question.question_id,
+        question_difficulty_index: question.difficulty_index,
+        question_title: question.title,
+        answer_provided: "TODO",
+        rating_received: rating,
+        comments_received: comments,
+        datetime: Date.now(),
       };
-      console.log(`POSTing Session now: `, session);
-      // window.location.href = "/home";
+      addUserHistory("/", session).catch((err) => {
+        // TODO: handle this
+        console.log("err: ", err);
+      });
     });
   }, [socket]);
 
@@ -43,6 +49,7 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
       partnerSocketId,
       currentUsername
     );
+    window.location.href = "/home";
   };
 
   return (
