@@ -1,35 +1,42 @@
 let mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const questionSchema = new Schema({
-    question_id: {
+const userHistorySchema = new Schema({
+    username: {
+        type: String,
+        required: true
+    },
+    partnerUsername: {
+        type: String,
+        required: true
+    },
+    questionId: {
         type: Number,
         required: true,
-        unique: true,
     },
-    title: {
-        type: String,
-        required: true,
-    },
-    difficulty_index: {
+    questionDifficultyIndex: {
         type: Number,
         required: true,
     },
-    difficulty: {
+    questionTitle: {
         type: String,
         required: true,
     },
-    topics: {
+    answerProvided: {
         type: String,
     },
-    content: {
+    ratingReceived: {
+        type: Number,
+    },
+    commentsReceived: {
         type: String,
+    },
+    datetime: {
+        type: Date,
     },
 });
 
-// export default mongoose.model("Questions", questionSchema, "questions");
-
-var Question = (module.exports = mongoose.model("Questions", questionSchema, "questions"));
+var UserHistory = (module.exports = mongoose.model("UserHistory", userHistorySchema, "userhistories"));
 module.exports.get= function(callback, limit) {
-    Question.find(callback).limit(limit)
+    UserHistory.find(callback).limit(limit)
 }

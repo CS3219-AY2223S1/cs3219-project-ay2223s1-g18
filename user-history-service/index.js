@@ -4,8 +4,8 @@ let mongoose = require("mongoose");
 let dotenv = require("dotenv");
 dotenv.config();
 
-const QuestionRouter = require("./question.route");
-const port = 8002;
+const UserHistoryRouter = require("./user-history.route");
+const port = 8003;
 
 const app = express();
 
@@ -28,6 +28,6 @@ mongoose.connection.on("error", (err) => {
   throw new Error("Failed to connect to MongoDB database!");
 });
 
-app.use("/api/questions", QuestionRouter);
+app.use("/api/user-history", UserHistoryRouter);
 
-app.listen(port, () => console.log("Question-Service listening on Port", port));
+app.listen(port, () => console.log("User-History-Service listening on Port", port));
