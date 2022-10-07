@@ -12,6 +12,8 @@ import { useParams } from "react-router-dom";
 import { SocketContext } from "../context/socket";
 import { STATUS_CODE_OK } from "../utils/constants";
 import { QuestionSvcGETRequest } from "../utils/QuestionService";
+import Modal from "react-bootstrap/Modal";
+
 const InterviewPage = () => {
   let paramArr = useParams().name.split("-");
   let difficulty = paramArr[0];
@@ -19,6 +21,10 @@ const InterviewPage = () => {
   let guestSocketId = paramArr[2];
   let question_id = paramArr[3];
   const [question, setQuestion] = useState();
+  const [showEndSessionModal, setShowEndSessionModal] = useState(false);
+
+  const handleCloseEndSessionModal = () => setShowEndSessionModal(false);
+  const handleShowEndSessionModal = () => setShowEndSessionModal(true);
 
   const [sessionEnded, setSessionEnded] = useState(false);
   const [partnerSocketId, setPartnerSocketId] = useState();
@@ -26,11 +32,11 @@ const InterviewPage = () => {
 
   useEffect(() => {
     QuestionSvcGETRequest(`/${question_id}`).then((res) => {
-      if (res.status == STATUS_CODE_OK) {
+      if (res.status === STATUS_CODE_OK) {
         setQuestion(res.data.data);
       }
     });
-  }, []);
+  }, [question_id]);
 
   const handleEndSession = () => {
     socket.emit("end session");
@@ -52,7 +58,11 @@ const InterviewPage = () => {
   ) : (
     <div>
       <StyledNav>
-        <Button variant="secondary" size="small" onClick={handleEndSession}>
+        <Button
+          variant="secondary"
+          size="small"
+          onClick={handleShowEndSessionModal}
+        >
           End Session
         </Button>
         <h3 className="m-0">Practice</h3>
@@ -83,6 +93,24 @@ const InterviewPage = () => {
           </Col>
         </Row>
       </StyledWrapper>
+
+      <Modal show={showEndSessionModal} onHide={handleCloseEndSessionModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>End Interview Session</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          This will terminate the interview session for you and your peer, are
+          you sure you are done with the question?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseEndSessionModal}>
+            Back to room
+          </Button>
+          <Button variant="primary" onClick={handleEndSession}>
+            Yes, end session
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

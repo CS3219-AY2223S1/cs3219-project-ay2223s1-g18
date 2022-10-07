@@ -6,7 +6,6 @@ import { SocketContext } from "../../context/socket";
 import { fetchStorage } from "../../utils/LocalStorageService";
 
 const FeedbackForm = ({ partnerSocketId, question }) => {
-  console.log("question: ", question);
   const [selectedRating, setSelectedRating] = useState(0);
   const [comments, setComments] = useState("");
   const socket = useContext(SocketContext);
@@ -21,10 +20,6 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
   ];
 
   useEffect(() => {
-    console.log("OMG IT'S IN THE FORM PARTNER ", partnerSocketId);
-  }, [partnerSocketId]);
-
-  useEffect(() => {
     socket.on("rating received", (rating, comments, senderName) => {
       var session = {
         partnerUsername: senderName,
@@ -36,6 +31,7 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
         commentsReceived: comments,
       };
       console.log(`POSTing Session now: `, session);
+      // window.location.href = "/home";
     });
   }, [socket]);
 
@@ -47,7 +43,6 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
       partnerSocketId,
       currentUsername
     );
-    // window.location.href = "/home";
   };
 
   return (
