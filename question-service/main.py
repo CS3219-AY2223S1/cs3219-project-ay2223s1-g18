@@ -23,6 +23,7 @@ options.add_argument('--ignore-ssl-errors')
 options.add_argument('--log-level=3')                   # Show only fatal errors
 driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=options)
 
+
 # load environment variables
 load_dotenv()
 database_connector = os.getenv('DB_CLOUD_URI')
