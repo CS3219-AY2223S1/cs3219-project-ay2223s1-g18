@@ -34,17 +34,18 @@ io.on("connection", (socket) => {
 
   socket.on("end session", () => {
     const meetingRoomId = Array.from(socket.rooms.values())[1];
-    console.log("receive end session", meetingRoomId);
     io.to(meetingRoomId).emit("end session for all");
 
     io.in(meetingRoomId)
       .fetchSockets()
       .then((socks) => {
-        var sock1 = socks[0].id;
-        var sock2 = socks[1].id;
+        if (socks.length > 2) {
+          var sock1 = socks[0].id;
+          var sock2 = socks[1].id;
 
-        io.to(sock2).emit("partner socketId", sock1);
-        io.to(sock1).emit("partner socketId", sock2);
+          io.to(sock2).emit("partner socketId", sock1);
+          io.to(sock1).emit("partner socketId", sock2);
+        }
       });
   });
 
