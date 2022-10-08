@@ -15,6 +15,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import CompleteSignup from "./pages/auth/CompleteSignup";
+import PageNotFound from "./pages/PageNotFound";
 import { SocketContext, socket } from "./context/socket";
 
 function App() {
@@ -46,6 +47,8 @@ function App() {
             <Route path="/" element={<InterviewRoomLayout />}>
               <Route path="/interview/:name" element={<InterviewPage />} />
             </Route>
+
+            <Route path="*" element={<PageNotFound />} />
           </Routes>
         </Router>
       </SocketContext.Provider>
