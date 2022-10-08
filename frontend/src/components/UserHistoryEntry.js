@@ -20,7 +20,12 @@ const UserHistoryEntry = ({ session, index }) => {
             />
             <p className="mt-2 mb-3">
               Practice with{" "}
-              <span className="partner-name">{session.partnerUsername}</span>
+              <a
+                className="partner-name"
+                href={"/profile/" + session.partnerUsername}
+              >
+                {session.partnerUsername}
+              </a>
             </p>
             <div className="d-flex">
               {session.datetime && (
@@ -99,6 +104,10 @@ const StyledAccordionHeader = styled.div`
   .partner-name {
     font-weight: 700;
     color: var(--accent) !important;
+    cursor: pointer;
+  }
+  .partner-name:hover {
+    text-decoration: underline !important;
   }
 `;
 

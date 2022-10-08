@@ -10,13 +10,14 @@ import UserHistoryEntry from "../components/UserHistoryEntry";
 import Accordion from "react-bootstrap/Accordion";
 import { getUserHistory } from "../utils/UserHistoryService";
 import { STATUS_CODE_OK } from "../utils/constants";
+import { useParams } from "react-router-dom";
 
 const ProfilePage = () => {
-  const currentUsername = fetchStorage("currentUsername");
+  let username = useParams().username;
   const [userHistory, setUserHistory] = useState();
 
   useEffect(() => {
-    getUserHistory(`/${currentUsername}`).then((res) => {
+    getUserHistory(`/${username}`).then((res) => {
       if (res.status === STATUS_CODE_OK) {
         setUserHistory(res.data.data);
       }
@@ -34,15 +35,30 @@ const ProfilePage = () => {
         <Col xs={12} md={4}>
           <UserInfoContainer>
             <div>
-              <PlaceholderDp initial={currentUsername} size={60} />
-              <h4 style={{ marginTop: "16px" }}>{currentUsername}</h4>
+              <PlaceholderDp initial={username} size={60} />
+              <h4 style={{ marginTop: "16px" }}>{username}</h4>
             </div>
-            <div>
-              <p className="mb-2">⭐️ Level 5</p>
-              <p className="mb-0">📊 23 sessions joined</p>
-            </div>
+            {userHistory && (
+              <div>
+                {/* <p className="mb-2">⭐️ Level 5</p>
+              <p className="mb-0">📊 23 sessions joined</p> */}
+                <StatisticTile
+                  emoji="🔥"
+                  tileColor="#FEF2F2"
+                  label="Sessions completed"
+                  number={userHistory.length}
+                />
+
+                <StatisticTile
+                  emoji="⭐️"
+                  tileColor="#FDFAF1"
+                  label="Average rating"
+                  number={userHistory.length}
+                />
+              </div>
+            )}
             <p>🗓 Member since 25 Aug</p>
-            <a href="settings">
+            {/* <a href="settings">
               <Button
                 variant="secondary"
                 size="small"
@@ -50,18 +66,21 @@ const ProfilePage = () => {
               >
                 Edit Profile
               </Button>
-            </a>
+            </a> */}
           </UserInfoContainer>
         </Col>
         <Col xs={12} md={8}>
-          {/* <SessionHistoryContainer>
-            <div className="emoji">⛺️</div>
-            <h4 className="mb-5">No recent submissions!</h4>
-            <a href="/">
-              <Button size="small">Do some practice</Button>
-            </a>
-          </SessionHistoryContainer> */}
-          {userHistory && <UserHistorySection userHistory={userHistory} />}
+          {userHistory ? (
+            <UserHistorySection userHistory={userHistory} />
+          ) : (
+            <SessionHistoryContainer>
+              <div className="emoji">⛺️</div>
+              <h4 className="mb-5">No recent submissions!</h4>
+              <a href="/">
+                <Button size="small">Do some practice</Button>
+              </a>
+            </SessionHistoryContainer>
+          )}
         </Col>
       </Row>
     </Container>
@@ -82,6 +101,48 @@ const UserHistorySection = ({ userHistory }) => {
     </>
   );
 };
+
+const StatisticTile = ({ emoji, tileColor, number, label }) => {
+  return (
+    <StyledStatisticTile>
+      <div className="emoji-tile" style={{ backgroundColor: tileColor }}>
+        {emoji}
+      </div>
+      <div>
+        <h4>{number}</h4>
+        <p className="label">{label}</p>
+      </div>
+    </StyledStatisticTile>
+  );
+};
+
+const StyledStatisticTile = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .emoji-tile {
+    width: 44px;
+    height: 44px;
+    padding: 12px;
+    border-radius: 8px;
+    margin-right: 16px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h4 {
+    margin: 0;
+  }
+
+  .label {
+    color: var(--base-500);
+    font-size: 14px;
+    margin: 0;
+  }
+`;
 
 const UserInfoContainer = styled.div`
   padding: 24px;

@@ -56,7 +56,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="dropdown-menu" style={{ marginTop: "16px" }}>
-          <Dropdown.Item eventKey="1" href="/profile">
+          <Dropdown.Item eventKey="1" href={"/profile/" + currentUsername}>
             <div className="d-flex align-items-center">
               <PlaceholderDp initial={currentUsername} />
               <div className="d-flex flex-column px-2">

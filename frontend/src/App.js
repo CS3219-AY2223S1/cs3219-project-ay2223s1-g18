@@ -40,7 +40,7 @@ function App() {
             </Route>
             <Route path="/" element={<ProtectedLayout />}>
               <Route path="/home" element={<HomePage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:username" element={<ProfilePage />} />
               <Route path="/loading" element={<CountdownPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
