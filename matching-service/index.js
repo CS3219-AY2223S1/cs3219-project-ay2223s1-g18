@@ -58,6 +58,13 @@ io.on("connection", (socket) => {
     }
   );
 
+  socket.on("new question", (question) => {
+    if (socket.rooms.size > 1) {
+      const meetingRoomId = Array.from(socket.rooms.values())[1];
+      io.to(meetingRoomId).emit("new question", question);
+    }
+  });
+
   //socket.broadcast.emit('new user');          // In future, can add in name of user
 
   socket.on("chat message", (messageObject) => {

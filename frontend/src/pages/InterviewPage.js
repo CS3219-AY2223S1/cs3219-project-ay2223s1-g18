@@ -38,18 +38,29 @@ const InterviewPage = () => {
     });
   }, [question_id]);
 
+  var getNewQuestion = () => {
+    QuestionSvcGETRequest("/", { difficulty: difficulty }).then((res) => {
+      if (res.status === STATUS_CODE_OK) {
+        socket.emit("new question", res.data.question);
+      }
+    });
+  };
+
   const handleEndSession = () => {
     socket.emit("end session");
   };
 
   useEffect(() => {
     socket.on("partner socketId", (partnerSocketId) => {
-      console.log("partnerSocketId: ", partnerSocketId);
       setPartnerSocketId(partnerSocketId);
     });
 
     socket.on("end session for all", () => {
       setSessionEnded(true);
+    });
+
+    socket.on("new question", (question) => {
+      setQuestion(question);
     });
   }, [socket]);
 
@@ -66,7 +77,7 @@ const InterviewPage = () => {
           End Session
         </Button>
         <h3 className="m-0">Practice</h3>
-        <Button variant="secondary" size="small">
+        <Button variant="secondary" size="small" onClick={getNewQuestion}>
           Next Question
         </Button>
       </StyledNav>
