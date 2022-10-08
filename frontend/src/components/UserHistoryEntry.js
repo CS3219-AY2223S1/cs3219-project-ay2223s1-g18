@@ -5,26 +5,12 @@ import DifficultyChip from "./DifficultyChip";
 import CalendarIcon from "../assets/icons/CalendarIcon.svg";
 import QuestionIcon from "../assets/icons/QuestionIcon.svg";
 
-const UserHistoryEntry = () => {
-  var session = {
-    _id: "63407ee213a7b3edb49d4d06",
-    username: "hello",
-    partnerUsername: "byebye",
-    questionId: 1763,
-    questionDifficultyIndex: 1,
-    questionTitle: "Longest Nice Substring",
-    answerProvided: "TODO",
-    ratingReceived: 5,
-    commentsReceived: "testing testing 123",
-    datetime: "2022-10-07T19:32:50.115Z",
-    __v: 0,
-  };
-
+const UserHistoryEntry = ({ session, index }) => {
   var difficultyMapping = ["easy", "medium", "hard"];
 
   return (
     <StyledAccordionItem>
-      <Accordion.Item eventKey="0">
+      <Accordion.Item eventKey={index}>
         <Accordion.Header>
           <StyledAccordionHeader>
             <DifficultyChip
@@ -37,12 +23,14 @@ const UserHistoryEntry = () => {
               <span className="partner-name">{session.partnerUsername}</span>
             </p>
             <div className="d-flex">
-              <div className="d-flex align-items-center">
-                <img src={CalendarIcon} alt="" />
-                <span className="mx-2">
-                  {new Date(session.datetime).toDateString()}
-                </span>
-              </div>
+              {session.datetime && (
+                <div className="d-flex align-items-center">
+                  <img src={CalendarIcon} alt="" />
+                  <span className="mx-2">
+                    {new Date(session.datetime).toDateString()}
+                  </span>
+                </div>
+              )}
               <div className="d-flex align-items-center mx-3">
                 <img src={QuestionIcon} alt="" />
                 <span className="mx-2">{session.questionTitle}</span>

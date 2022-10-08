@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { fetchStorage } from "../utils/LocalStorageService";
 import Container from "react-bootstrap/Container";
@@ -8,9 +8,20 @@ import PlaceholderDp from "../components/PlaceholderDp";
 import Button from "../components/Button";
 import UserHistoryEntry from "../components/UserHistoryEntry";
 import Accordion from "react-bootstrap/Accordion";
+import { getUserHistory } from "../utils/UserHistoryService";
+import { STATUS_CODE_OK } from "../utils/constants";
 
 const ProfilePage = () => {
   const currentUsername = fetchStorage("currentUsername");
+  const [userHistory, setUserHistory] = useState();
+
+  useEffect(() => {
+    getUserHistory(`/${currentUsername}`).then((res) => {
+      if (res.status === STATUS_CODE_OK) {
+        setUserHistory(res.data.data);
+      }
+    });
+  }, []);
 
   return (
     <Container
@@ -50,9 +61,7 @@ const ProfilePage = () => {
               <Button size="small">Do some practice</Button>
             </a>
           </SessionHistoryContainer> */}
-          <Accordion>
-            <UserHistoryEntry />
-          </Accordion>
+          {userHistory && <UserHistorySection userHistory={userHistory} />}
         </Col>
       </Row>
     </Container>
@@ -60,6 +69,19 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+const UserHistorySection = ({ userHistory }) => {
+  return (
+    <>
+      <h3>Past Sessions</h3>
+      <Accordion style={{ display: "grid", gap: "12px", marginTop: "20px" }}>
+        {userHistory.map((session, index) => (
+          <UserHistoryEntry session={session} key={session._id} index={index} />
+        ))}
+      </Accordion>
+    </>
+  );
+};
 
 const UserInfoContainer = styled.div`
   padding: 24px;
