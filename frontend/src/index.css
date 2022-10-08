@@ -115,3 +115,8 @@ textarea::placeholder {
   color: var(--base-400);
   font-family: "Circular";
 }
+
+hr {
+  border: 1px solid var(--base-100) !important;
+  opacity: 1 !important;
+}

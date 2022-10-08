@@ -6,6 +6,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import PlaceholderDp from "../components/PlaceholderDp";
 import Button from "../components/Button";
+import UserHistoryEntry from "../components/UserHistoryEntry";
+import Accordion from "react-bootstrap/Accordion";
 
 const ProfilePage = () => {
   const currentUsername = fetchStorage("currentUsername");
@@ -41,13 +43,16 @@ const ProfilePage = () => {
           </UserInfoContainer>
         </Col>
         <Col xs={12} md={8}>
-          <SubmissionHistoryContainer>
+          {/* <SessionHistoryContainer>
             <div className="emoji">⛺️</div>
             <h4 className="mb-5">No recent submissions!</h4>
             <a href="/">
               <Button size="small">Do some practice</Button>
             </a>
-          </SubmissionHistoryContainer>
+          </SessionHistoryContainer> */}
+          <Accordion>
+            <UserHistoryEntry />
+          </Accordion>
         </Col>
       </Row>
     </Container>
@@ -70,7 +75,7 @@ const UserInfoContainer = styled.div`
   }
 `;
 
-const SubmissionHistoryContainer = styled.div`
+const SessionHistoryContainer = styled.div`
   padding: 12px 0;
   border-radius: 16px;
   border: 1px solid var(--base-100);
