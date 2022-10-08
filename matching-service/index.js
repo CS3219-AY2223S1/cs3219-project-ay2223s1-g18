@@ -39,7 +39,7 @@ io.on("connection", (socket) => {
     io.in(meetingRoomId)
       .fetchSockets()
       .then((socks) => {
-        if (socks.length > 2) {
+        if (socks.length === 2) {
           var sock1 = socks[0].id;
           var sock2 = socks[1].id;
 

@@ -76,7 +76,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
           <Dropdown.Divider
             style={{ borderTop: "1px solid var(--base-100)" }}
           />
-          <Dropdown.Item eventKey="2" href="/profile">
+          <Dropdown.Item eventKey="2" href={"/profile/" + currentUsername}>
             <img src={UserIcon} alt="" />
             Profile
           </Dropdown.Item>

@@ -54,10 +54,12 @@ const UserHistoryEntry = ({ session, index }) => {
               <p className="label">Rating Received:</p>
               <p className="bold">{session.ratingReceived}</p>
             </div>
-            <div>
-              <p className="label">Comments Received:</p>
-              <p>{session.commentsReceived}</p>
-            </div>
+            {session.commentsReceived && (
+              <div>
+                <p className="label">Comments Received:</p>
+                <p>{session.commentsReceived}</p>
+              </div>
+            )}
           </StyledAccordionBody>
         </Accordion.Body>
       </Accordion.Item>
