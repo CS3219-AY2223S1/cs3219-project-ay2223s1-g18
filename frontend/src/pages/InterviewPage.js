@@ -15,7 +15,7 @@ import { QuestionSvcGETRequest } from "../utils/QuestionService";
 import Modal from "react-bootstrap/Modal";
 
 const InterviewPage = () => {
-  let paramArr = useParams().name.split("-");
+  let paramArr = useParams().name.split("&");
   let difficulty = paramArr[0];
   let peerType = paramArr[1];
   let guestSocketId = paramArr[2];

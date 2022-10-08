@@ -5,7 +5,6 @@ import StarIcon from "../../assets/icons/StarIcon.svg";
 import { SocketContext } from "../../context/socket";
 import { fetchStorage } from "../../utils/LocalStorageService";
 import { addUserHistory } from "../../utils/UserHistoryService";
-import { STATUS_CODE_OK } from "../../utils/constants";
 
 const FeedbackForm = ({ partnerSocketId, question }) => {
   const [selectedRating, setSelectedRating] = useState(0);
