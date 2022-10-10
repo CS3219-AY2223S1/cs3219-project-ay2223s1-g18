@@ -6,15 +6,15 @@ on:
   pull_request:
     branches: [ main ]
     paths: 
-      - 'matching-service/**'
-      - '.github/workflows/deploy_matching.yml'
+      - 'question-service/**'
+      - '.github/workflows/deploy_question.yml'
 
 
 jobs:
   test_user:
     defaults:
       run:
-        working-directory: ./matching-service
+        working-directory: ./question-service
 
     runs-on: ubuntu-latest
     strategy:

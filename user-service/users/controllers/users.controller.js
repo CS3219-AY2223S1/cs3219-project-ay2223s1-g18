@@ -127,6 +127,9 @@ export class UserController {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message =
               'Username and/or Password are missing!'
+          } else if (errorObject.name === 'BadUsernameError' || errorObject.name === 'BadPasswordError') {
+            errorResponse.statusCode = HttpResponse.UNAUTHORIZED
+            errorResponse.response.message = 'Invalid Credentials provided!'
           }
 
           res.status(errorResponse.statusCode).json(errorResponse.response)
