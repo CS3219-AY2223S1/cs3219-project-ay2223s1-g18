@@ -45,3 +45,13 @@ services:
       - 8002:8002
     depends_on:
       - mongodb
+
+  user-history-service:
+    env_file: # To be deleted
+      - ./user-history-service/.env.prod
+    container_name: user-history-service
+    build: ./user-history-service
+    ports:
+      - 8003:8003
+    depends_on:
+      - mongodb
