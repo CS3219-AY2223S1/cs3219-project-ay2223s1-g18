@@ -5,7 +5,9 @@ name: User Service CI
 on:
   pull_request:
     branches: [ main ]
-    paths: 'frontend/**'
+    paths: 
+      - 'frontend/**'
+      - '.github/workflows/deploy_frontend.yml'
 
 
 jobs:

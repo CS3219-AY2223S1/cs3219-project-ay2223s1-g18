@@ -5,8 +5,9 @@ name: User Service CI
 on:
   pull_request:
     branches: [ main ]
-    paths: 'user-service/**'
-
+    paths: 
+      - 'user-service/**'
+      - '.github/workflows/deploy_user.yml'
 
 jobs:
   test_user:
