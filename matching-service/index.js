@@ -8,9 +8,6 @@ import MatchingRouter from "./matching.route.js";
 import { createPendingMatch } from "./matching.controller.js";
 import MatchingService from "./matching.service.js";
 
-import { ExpressPeerServer } from "peer";
-import { PeerServer } from "peer";
-
 const port = process.env.SERVICE_PORT || 8001;
 
 const app = express();
@@ -26,24 +23,6 @@ app.use("/matching", MatchingRouter);
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-// start of Video chat
-// const peerApp = express();
-// const peerServer = createServer(peerApp);
-// var peerPort = 9000;
-
-// const expresspeerServer = ExpressPeerServer(peerServer, {
-//   debug: true,
-// });
-// peerApp.use("/peerjs", expresspeerServer);
-// peerServer.listen(peerPort, () => {
-//   console.log("Peer server listening on port ", peerPort);
-// });
-// // End of video chat
-
-// app.get("/", (req, res) => {
-//   res.sendFile("/temp_matching_service_file.html", { root: "." });
-// });
-
 // References cache
 var latestDifficulty;
 var lastRoomId;
@@ -51,6 +30,39 @@ var lastRoomId;
 io.on("connection", (socket) => {
   socket.on("host peer id", ({ guestSocketId, hostPeerId }) => {
     io.to(guestSocketId).emit("host peer id", { hostPeerId: hostPeerId });
+  });
+
+  socket.on("end session", () => {
+    const meetingRoomId = Array.from(socket.rooms.values())[1];
+    io.to(meetingRoomId).emit("end session for all");
+
+    io.in(meetingRoomId)
+      .fetchSockets()
+      .then((socks) => {
+        if (socks.length === 2) {
+          var sock1 = socks[0].id;
+          var sock2 = socks[1].id;
+
+          io.to(sock2).emit("partner socketId", sock1);
+          io.to(sock1).emit("partner socketId", sock2);
+        }
+      });
+  });
+
+  socket.on(
+    "partner rating",
+    (rating, comments, receiverSocket, senderName) => {
+      socket
+        .to(receiverSocket)
+        .emit("rating received", rating, comments, senderName);
+    }
+  );
+
+  socket.on("new question", (question) => {
+    if (socket.rooms.size > 1) {
+      const meetingRoomId = Array.from(socket.rooms.values())[1];
+      io.to(meetingRoomId).emit("new question", question);
+    }
   });
 
   //socket.broadcast.emit('new user');          // In future, can add in name of user
@@ -136,8 +148,9 @@ io.on("connection", (socket) => {
           questionId,
           socketId
         );
+
         io.to(meetingRoomId).emit("sendAnnouncement", {
-          msg: `${name} has joined the room.`,
+          msg: `${name} and ${nameOfPendingMatch} have joined the room.`,
           type: 1, // 0 – normal msg, 1 – system announcement
         });
 
@@ -155,6 +168,10 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected");
 
+    io.to(lastRoomId).emit("sendAnnouncement", {
+      msg: `Your partner has left the room. You are now alone.`,
+      type: 1, // 0 – normal msg, 1 – system announcement
+    });
     deleteUserPendingRequest(latestDifficulty, socket.id, lastRoomId);
   });
 

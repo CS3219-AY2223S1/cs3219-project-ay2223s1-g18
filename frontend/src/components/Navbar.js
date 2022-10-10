@@ -22,28 +22,12 @@ const Navbar = ({ layout }) => {
       )}
 
       {layout === "public" && <PublicLayoutNav />}
-      {layout === "interviewRoom" && <InterviewRoomNav />}
+      {/* {layout === "interviewRoom" && <InterviewRoomNav />} */}
     </>
   );
 };
 
 export default Navbar;
-
-var InterviewRoomNav = () => {
-  return (
-    <StyledNav>
-      <Link to="/home">
-        <Button variant="secondary" size="small">
-          Leave Room
-        </Button>
-      </Link>
-      <h3 className="m-0">Practice</h3>
-      <Button variant="secondary" size="small">
-        Next Question
-      </Button>
-    </StyledNav>
-  );
-};
 
 var ProtectedLayoutNav = ({ currentUsername }) => {
   const navigate = useNavigate();
@@ -72,7 +56,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="dropdown-menu" style={{ marginTop: "16px" }}>
-          <Dropdown.Item eventKey="1" href="/profile">
+          <Dropdown.Item eventKey="1" href={"/profile/" + currentUsername}>
             <div className="d-flex align-items-center">
               <PlaceholderDp initial={currentUsername} />
               <div className="d-flex flex-column px-2">
@@ -92,7 +76,7 @@ var ProtectedLayoutNav = ({ currentUsername }) => {
           <Dropdown.Divider
             style={{ borderTop: "1px solid var(--base-100)" }}
           />
-          <Dropdown.Item eventKey="2" href="/profile">
+          <Dropdown.Item eventKey="2" href={"/profile/" + currentUsername}>
             <img src={UserIcon} alt="" />
             Profile
           </Dropdown.Item>
