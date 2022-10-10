@@ -98,7 +98,7 @@ const InterviewPage = () => {
                 height: "calc(100vh - 68px)",
               }}
             >
-              {/* <VideoChat peerType={peerType} guestSocketId={guestSocketId} /> */}
+              <VideoChat peerType={peerType} guestSocketId={guestSocketId} />
               <Chat />
             </div>
           </Col>
