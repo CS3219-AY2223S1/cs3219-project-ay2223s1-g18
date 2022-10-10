@@ -1,17 +1,13 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-
-name: User Service CI
+name: Matching Service CI
 
 on:
   pull_request:
     branches: [ main ]
     paths: 
       - 'matching-service/**'
-      - '.github/workflows/deploy_matching.yml'
-
 
 jobs:
-  test_user:
+  test_matching:
     defaults:
       run:
         working-directory: ./matching-service
