@@ -1,12 +1,11 @@
 name: Build and Deploy User Service to GCP
+
 on:
  push:
     branches: [ main ]
     paths: 
       - 'user-service/**'
       - '.github/workflows/deploy_user.yml'
-
-
 
 jobs:
   deploy_user_gcp:

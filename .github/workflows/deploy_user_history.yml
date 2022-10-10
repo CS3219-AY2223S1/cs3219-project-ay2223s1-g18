@@ -7,7 +7,6 @@ on:
       - 'user-history-service/**'
       - '.github/workflows/deploy_user_history.yml'
 
-
 jobs:
   deploy_user_gcp:
     runs-on: ubuntu-latest

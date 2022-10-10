@@ -7,7 +7,6 @@ on:
       - 'question-service/**'
       - '.github/workflows/deploy_question.yml'
 
-
 jobs:
   deploy_question_gcp:
     runs-on: ubuntu-latest

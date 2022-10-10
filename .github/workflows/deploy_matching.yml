@@ -7,7 +7,6 @@ on:
       - 'matching-service/**'
       - '.github/workflows/deploy_matching.yml'
 
-
 jobs:
   deploy_matching_gcp:
     runs-on: ubuntu-latest

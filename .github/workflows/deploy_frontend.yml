@@ -7,7 +7,6 @@ on:
       - 'frontend/**'
       - '.github/workflows/deploy_frontend.yml'
 
-
 jobs:
   deploy_frontend_gcp:
     runs-on: ubuntu-latest
