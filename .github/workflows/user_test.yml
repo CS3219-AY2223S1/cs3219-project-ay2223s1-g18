@@ -5,7 +5,6 @@ on:
     branches: [ main ]
     paths: 
       - 'user-service/**'
-      - '.github/workflows/deploy_user.yml'
 
 jobs:
   test_user:

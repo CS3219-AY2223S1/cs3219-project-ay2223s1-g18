@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy_user_history.yml'
 
 jobs:
-  deploy_user_gcp:
+  deploy_user_history_gcp:
     runs-on: ubuntu-latest
     steps:      
 
@@ -25,7 +25,7 @@ jobs:
         gcloud_service_key: ${{ secrets.GCP_CREDENTIALS }}
         registry: gcr.io
         project_id: ${{ secrets.GCP_PROJECT_ID }}
-        image_name: user
+        image_name: user-history
         image_tag: ${{ steps.pr_commit.outputs.sha_short }}
         context: ./user-history-service
 
@@ -37,6 +37,6 @@ jobs:
     - name: Deploy latest image to Cloud Run
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
-        service: user
+        service: user-history
         image: 'gcr.io/${{ secrets.GCP_PROJECT_ID }}/user-history:${{ steps.pr_commit.outputs.sha_short }}'
         region: ${{ secrets.GCP_SERVICE_REGION }}
