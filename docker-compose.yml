@@ -14,6 +14,14 @@ services:
     ports:
       - 3000:3000
 
+  gateway-service:
+    env_file: # To be deleted
+      - ./user-service/.env.prod
+    container_name: gateway-service
+    build: ./user-service
+    ports:
+      - 80:80
+
   user-service:
     env_file: # To be deleted
       - ./user-service/.env.prod
