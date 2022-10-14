@@ -168,8 +168,15 @@ const StyledDifficultyCard = styled.div`
   padding: 48px;
   cursor: pointer;
   border-radius: 20px;
-
+  box-shadow: none;
   margin: 16px 0;
+  transition: 300ms ease-out;
+
+  :hover {
+    box-shadow: 0px 4px 7px rgba(0, 0, 0, 0.05),
+      0px 12px 40px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+  }
 
   svg path {
     ${({ difficulty }) =>
