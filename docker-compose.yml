@@ -16,11 +16,16 @@ services:
 
   gateway-service:
     env_file: # To be deleted
-      - ./user-service/.env.prod
+      - ./gateway-service/.env.prod
     container_name: gateway-service
-    build: ./user-service
+    build: ./gateway-service
     ports:
       - 80:80
+    depends_on:
+      - user-service
+      - matching-service
+      - question-service
+      - user-history-service
 
   user-service:
     env_file: # To be deleted
