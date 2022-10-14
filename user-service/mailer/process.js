@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 
 export async function sendValidationEmailRequest (enclosedDetails, message, token, isSignup = false) {
-  const clientUrl = 'http://localhost:3000'// to be changed later
+  const clientUrl = process.env.FRONTEND_URI || 'http://localhost:3000'
 
   const apiType = isSignup ? 'completeSignup' : 'passwordReset'
   const emailSubject = isSignup ? 'Welcome to PeerPrep!' : 'Password Reset Request'

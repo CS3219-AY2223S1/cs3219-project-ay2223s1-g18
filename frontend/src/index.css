@@ -58,6 +58,7 @@ code {
   --base-50: #f9fafb;
 
   --accent: #4f46e5;
+  --accent-a10: rgba(79, 70, 229, 0.1);
 
   --red: #dc2626;
   --green: #16a34a;
@@ -113,4 +114,9 @@ input::placeholder,
 textarea::placeholder {
   color: var(--base-400);
   font-family: "Circular";
+}
+
+hr {
+  border: 1px solid var(--base-100) !important;
+  opacity: 1 !important;
 }

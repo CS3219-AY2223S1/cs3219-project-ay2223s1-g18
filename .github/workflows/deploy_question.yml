@@ -1,15 +1,15 @@
-name: Build and Deploy Frontend to GCP
+name: Build and Deploy Question Service to GCP
 
 on:
  push:
     branches: [ main ]
     paths: 
-      - 'frontend/**'
-      - '.github/workflows/deploy_frontend.yml'
+      - 'question-service/**'
+      - '.github/workflows/deploy_question.yml'
 
 
 jobs:
-  deploy_frontend_gcp:
+  deploy_question_gcp:
     runs-on: ubuntu-latest
     steps:      
 
@@ -26,9 +26,9 @@ jobs:
         gcloud_service_key: ${{ secrets.GCP_CREDENTIALS }}
         registry: gcr.io
         project_id: ${{ secrets.GCP_PROJECT_ID }}
-        image_name: frontend
+        image_name: question
         image_tag: ${{ steps.pr_commit.outputs.sha_short }}
-        context: ./frontend
+        context: ./question-service
 
     - name: 'Authenticate to Google Cloud'
       uses: 'google-github-actions/auth@v0'
@@ -38,6 +38,6 @@ jobs:
     - name: Deploy latest image to Cloud Run
       uses: 'google-github-actions/deploy-cloudrun@v0'
       with:
-        service: frontend
-        image: 'gcr.io/${{ secrets.GCP_PROJECT_ID }}/frontend:${{ steps.pr_commit.outputs.sha_short }}'
+        service: question
+        image: 'gcr.io/${{ secrets.GCP_PROJECT_ID }}/question:${{ steps.pr_commit.outputs.sha_short }}'
         region: ${{ secrets.GCP_SERVICE_REGION }}

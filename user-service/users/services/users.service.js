@@ -7,6 +7,8 @@ import { sendValidationEmailRequest } from '../../mailer/process.js'
 import { RESET_PASSWORD_MESSAGE, SIGNUP_MESSAGE } from '../../mailer/message.js'
 import { JwtSecrets } from '../../constants/jwtSecrets.js'
 
+const HASH_SALT_ROUNDS = 11
+
 export default class UserService {
   static async createUserVerificationRequest (email, username, password) {
     if (!email || !username || !password) { throw new Error({ name: 'ValidationError' }) }
@@ -85,7 +87,7 @@ export default class UserService {
 }
 
 async function hashPassword (password) {
-  return bcrypt.hash(password, parseInt(process.env.HASH_SALT_ROUNDS))
+  return bcrypt.hash(password, parseInt(HASH_SALT_ROUNDS))
 };
 
 async function verifyHashPassword (enteredPassword, storedHashPassword) {

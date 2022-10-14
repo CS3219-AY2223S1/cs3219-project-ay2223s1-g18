@@ -46,7 +46,7 @@ const HomePage = () => {
   useEffect(() => {
     socket.on("successfulMatch", (difficulty, questionId, socketId) => {
       navigate(
-        `/interview/${difficulty}-${peerType}-${socketId}-${questionId}`
+        `/interview/${difficulty}&${peerType}&${socketId}&${questionId}`
       );
     });
   }, [peerType]);

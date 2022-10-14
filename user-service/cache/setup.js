@@ -2,7 +2,7 @@ import redis from 'redis'
 
 export async function startRedisClient () {
   const client = redis.createClient({
-    port: process.env.USER_REDIS_PORT
+    url: process.env.REDIS_URI
   })
 
   client.on('connect', () => {
