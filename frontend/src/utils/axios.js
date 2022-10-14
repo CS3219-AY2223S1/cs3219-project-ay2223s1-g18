@@ -47,9 +47,10 @@ instance.interceptors.response.use(
         })
         .catch((err) => {
           if (err.response.status === 401) {
-            clearCookies();
-            clearStorage("currentUsername");
-            window.location.reload();
+            console.log("UNAUTHORISED!", err);
+            // clearCookies();
+            // clearStorage("currentUsername");
+            // window.location.reload();
           }
         });
     }
