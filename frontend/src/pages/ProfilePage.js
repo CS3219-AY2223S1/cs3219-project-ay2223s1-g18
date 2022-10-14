@@ -8,22 +8,47 @@ import UserHistoryEntry from "../components/UserHistoryEntry";
 import { getUserHistory } from "../utils/UserHistoryService";
 import { STATUS_CODE_OK } from "../utils/constants";
 import { useParams } from "react-router-dom";
+import { GETRequest } from "../utils/axios";
+import { Spinner } from "react-bootstrap";
 
 const ProfilePage = () => {
   let currentUsername = fetchStorage("currentUsername");
   let username = useParams().username;
+  const [loading, setLoading] = useState(false);
   const [peerPoints, setPeerPoints] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [userHistory, setUserHistory] = useState();
+  const [nextMilestone, setNextMilestone] = useState(0);
 
   useEffect(() => {
-    getUserHistory(`/${username}`).then((res) => {
-      if (res.status === STATUS_CODE_OK) {
-        setUserHistory(res.data.data.reverse());
-        getAverageRating(res.data.data);
-      }
-    });
+    setLoading(true);
+    GETRequest(`/accounts/${username}`)
+      .then((res) => {
+        if (res.status === STATUS_CODE_OK) {
+          getUserHistory(`/${username}`).then((res) => {
+            if (res.status === STATUS_CODE_OK) {
+              setUserHistory(res.data.data.reverse());
+              getAverageRating(res.data.data);
+              calculateNextMilestone(res.data.data.length);
+              setLoading(false);
+            }
+          });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        // console.log("err: ", err);
+        window.location.href = "/404";
+      });
   }, []);
+
+  var calculateNextMilestone = (numSessionsDone) => {
+    var nextMilestone = 1;
+    if (numSessionsDone > 0) {
+      nextMilestone = Math.ceil((numSessionsDone + 1) / 5) * 5;
+    }
+    setNextMilestone(nextMilestone);
+  };
 
   var getAverageRating = (historyArr) => {
     var sum = 0;
@@ -41,72 +66,79 @@ const ProfilePage = () => {
       style={{
         maxWidth: "1200px",
         marginTop: "40px",
+        marginBottom: "40px",
       }}
     >
-      <Row>
-        <Col xs={12} md={4}>
-          {userHistory && (
-            <UserInfoContainer>
-              <div>
-                <PlaceholderDp initial={username} size={60} />
-                <h4 style={{ marginTop: "16px" }}>{username}</h4>
-              </div>
-
-              <div>
-                <StatisticTile
-                  emoji="💚"
-                  tileColor="#E1F5E1"
-                  label="PeerPoints"
-                  number={peerPoints}
-                />
-                <StatisticTile
-                  emoji="🔥"
-                  tileColor="#FEF2F2"
-                  label="Sessions completed"
-                  number={userHistory.length}
-                />
-                <StatisticTile
-                  emoji="⭐️"
-                  tileColor="#FDFAF1"
-                  label="Average rating"
-                  number={!averageRating ? 0 : averageRating}
-                />
-              </div>
-              {currentUsername === username && <hr className="m-0" />}
-              {currentUsername === username && (
-                <div style={{ display: "grid", gap: "12px" }}>
-                  <div className="d-flex justify-content-between">
-                    <b>10 Sessions Milestone</b>
-                    <p className="m-0">{userHistory.length}/10</p>
-                  </div>
-                  <ProgressBar
-                    variant="warning"
-                    now={(userHistory.length / 10) * 100}
-                  />
-                  <p style={{ color: "var(base-500)", fontSize: "14px" }}>
-                    Complete 10 interview sessions
-                  </p>
+      {loading ? (
+        <Spinner animation="grow" variant="secondary" size="xl" />
+      ) : (
+        <Row>
+          <Col xs={12} md={4}>
+            {userHistory && (
+              <UserInfoContainer>
+                <div>
+                  <PlaceholderDp initial={username} size={60} />
+                  <h4 style={{ marginTop: "16px" }}>{username}</h4>
                 </div>
-              )}
-            </UserInfoContainer>
-          )}
-        </Col>
-        <Col xs={12} md={8}>
-          {userHistory && userHistory.length > 0 ? (
-            <UserHistorySection userHistory={userHistory} />
-          ) : (
-            <SessionHistoryContainer>
-              <div className="emoji">⛺️</div>
-              <h4 className="mb-5">No recent sessions!</h4>
-              {currentUsername === username && (
-                <a href="/">
-                  <Button size="small">Do some practice</Button>
-                </a>
-              )}
-            </SessionHistoryContainer>
-          )}
-        </Col>
-      </Row>
+
+                <div>
+                  <StatisticTile
+                    emoji="💚"
+                    tileColor="#E1F5E1"
+                    label="PeerPoints"
+                    number={peerPoints}
+                  />
+                  <StatisticTile
+                    emoji="🔥"
+                    tileColor="#FEF2F2"
+                    label="Sessions completed"
+                    number={userHistory.length}
+                  />
+                  <StatisticTile
+                    emoji="⭐️"
+                    tileColor="#FDFAF1"
+                    label="Average rating"
+                    number={!averageRating ? 0 : averageRating}
+                  />
+                </div>
+                {currentUsername === username && <hr className="m-0" />}
+                {currentUsername === username && (
+                  <div style={{ display: "grid", gap: "12px" }}>
+                    <div className="d-flex justify-content-between">
+                      <b>{nextMilestone} Sessions Milestone</b>
+                      <p className="m-0">
+                        {userHistory.length}/{nextMilestone}
+                      </p>
+                    </div>
+                    <ProgressBar
+                      variant="warning"
+                      now={(userHistory.length / nextMilestone) * 100}
+                    />
+                    <p style={{ color: "var(base-500)", fontSize: "14px" }}>
+                      Complete {nextMilestone} interview sessions
+                    </p>
+                  </div>
+                )}
+              </UserInfoContainer>
+            )}
+          </Col>
+          <Col xs={12} md={8}>
+            {userHistory && userHistory.length > 0 ? (
+              <UserHistorySection userHistory={userHistory} />
+            ) : (
+              <SessionHistoryContainer>
+                <div className="emoji">⛺️</div>
+                <h4 className="mb-5">No recent sessions!</h4>
+                {currentUsername === username && (
+                  <a href="/">
+                    <Button size="small">Do some practice</Button>
+                  </a>
+                )}
+              </SessionHistoryContainer>
+            )}
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 };

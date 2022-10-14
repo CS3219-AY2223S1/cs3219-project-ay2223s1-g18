@@ -5,9 +5,12 @@ import StarIcon from "../../assets/icons/StarIcon.svg";
 import { SocketContext } from "../../context/socket";
 import { fetchStorage } from "../../utils/LocalStorageService";
 import { addUserHistory } from "../../utils/UserHistoryService";
+import { STATUS_CODE_OK } from "../../utils/constants";
 
 const FeedbackForm = ({ partnerSocketId, question }) => {
   const [selectedRating, setSelectedRating] = useState(0);
+  const [hasSubmittedFeedback, setHasSubmittedFeedback] = useState(false);
+  const [hasReceivedFeedback, setHasReceivedFeedback] = useState(false);
   const [comments, setComments] = useState("");
   const socket = useContext(SocketContext);
   const currentUsername = fetchStorage("currentUsername");
@@ -21,6 +24,13 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
   ];
 
   useEffect(() => {
+    socket.on("user disconnected", () => {
+      setTimeout(() => {
+        if (!hasReceivedFeedback) {
+          window.location.href = "/error";
+        }
+      }, 2000);
+    });
     socket.on("rating received", (rating, comments, senderName) => {
       var session = {
         username: currentUsername,
@@ -33,10 +43,15 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
         comments_received: comments,
         datetime: Date.now(),
       };
-      addUserHistory("/", session).catch((err) => {
-        // TODO: handle this
-        console.log("err: ", err);
-      });
+      addUserHistory("/", session)
+        .then((res) => {
+          if (res.status === STATUS_CODE_OK) {
+            setHasReceivedFeedback(true);
+          }
+        })
+        .catch((err) => {
+          window.location.href = "/error";
+        });
     });
   }, [socket]);
 
@@ -48,60 +63,75 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
       partnerSocketId,
       currentUsername
     );
-    window.location.href = "/home";
+    setHasSubmittedFeedback(true);
   };
+
+  useEffect(() => {
+    if (hasReceivedFeedback && hasSubmittedFeedback) {
+      window.location.href = "/home";
+    }
+  }, [hasReceivedFeedback, hasSubmittedFeedback]);
 
   return (
     <CardPageWrap>
       <Header>Session has ended!</Header>
-      <CardWrap>
-        <div
-          style={{ width: "650px" }}
-          className="d-flex flex-column align-items-center"
-        >
-          <div>
-            <div style={{ width: "100%", marginBottom: "48px" }}>
-              <h4>Rate your partner</h4>
-              <p style={{ color: "var(--base-500)" }}>
-                How correct and clear do you feel your partner was?
-              </p>
-              <div
-                className="d-flex"
-                style={{ marginLeft: "-8px", marginRight: "-8px" }}
-              >
-                {selectionOptions.map((option, index) => (
-                  <SelectionTile
-                    onClick={() => setSelectedRating(index + 1)}
-                    isSelected={selectedRating === index + 1}
-                    label={option}
-                    key={index}
-                    numStars={index + 1}
-                  />
-                ))}
+      {!hasSubmittedFeedback && (
+        <CardWrap>
+          <div
+            style={{ width: "650px" }}
+            className="d-flex flex-column align-items-center"
+          >
+            <div>
+              <div style={{ width: "100%", marginBottom: "48px" }}>
+                <h4>Rate your partner</h4>
+                <p style={{ color: "var(--base-500)" }}>
+                  How correct and clear do you feel your partner was?
+                </p>
+                <div
+                  className="d-flex"
+                  style={{ marginLeft: "-8px", marginRight: "-8px" }}
+                >
+                  {selectionOptions.map((option, index) => (
+                    <SelectionTile
+                      onClick={() => setSelectedRating(index + 1)}
+                      isSelected={selectedRating === index + 1}
+                      label={option}
+                      key={index}
+                      numStars={index + 1}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4>Additional comments</h4>
+                <textarea
+                  value={comments}
+                  onChange={(e) => setComments(e.target.value)}
+                  style={{ width: "100%", marginTop: "8px" }}
+                  placeholder="What did your partner do well? What could they improve on?"
+                  rows={4}
+                />
               </div>
             </div>
-            <div>
-              <h4>Additional comments</h4>
-              <textarea
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-                style={{ width: "100%", marginTop: "8px" }}
-                placeholder="What did your partner do well? What could they improve on?"
-                rows={4}
-              />
-            </div>
-          </div>
 
-          <Button
-            disabled={!selectedRating}
-            size="medium"
-            style={{ marginTop: "60px", width: "60%" }}
-            onClick={onSubmit}
-          >
-            Submit Rating
-          </Button>
+            <Button
+              disabled={!selectedRating}
+              size="medium"
+              style={{ marginTop: "60px", width: "60%" }}
+              onClick={onSubmit}
+            >
+              Submit Rating
+            </Button>
+          </div>
+        </CardWrap>
+      )}
+
+      {hasSubmittedFeedback && (
+        <div className="mt-5">
+          Feedback submitted! Waiting for your partner to submit your
+          feedback...
         </div>
-      </CardWrap>
+      )}
     </CardPageWrap>
   );
 };

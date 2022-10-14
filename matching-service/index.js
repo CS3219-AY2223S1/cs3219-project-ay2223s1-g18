@@ -172,6 +172,7 @@ io.on("connection", (socket) => {
       msg: `Your partner has left the room. You are now alone.`,
       type: 1, // 0 – normal msg, 1 – system announcement
     });
+    io.to(lastRoomId).emit("user disconnected");
     deleteUserPendingRequest(latestDifficulty, socket.id, lastRoomId);
   });
 
