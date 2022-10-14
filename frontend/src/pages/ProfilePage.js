@@ -18,6 +18,7 @@ const ProfilePage = () => {
   const [peerPoints, setPeerPoints] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [userHistory, setUserHistory] = useState();
+  const [nextMilestone, setNextMilestone] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -28,6 +29,7 @@ const ProfilePage = () => {
             if (res.status === STATUS_CODE_OK) {
               setUserHistory(res.data.data.reverse());
               getAverageRating(res.data.data);
+              calculateNextMilestone(res.data.data.length);
               setLoading(false);
             }
           });
@@ -39,6 +41,14 @@ const ProfilePage = () => {
         window.location.href = "/404";
       });
   }, []);
+
+  var calculateNextMilestone = (numSessionsDone) => {
+    var nextMilestone = 1;
+    if (numSessionsDone > 0) {
+      nextMilestone = Math.ceil((numSessionsDone + 1) / 5) * 5;
+    }
+    setNextMilestone(nextMilestone);
+  };
 
   var getAverageRating = (historyArr) => {
     var sum = 0;
@@ -56,6 +66,7 @@ const ProfilePage = () => {
       style={{
         maxWidth: "1200px",
         marginTop: "40px",
+        marginBottom: "40px",
       }}
     >
       {loading ? (
@@ -94,15 +105,17 @@ const ProfilePage = () => {
                 {currentUsername === username && (
                   <div style={{ display: "grid", gap: "12px" }}>
                     <div className="d-flex justify-content-between">
-                      <b>10 Sessions Milestone</b>
-                      <p className="m-0">{userHistory.length}/10</p>
+                      <b>{nextMilestone} Sessions Milestone</b>
+                      <p className="m-0">
+                        {userHistory.length}/{nextMilestone}
+                      </p>
                     </div>
                     <ProgressBar
                       variant="warning"
-                      now={(userHistory.length / 10) * 100}
+                      now={(userHistory.length / nextMilestone) * 100}
                     />
                     <p style={{ color: "var(base-500)", fontSize: "14px" }}>
-                      Complete 10 interview sessions
+                      Complete {nextMilestone} interview sessions
                     </p>
                   </div>
                 )}
