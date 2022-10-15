@@ -13,7 +13,6 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    setError("");
     POSTRequest(`/auth/`, { username, password })
       .then((res) => {
         if (res.data.status && res.data.response) {
@@ -27,7 +26,6 @@ function LoginPage() {
         }
       })
       .catch((err) => {
-        // setError(err);
         setError("Wrong username or password!");
       });
   };
