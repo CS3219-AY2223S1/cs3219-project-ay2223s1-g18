@@ -1,7 +1,7 @@
 name: Build and Deploy User History Service to GCP
 
 on:
- push:
+  push:
     branches: [ main ]
     paths: 
       - 'user-history-service/**'

@@ -1,7 +1,7 @@
 name: Build and Deploy Question Service to GCP
 
 on:
- push:
+  push:
     branches: [ main ]
     paths: 
       - 'question-service/**'

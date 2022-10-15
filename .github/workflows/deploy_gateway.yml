@@ -1,7 +1,7 @@
 name: Build and Deploy Gateway Service to GCP
 
 on:
- push:
+  push:
     branches: [ main ]
     paths: 
       - 'gateway-service/**'

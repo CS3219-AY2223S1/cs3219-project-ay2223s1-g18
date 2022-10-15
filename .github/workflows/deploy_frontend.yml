@@ -1,7 +1,7 @@
 name: Build and Deploy Frontend to GCP
 
 on:
- push:
+  push:
     branches: [ main ]
     paths: 
       - 'frontend/**'
