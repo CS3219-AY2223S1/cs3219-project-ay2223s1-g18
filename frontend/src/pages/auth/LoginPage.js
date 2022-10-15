@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import { saveStorage } from "../../utils/LocalStorageService";
 import { POSTRequest } from "../../utils/axios";
+import { setAccessToken, setRefreshToken } from "../../utils/TokenService";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -16,8 +17,8 @@ function LoginPage() {
     POSTRequest(`/auth/`, { username, password })
       .then((res) => {
         if (res.data.status && res.data.response) {
-          document.cookie = `RefreshToken=${res.data.response.refreshToken}`;
-          document.cookie = `AccessToken=${res.data.response.accessToken}`;
+          setAccessToken(res.data.response.accessToken);
+          setRefreshToken(res.data.response.refreshToken);
 
           saveStorage("currentUsername", username);
           navigate("/home");

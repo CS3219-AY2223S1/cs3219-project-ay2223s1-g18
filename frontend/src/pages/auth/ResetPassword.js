@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Button from "../../components/Button";
 import { useLocation } from "react-router-dom";
-import { clearCookies } from "../../utils/TokenService";
+import { clearCookies, setAccessToken } from "../../utils/TokenService";
 import { PATCHRequest } from "../../utils/axios";
 import MessageScreen from "../../components/MessageScreen";
 
 const ResetPassword = () => {
   const token = new URLSearchParams(useLocation().search).get("token");
-  document.cookie = "AccessToken=" + token;
+
+  setAccessToken(token);
   const [password, setPassword] = useState("");
   const [passwordErr, setPasswordErr] = useState("");
   const [successfullyReset, setSuccessfullyReset] = useState(false);
