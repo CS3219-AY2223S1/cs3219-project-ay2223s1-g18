@@ -1,11 +1,16 @@
 import axios from "axios";
 import { URL_USER_SVC } from "../utils/configs";
 import { clearStorage } from "./LocalStorageService";
-import { clearCookies, getToken, setAccessToken } from "./TokenService";
+import {
+  clearCookies,
+  getAccessToken,
+  getRefreshToken,
+  setAccessToken,
+} from "./TokenService";
 
 const requestInterceptor = (req) => {
   try {
-    var accessToken = getToken("AccessToken");
+    var accessToken = getAccessToken();
     req.headers.Authorization = `Bearer ${accessToken}`;
     return req;
   } catch (err) {
@@ -24,12 +29,13 @@ instance.interceptors.response.use(
   (response) => {
     return response;
   },
+  // Access Token Expired
   async function (error) {
     const originalRequest = error.config;
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refreshToken = getToken("RefreshToken");
+      const refreshToken = getRefreshToken();
 
       return axios
         .get(`${URL_USER_SVC}/accesstoken`, {
@@ -42,12 +48,14 @@ instance.interceptors.response.use(
 
             instance.defaults.headers.common["Authorization"] =
               "Bearer " + newAccessToken;
+
             return instance(originalRequest);
           }
         })
         .catch((err) => {
+          console.log("REFRESH TOKEN EXPIRED: ", err);
+          // Refresh Token expired
           if (err.response.status === 401) {
-            console.log("UNAUTHORISED!", err);
             clearCookies();
             clearStorage("currentUsername");
             window.location.reload();
