@@ -26,6 +26,7 @@ const InterviewPage = () => {
   const handleCloseEndSessionModal = () => setShowEndSessionModal(false);
   const handleShowEndSessionModal = () => setShowEndSessionModal(true);
 
+  const [partnerDisconnected, setPartnerDisconnected] = useState(false);
   const [sessionEnded, setSessionEnded] = useState(false);
   const [partnerSocketId, setPartnerSocketId] = useState();
   const socket = useContext(SocketContext);
@@ -47,6 +48,9 @@ const InterviewPage = () => {
   };
 
   const handleEndSession = () => {
+    if (partnerDisconnected) {
+      window.location.href = "/";
+    }
     socket.emit("end session");
   };
 
@@ -61,6 +65,10 @@ const InterviewPage = () => {
 
     socket.on("new question", (question) => {
       setQuestion(question);
+    });
+
+    socket.on("user disconnected", () => {
+      setPartnerDisconnected(true);
     });
   }, [socket]);
 
@@ -110,8 +118,9 @@ const InterviewPage = () => {
           <Modal.Title>End Interview Session</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          This will terminate the interview session for you and your peer, are
-          you sure you are done with the question?
+          {partnerDisconnected
+            ? "Are you done with the question?"
+            : "This will terminate the interview session for you and your peer, are you sure you are done with the question?"}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseEndSessionModal}>
