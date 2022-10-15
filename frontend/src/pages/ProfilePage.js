@@ -22,24 +22,23 @@ const ProfilePage = () => {
 
   useEffect(() => {
     setLoading(true);
-    // GETRequest(`/accounts/${username}`)
-    //   .then((res) => {
-    //     if (res.status === STATUS_CODE_OK) {
-    getUserHistory(`/${username}`).then((res) => {
-      if (res.status === STATUS_CODE_OK) {
-        setUserHistory(res.data.data.reverse());
-        getAverageRating(res.data.data);
-        calculateNextMilestone(res.data.data.length);
+    GETRequest(`/accounts/${username}`)
+      .then((res) => {
+        if (res.status === STATUS_CODE_OK) {
+          getUserHistory(`/${username}`).then((res) => {
+            if (res.status === STATUS_CODE_OK) {
+              setUserHistory(res.data.data.reverse());
+              getAverageRating(res.data.data);
+              calculateNextMilestone(res.data.data.length);
+              setLoading(false);
+            }
+          });
+        }
         setLoading(false);
-      }
-    });
-    //   }
-    //   setLoading(false);
-    // })
-    // .catch((err) => {
-    //   // console.log("err: ", err);
-    //   window.location.href = "/404";
-    // });
+      })
+      .catch((err) => {
+        window.location.href = "/404";
+      });
   }, []);
 
   var calculateNextMilestone = (numSessionsDone) => {
