@@ -8,20 +8,30 @@ services:
     container_name: mongodb  
     image: mongo:latest
 
-
   frontend-service:
     container_name: frontend-service
     build: ./frontend
     ports:
       - 3000:3000
 
+  gateway-service:
+    env_file: # To be deleted
+      - ./gateway-service/.env.prod
+    container_name: gateway-service
+    build: ./gateway-service
+    ports:
+      - 80:80
+    depends_on:
+      - user-service
+      - matching-service
+      - question-service
+      - user-history-service
+
   user-service:
     env_file: # To be deleted
       - ./user-service/.env.prod
     container_name: user-service
     build: ./user-service
-    ports:
-      - 8000:8000
     depends_on:
       - redis_user
       - mongodb
@@ -31,8 +41,6 @@ services:
       - ./matching-service/.env.prod
     container_name: matching-service
     build: ./matching-service
-    ports:
-      - 8001:8001
     depends_on:
       - mongodb
 
@@ -41,7 +49,13 @@ services:
       - ./question-service/.env.prod
     container_name: question-service
     build: ./question-service
-    ports:
-      - 8002:8002
+    depends_on:
+      - mongodb
+
+  user-history-service:
+    env_file: # To be deleted
+      - ./user-history-service/.env.prod
+    container_name: user-history-service
+    build: ./user-history-service
     depends_on:
       - mongodb

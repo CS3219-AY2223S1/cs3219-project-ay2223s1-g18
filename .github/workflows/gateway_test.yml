@@ -1,0 +1,26 @@
+name: User Service CI
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths: 
+      - 'gateway-service/**'
+
+jobs:
+  test_gateway:
+    defaults:
+      run:
+        working-directory: ./gateway-service
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        mongodb-version: ['5.0']
+        redis-version: [4]
+
+    steps:
+      - uses: actions/checkout@v3
+      
+
+      # - name: Test Gateway Service

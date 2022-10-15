@@ -1,12 +1,11 @@
 name: Build and Deploy Frontend to GCP
 
 on:
- push:
+  push:
     branches: [ main ]
     paths: 
       - 'frontend/**'
       - '.github/workflows/deploy_frontend.yml'
-
 
 jobs:
   deploy_frontend_gcp:
