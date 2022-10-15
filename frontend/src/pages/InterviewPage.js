@@ -20,6 +20,7 @@ const InterviewPage = () => {
   let peerType = paramArr[1];
   let guestSocketId = paramArr[2];
   let question_id = paramArr[3];
+
   const [question, setQuestion] = useState();
   const [showEndSessionModal, setShowEndSessionModal] = useState(false);
 
@@ -31,6 +32,7 @@ const InterviewPage = () => {
   const [partnerSocketId, setPartnerSocketId] = useState();
   const socket = useContext(SocketContext);
 
+  // On page load, get the Question object using the Question id
   useEffect(() => {
     QuestionSvcGETRequest(`/${question_id}`).then((res) => {
       if (res.status === STATUS_CODE_OK) {
@@ -39,13 +41,13 @@ const InterviewPage = () => {
     });
   }, [question_id]);
 
-  var getNewQuestion = () => {
-    QuestionSvcGETRequest("/", { difficulty: difficulty }).then((res) => {
-      if (res.status === STATUS_CODE_OK) {
-        socket.emit("new question", res.data.question);
-      }
-    });
-  };
+  // var getNewQuestion = () => {
+  //   QuestionSvcGETRequest("/", { difficulty: difficulty }).then((res) => {
+  //     if (res.status === STATUS_CODE_OK) {
+  //       socket.emit("new question", res.data.question);
+  //     }
+  //   });
+  // };
 
   const handleEndSession = () => {
     if (partnerDisconnected) {
@@ -55,6 +57,8 @@ const InterviewPage = () => {
   };
 
   useEffect(() => {
+    socket.emit("check room existence");
+
     socket.on("partner socketId", (partnerSocketId) => {
       setPartnerSocketId(partnerSocketId);
     });
@@ -63,8 +67,14 @@ const InterviewPage = () => {
       setSessionEnded(true);
     });
 
-    socket.on("new question", (question) => {
-      setQuestion(question);
+    // socket.on("new question", (question) => {
+    //   setQuestion(question);
+    // });
+
+    socket.on("does room exist", (doesRoomExist) => {
+      if (!doesRoomExist) {
+        window.location.href = "/404";
+      }
     });
 
     socket.on("user disconnected", () => {
@@ -85,9 +95,9 @@ const InterviewPage = () => {
           End Session
         </Button>
         <h3 className="m-0">Practice</h3>
-        <Button variant="secondary" size="small" onClick={getNewQuestion}>
+        {/* <Button variant="secondary" size="small" onClick={getNewQuestion}>
           Next Question
-        </Button>
+        </Button> */}
       </StyledNav>
       <StyledWrapper>
         <Row className="w-100">
