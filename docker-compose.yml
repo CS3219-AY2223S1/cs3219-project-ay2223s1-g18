@@ -32,8 +32,6 @@ services:
       - ./user-service/.env.prod
     container_name: user-service
     build: ./user-service
-    ports:
-      - 8000:8000
     depends_on:
       - redis_user
       - mongodb
@@ -43,8 +41,6 @@ services:
       - ./matching-service/.env.prod
     container_name: matching-service
     build: ./matching-service
-    ports:
-      - 8001:8001
     depends_on:
       - mongodb
 
@@ -53,8 +49,6 @@ services:
       - ./question-service/.env.prod
     container_name: question-service
     build: ./question-service
-    ports:
-      - 8002:8002
     depends_on:
       - mongodb
 
@@ -63,7 +57,5 @@ services:
       - ./user-history-service/.env.prod
     container_name: user-history-service
     build: ./user-history-service
-    ports:
-      - 8003:8003
     depends_on:
       - mongodb
