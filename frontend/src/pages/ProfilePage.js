@@ -61,7 +61,20 @@ const ProfilePage = () => {
     setAverageRating(averageRating);
   };
 
-  return (
+  return loading ? (
+    <div
+      className="w-100 d-flex flex-column align-items-center justify-content-center"
+      style={{ height: "90vh" }}
+    >
+      <Spinner
+        animation="grow"
+        variant="secondary"
+        size="xl"
+        className="mb-4"
+      />
+      Loading....
+    </div>
+  ) : (
     <Container
       style={{
         maxWidth: "1200px",
@@ -69,76 +82,72 @@ const ProfilePage = () => {
         marginBottom: "40px",
       }}
     >
-      {loading ? (
-        <Spinner animation="grow" variant="secondary" size="xl" />
-      ) : (
-        <Row>
-          <Col xs={12} md={4}>
-            {userHistory && (
-              <UserInfoContainer>
-                <div>
-                  <PlaceholderDp initial={username} size={60} />
-                  <h4 style={{ marginTop: "16px" }}>{username}</h4>
-                </div>
+      <Row>
+        <Col xs={12} md={4}>
+          {userHistory && (
+            <UserInfoContainer>
+              <div>
+                <PlaceholderDp initial={username} size={60} />
+                <h4 style={{ marginTop: "16px" }}>{username}</h4>
+              </div>
 
-                <div>
-                  <StatisticTile
-                    emoji="💚"
-                    tileColor="#E1F5E1"
-                    label="PeerPoints"
-                    number={peerPoints}
-                  />
-                  <StatisticTile
-                    emoji="🔥"
-                    tileColor="#FEF2F2"
-                    label="Sessions completed"
-                    number={userHistory.length}
-                  />
-                  <StatisticTile
-                    emoji="⭐️"
-                    tileColor="#FDFAF1"
-                    label="Average rating"
-                    number={!averageRating ? 0 : averageRating}
-                  />
-                </div>
-                {currentUsername === username && <hr className="m-0" />}
-                {currentUsername === username && (
-                  <div style={{ display: "grid", gap: "12px" }}>
-                    <div className="d-flex justify-content-between">
-                      <b>{nextMilestone} Sessions Milestone</b>
-                      <p className="m-0">
-                        {userHistory.length}/{nextMilestone}
-                      </p>
-                    </div>
-                    <ProgressBar
-                      variant="warning"
-                      now={(userHistory.length / nextMilestone) * 100}
-                    />
-                    <p style={{ color: "var(base-500)", fontSize: "14px" }}>
-                      Complete {nextMilestone} interview sessions
+              <div>
+                <StatisticTile
+                  emoji="💚"
+                  tileColor="#E1F5E1"
+                  label="PeerPoints"
+                  number={peerPoints}
+                />
+                <StatisticTile
+                  emoji="🔥"
+                  tileColor="#FEF2F2"
+                  label="Sessions completed"
+                  number={userHistory.length}
+                />
+                <StatisticTile
+                  emoji="⭐️"
+                  tileColor="#FDFAF1"
+                  label="Average rating"
+                  number={!averageRating ? 0 : averageRating}
+                />
+              </div>
+              {currentUsername === username && <hr className="m-0" />}
+              {currentUsername === username && (
+                <div style={{ display: "grid", gap: "12px" }}>
+                  <div className="d-flex justify-content-between">
+                    <b>{nextMilestone} Sessions Milestone</b>
+                    <p className="m-0">
+                      {userHistory.length}/{nextMilestone}
                     </p>
                   </div>
-                )}
-              </UserInfoContainer>
-            )}
-          </Col>
-          <Col xs={12} md={8}>
-            {userHistory && userHistory.length > 0 ? (
-              <UserHistorySection userHistory={userHistory} />
-            ) : (
-              <SessionHistoryContainer>
-                <div className="emoji">⛺️</div>
-                <h4 className="mb-5">No recent sessions!</h4>
-                {currentUsername === username && (
-                  <a href="/">
-                    <Button size="small">Do some practice</Button>
-                  </a>
-                )}
-              </SessionHistoryContainer>
-            )}
-          </Col>
-        </Row>
-      )}
+                  <ProgressBar
+                    variant="warning"
+                    now={(userHistory.length / nextMilestone) * 100}
+                  />
+                  <p style={{ color: "var(base-500)", fontSize: "14px" }}>
+                    Complete {nextMilestone} interview sessions
+                  </p>
+                </div>
+              )}
+            </UserInfoContainer>
+          )}
+        </Col>
+        <Col xs={12} md={8}>
+          {userHistory && userHistory.length > 0 ? (
+            <UserHistorySection userHistory={userHistory} />
+          ) : (
+            <SessionHistoryContainer>
+              <div className="emoji">⛺️</div>
+              <h4 className="mb-5">No recent sessions!</h4>
+              {currentUsername === username && (
+                <a href="/">
+                  <Button size="small">Do some practice</Button>
+                </a>
+              )}
+            </SessionHistoryContainer>
+          )}
+        </Col>
+      </Row>
     </Container>
   );
 };
