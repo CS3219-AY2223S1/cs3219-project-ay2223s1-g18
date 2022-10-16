@@ -66,7 +66,7 @@ export class AuthMiddleware {
           })
         }
       } catch (errorObject) {
-        console.log(errorObject)
+        console.log(errorObject.toString())
         const errorResponse = JSON.parse(serverErrorResponse)
 
         return res.status(errorResponse.statusCode).json(errorResponse.response)
