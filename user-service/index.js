@@ -14,6 +14,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.options('*', cors())
 
-app.use('/api/user', UserRouter)
+app.use('/', UserRouter)
 
 app.listen(port, () => console.log('User-Service listening on Port', port))
