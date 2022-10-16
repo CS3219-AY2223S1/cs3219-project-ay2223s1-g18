@@ -14,12 +14,12 @@ const serverErrorResponse = JSON.stringify({
   }
 })
 
-export default class AuthService {
+export class AuthMiddleware {
   static getHealthStatus () {
     return async (req, res, next) => {
       res.status(HttpResponse.OK).json({
         status: 'true',
-        response: 'Auth service operational'
+        response: 'Auth Service Operational'
       })
       next()
     }
@@ -74,16 +74,40 @@ export default class AuthService {
     }
   }
 
-  static async getAccessToken (username) {
-    return {
-      accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+  static getAccessToken (username) {
+    return async (req, res, next) => {
+      try {
+        res.status(HttpResponse.OK).json({
+          status: true,
+          response: {
+            accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+          }
+        })
+      } catch (errorObject) {
+        console.log(errorObject)
+        const errorResponse = JSON.parse(serverErrorResponse)
+
+        return res.status(errorResponse.statusCode).json(errorResponse.response)
+      }
     }
   };
 
-  static async getInitialTokens (username) {
-    return {
-      refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
-      accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+  static getInitialTokens (username) {
+    return async (req, res, next) => {
+      try {
+        res.status(HttpResponse.OK).json({
+          status: true,
+          response: {
+            refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
+            accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+          }
+        })
+      } catch (errorObject) {
+        console.log(errorObject)
+        const errorResponse = JSON.parse(serverErrorResponse)
+
+        return res.status(errorResponse.statusCode).json(errorResponse.response)
+      }
     }
   };
 }
