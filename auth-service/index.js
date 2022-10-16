@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import AuthRouter from './auth/routes/auth.route.js'
 dotenv.config()
 
-const port = process.env.USER_PORT || 8000
+const port = process.env.AUTH_PORT || 7000
 
 const app = express()
 

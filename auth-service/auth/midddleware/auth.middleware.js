@@ -1,10 +1,10 @@
-
 import jwt from 'jsonwebtoken'
-import { HttpResponse } from '../../constants/httpResponse.js'
+
 import RedisInstance from '../../cache/instance.js'
+import { HttpResponse } from '../../constants/httpResponse.js'
+import { JwtSecrets } from '../../constants/jwtSecrets.js'
 
 const JwtBlacklist = new RedisInstance()
-// const KEY_VALUE = 'invalid'
 
 const serverErrorResponse = JSON.stringify({
   statusCode: HttpResponse.INTERNAL_SERVER_ERROR,
@@ -14,7 +14,17 @@ const serverErrorResponse = JSON.stringify({
   }
 })
 
-export class TokenMiddleware {
+export default class AuthService {
+  static getHealthStatus () {
+    return async (req, res, next) => {
+      res.status(HttpResponse.OK).json({
+        status: 'true',
+        response: 'Auth service operational'
+      })
+      next()
+    }
+  }
+
   static analyseJwtToken (secret) {
     return async (req, res, next) => {
       try {
@@ -25,10 +35,6 @@ export class TokenMiddleware {
           secret)
         const status = await JwtBlacklist.getObject(req.headers.authorization)
         if (status) { throw new Error({ name: 'JsonWebTokenError' }) }
-
-        // To be moved to access control
-        // if (!isVerificationToken && targetUser && targetUser != decodedToken.username)
-        //     throw ({ name: 'InvalidPrivilegesError' });
 
         res.locals.tokenData = decodedToken
         next()
@@ -67,4 +73,21 @@ export class TokenMiddleware {
       }
     }
   }
+
+  static async getAccessToken (username) {
+    return {
+      accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+    }
+  };
+
+  static async getInitialTokens (username) {
+    return {
+      refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
+      accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
+    }
+  };
+}
+
+function createJwtToken (identifiers, tokenSecret, tokenExpiry) {
+  return jwt.sign(identifiers, tokenSecret, { expiresIn: tokenExpiry })
 }
