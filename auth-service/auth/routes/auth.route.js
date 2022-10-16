@@ -10,7 +10,7 @@ router.route('/verification').get(AuthMiddleware.analyseJwtToken(JwtSecrets.VERI
 router.route('/access').get(AuthMiddleware.analyseJwtToken(JwtSecrets.ACCESS))
 
 router.route('/get-access').get(AuthMiddleware.analyseJwtToken(JwtSecrets.REFRESH), AuthMiddleware.getAccessToken())
-router.route('/initialize-tokens').get(AuthMiddleware.analyseJwtToken(JwtSecrets.REFRESH), AuthMiddleware.getInitialTokens('hello'))
+router.route('/initialize-tokens').get(AuthMiddleware.getInitialTokens('hello'))
 
 router.route('/logout').post(AuthMiddleware.analyseJwtToken(JwtSecrets.REFRESH), AuthMiddleware.blacklistJwtToken(true))
 

@@ -19,7 +19,7 @@ export class AuthMiddleware {
     return async (req, res, next) => {
       res.status(HttpResponse.OK).json({
         status: 'true',
-        response: 'Auth Service Operational'
+        response: 'operational'
       })
       next()
     }
@@ -50,7 +50,7 @@ export class AuthMiddleware {
           errorResponse.response.message = 'Not Authorized to use service!'
         }
 
-        return res.status(errorResponse.statusCode).json(errorResponse.response)
+        res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
   }
@@ -69,7 +69,7 @@ export class AuthMiddleware {
         console.log(errorObject.toString())
         const errorResponse = JSON.parse(serverErrorResponse)
 
-        return res.status(errorResponse.statusCode).json(errorResponse.response)
+        res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
   }
@@ -87,7 +87,7 @@ export class AuthMiddleware {
         console.log(errorObject)
         const errorResponse = JSON.parse(serverErrorResponse)
 
-        return res.status(errorResponse.statusCode).json(errorResponse.response)
+        res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
   };
@@ -103,10 +103,10 @@ export class AuthMiddleware {
           }
         })
       } catch (errorObject) {
-        console.log(errorObject)
+        console.log(errorObject.toString())
         const errorResponse = JSON.parse(serverErrorResponse)
 
-        return res.status(errorResponse.statusCode).json(errorResponse.response)
+        res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
   };
