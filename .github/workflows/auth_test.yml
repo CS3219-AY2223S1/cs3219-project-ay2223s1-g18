@@ -1,16 +1,16 @@
-name: User Service CI
+name: Authentication Service CI
 
 on:
   pull_request:
     branches: [ main ]
     paths: 
-      - 'user-service/**'
+      - 'auth-service/**'
 
 jobs:
   test_user:
     defaults:
       run:
-        working-directory: ./user-service
+        working-directory: ./auth-service
 
     runs-on: ubuntu-latest
     strategy:
@@ -33,6 +33,10 @@ jobs:
             mongodb-version: ${{ matrix.mongodb-version }}
             mongodb-port: 27017
       
+      - name: Start Redis v${{ matrix.redis-version }}
+        uses: superchargejs/redis-github-action@1.1.0
+        with:
+            redis-version: ${{ matrix.redis-version }}
 
       - name: Install Node dependencies
         run: npm ci
