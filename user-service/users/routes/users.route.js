@@ -12,7 +12,6 @@ router.route('/password-reset-verify').patch(UserController.completePasswordRese
 router.route('/auth').post(UserController.authenticateUser())
 
 router.route('/health').get(UserController.getHealthStatus())
-router.route('/accesstoken').get(UserController.getAccessToken())
 
 router.route('/accounts/:username').get(UserController.getUserAccountByName())
 router.route('/accounts').get(UserController.getUserAccounts())
