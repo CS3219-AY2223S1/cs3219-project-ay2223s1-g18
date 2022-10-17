@@ -36,8 +36,8 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      # - name: Lint User Service Code
-      #   run: npm run lint
+      - name: Lint User Service Code
+        run: npm run lint
 
       # - name: Test User Service
       #   run: npm test -- if present
