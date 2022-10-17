@@ -2,7 +2,7 @@
 import Helper from './helper.js'
 import MatchingModel from './matching.model.js'
 
-export class MatchingService {
+export default class MatchingService {
     static async createPendingMatch(name, difficulty, socketId) {
         return new Promise((resolve, reject) => {
             Helper
