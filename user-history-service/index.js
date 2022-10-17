@@ -28,6 +28,8 @@ mongoose.connection.on("error", (err) => {
   throw new Error("Failed to connect to MongoDB database!");
 });
 
-app.use("/api/user-history", UserHistoryRouter);
+app.use("/", UserHistoryRouter);
 
-app.listen(port, () => console.log("User-History-Service listening on Port", port));
+app.listen(port, () =>
+  console.log("User-History-Service listening on Port", port)
+);
