@@ -2,9 +2,9 @@ name: Frontend Service CI
 
 on:
   pull_request:
-    branches: [ main ]
-    paths: 
-      - 'frontend/**'
+    branches: [main]
+    paths:
+      - "frontend/**"
 
 jobs:
   test_frontend:
@@ -16,12 +16,12 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
-        mongodb-version: ['5.0']
+        mongodb-version: ["5.0"]
         redis-version: [4]
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -30,8 +30,8 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      # - name: Lint User Service Code
-      #   run: npm run lint
+      - name: Lint User Service Code
+        run: npm run lint
 
       # - name: Test User Service
       #   run: npm test -- if present

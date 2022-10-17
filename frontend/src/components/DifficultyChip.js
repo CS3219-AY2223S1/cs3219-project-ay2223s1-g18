@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const DifficultyChip = ({ difficulty }) => {
   return (
@@ -20,6 +21,10 @@ const DifficultyChip = ({ difficulty }) => {
 };
 
 export default DifficultyChip;
+
+DifficultyChip.propTypes = {
+  difficulty: PropTypes.string,
+};
 
 const StyledChip = styled.div`
   color: white !important;

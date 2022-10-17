@@ -10,6 +10,7 @@ import { STATUS_CODE_OK } from "../utils/constants";
 import { useParams } from "react-router-dom";
 import { GETRequest } from "../utils/axios";
 import { Spinner } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const ProfilePage = () => {
   let currentUsername = fetchStorage("currentUsername");
@@ -37,6 +38,7 @@ const ProfilePage = () => {
         setLoading(false);
       })
       .catch((err) => {
+        console.error(err);
         window.location.href = "/404";
       });
   }, []);
@@ -178,6 +180,17 @@ const StatisticTile = ({ emoji, tileColor, number, label }) => {
       </div>
     </StyledStatisticTile>
   );
+};
+
+UserHistorySection.propTypes = {
+  userHistory: PropTypes.node,
+};
+
+StatisticTile.propTypes = {
+  emoji: PropTypes.string.isRequired,
+  tileColor: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  number: PropTypes.number.isRequired,
 };
 
 const StyledStatisticTile = styled.div`

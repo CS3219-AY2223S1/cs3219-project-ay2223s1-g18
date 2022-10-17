@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import { saveStorage } from "../../utils/LocalStorageService";
@@ -26,6 +26,7 @@ function LoginPage() {
         }
       })
       .catch((err) => {
+        console.error(err);
         setError("Wrong username or password!");
       });
   };
@@ -89,7 +90,8 @@ function LoginPage() {
             Log in
           </Button>
           <p style={{ marginTop: "16px" }}>
-            Don't have an account? <a href="/signup">Sign up</a>
+            {"Don't have an account? "}
+            <a href="/signup">Sign up</a>
           </p>
         </div>
       </CardWrap>
