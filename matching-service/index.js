@@ -49,6 +49,16 @@ io.on("connection", (socket) => {
       });
   });
 
+  socket.on("check room existence", (meetingRoomId) => {
+    const ownSocketId = Array.from(socket.rooms.values())[0];
+
+    if (socket.rooms.size > 1) {
+      io.to(ownSocketId).emit("does room exist", true);
+    } else {
+      io.to(ownSocketId).emit("does room exist", false);
+    }
+  });
+
   socket.on(
     "partner rating",
     (rating, comments, receiverSocket, senderName) => {
@@ -58,12 +68,12 @@ io.on("connection", (socket) => {
     }
   );
 
-  socket.on("new question", (question) => {
-    if (socket.rooms.size > 1) {
-      const meetingRoomId = Array.from(socket.rooms.values())[1];
-      io.to(meetingRoomId).emit("new question", question);
-    }
-  });
+  // socket.on("new question", (question) => {
+  //   if (socket.rooms.size > 1) {
+  //     const meetingRoomId = Array.from(socket.rooms.values())[1];
+  //     io.to(meetingRoomId).emit("new question", question);
+  //   }
+  // });
 
   //socket.broadcast.emit('new user');          // In future, can add in name of user
 
@@ -172,6 +182,7 @@ io.on("connection", (socket) => {
       msg: `Your partner has left the room. You are now alone.`,
       type: 1, // 0 – normal msg, 1 – system announcement
     });
+    io.to(lastRoomId).emit("user disconnected");
     deleteUserPendingRequest(latestDifficulty, socket.id, lastRoomId);
   });
 

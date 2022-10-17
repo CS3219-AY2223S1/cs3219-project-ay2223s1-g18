@@ -17,6 +17,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import CompleteSignup from "./pages/auth/CompleteSignup";
 import PageNotFound from "./pages/PageNotFound";
 import { SocketContext, socket } from "./context/socket";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
             </Route>
             <Route path="/" element={<InterviewRoomLayout />}>
               <Route path="/interview/:name" element={<InterviewPage />} />
+              <Route path="/error" element={<ErrorPage />}></Route>
             </Route>
 
             <Route path="*" element={<PageNotFound />} />

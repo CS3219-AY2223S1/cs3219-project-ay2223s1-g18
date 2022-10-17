@@ -1,12 +1,11 @@
 name: Build and Deploy Matching Service to GCP
 
 on:
- push:
+  push:
     branches: [ main ]
     paths: 
       - 'matching-service/**'
       - '.github/workflows/deploy_matching.yml'
-
 
 jobs:
   deploy_matching_gcp:

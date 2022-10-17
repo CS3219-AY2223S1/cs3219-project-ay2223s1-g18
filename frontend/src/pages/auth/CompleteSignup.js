@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import MessageScreen from "../../components/MessageScreen";
 import Button from "../../components/Button";
 import { POSTRequest } from "../../utils/axios";
-import { clearCookies } from "../../utils/TokenService";
+import { clearCookies, setAccessToken } from "../../utils/TokenService";
 import { useLocation } from "react-router-dom";
 
 const CompleteSignup = () => {
   const token = new URLSearchParams(useLocation().search).get("token");
-  document.cookie = "AccessToken=" + token;
+  setAccessToken(token);
   const [signupSucceeded, setSignupSucceeded] = useState(false);
 
   useEffect(() => {

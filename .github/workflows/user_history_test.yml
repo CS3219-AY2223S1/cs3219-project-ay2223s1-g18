@@ -1,16 +1,16 @@
-name: User Service CI
+name: User History Service CI
 
 on:
   pull_request:
     branches: [ main ]
     paths: 
-      - 'user-service/**'
+      - 'user-history-service/**'
 
 jobs:
-  test_user:
+  test_user_history:
     defaults:
       run:
-        working-directory: ./user-service
+        working-directory: ./user-history-service
 
     runs-on: ubuntu-latest
     strategy:
@@ -32,19 +32,13 @@ jobs:
         with:
             mongodb-version: ${{ matrix.mongodb-version }}
             mongodb-port: 27017
-      
-      - name: Start Redis v${{ matrix.redis-version }}
-        uses: superchargejs/redis-github-action@1.1.0
-        with:
-            redis-version: ${{ matrix.redis-version }}
 
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Lint User Service Code
-        run: npm run lint
+      # - name: Lint User Service Code
+      #   run: npm run lint
 
       # - name: Test User Service
       #   run: npm test -- if present
       #   env:
-      #       MONGODB_URI: ${{ secrets.MONGODB_URI }}

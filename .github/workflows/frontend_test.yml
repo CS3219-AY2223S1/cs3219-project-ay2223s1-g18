@@ -1,17 +1,13 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-
-name: User Service CI
+name: Frontend Service CI
 
 on:
   pull_request:
     branches: [ main ]
     paths: 
       - 'frontend/**'
-      - '.github/workflows/deploy_frontend.yml'
-
 
 jobs:
-  test_user:
+  test_frontend:
     defaults:
       run:
         working-directory: ./frontend

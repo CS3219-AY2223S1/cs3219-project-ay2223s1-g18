@@ -8,22 +8,46 @@ import UserHistoryEntry from "../components/UserHistoryEntry";
 import { getUserHistory } from "../utils/UserHistoryService";
 import { STATUS_CODE_OK } from "../utils/constants";
 import { useParams } from "react-router-dom";
+import { GETRequest } from "../utils/axios";
+import { Spinner } from "react-bootstrap";
 
 const ProfilePage = () => {
   let currentUsername = fetchStorage("currentUsername");
   let username = useParams().username;
+  const [loading, setLoading] = useState(false);
   const [peerPoints, setPeerPoints] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [userHistory, setUserHistory] = useState();
+  const [nextMilestone, setNextMilestone] = useState(0);
 
   useEffect(() => {
-    getUserHistory(`/${username}`).then((res) => {
-      if (res.status === STATUS_CODE_OK) {
-        setUserHistory(res.data.data.reverse());
-        getAverageRating(res.data.data);
-      }
-    });
+    setLoading(true);
+    GETRequest(`/accounts/${username}`)
+      .then((res) => {
+        if (res.status === STATUS_CODE_OK) {
+          getUserHistory(`/${username}`).then((res) => {
+            if (res.status === STATUS_CODE_OK) {
+              setUserHistory(res.data.data.reverse());
+              getAverageRating(res.data.data);
+              calculateNextMilestone(res.data.data.length);
+              setLoading(false);
+            }
+          });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        window.location.href = "/404";
+      });
   }, []);
+
+  var calculateNextMilestone = (numSessionsDone) => {
+    var nextMilestone = 1;
+    if (numSessionsDone > 0) {
+      nextMilestone = Math.ceil((numSessionsDone + 1) / 5) * 5;
+    }
+    setNextMilestone(nextMilestone);
+  };
 
   var getAverageRating = (historyArr) => {
     var sum = 0;
@@ -36,11 +60,25 @@ const ProfilePage = () => {
     setAverageRating(averageRating);
   };
 
-  return (
+  return loading ? (
+    <div
+      className="w-100 d-flex flex-column align-items-center justify-content-center"
+      style={{ height: "90vh" }}
+    >
+      <Spinner
+        animation="grow"
+        variant="secondary"
+        size="xl"
+        className="mb-4"
+      />
+      Loading....
+    </div>
+  ) : (
     <Container
       style={{
         maxWidth: "1200px",
         marginTop: "40px",
+        marginBottom: "40px",
       }}
     >
       <Row>
@@ -76,15 +114,17 @@ const ProfilePage = () => {
               {currentUsername === username && (
                 <div style={{ display: "grid", gap: "12px" }}>
                   <div className="d-flex justify-content-between">
-                    <b>10 Sessions Milestone</b>
-                    <p className="m-0">{userHistory.length}/10</p>
+                    <b>{nextMilestone} Sessions Milestone</b>
+                    <p className="m-0">
+                      {userHistory.length}/{nextMilestone}
+                    </p>
                   </div>
                   <ProgressBar
                     variant="warning"
-                    now={(userHistory.length / 10) * 100}
+                    now={(userHistory.length / nextMilestone) * 100}
                   />
                   <p style={{ color: "var(base-500)", fontSize: "14px" }}>
-                    Complete 10 interview sessions
+                    Complete {nextMilestone} interview sessions
                   </p>
                 </div>
               )}
