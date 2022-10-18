@@ -5,7 +5,6 @@ import { Server } from "socket.io";
 
 import connectDatabase from "./connect.js";
 import MatchingRouter from "./matching.route.js";
-import { createPendingMatch } from "./matching.controller.js";
 import MatchingService from "./matching.service.js";
 
 const port = process.env.SERVICE_PORT || 8001;
@@ -49,7 +48,7 @@ io.on("connection", (socket) => {
       });
   });
 
-  socket.on("check room existence", (meetingRoomId) => {
+  socket.on("check room existence", () => {
     const ownSocketId = Array.from(socket.rooms.values())[0];
 
     if (socket.rooms.size > 1) {
@@ -195,8 +194,7 @@ io.on("connection", (socket) => {
     });
 
     // Checks if there exist a pending match request created by the user
-    let pendingMatchDeleted = false;
-    pendingMatchDeleted = userPendingMatch.then((data) => {
+    userPendingMatch.then((data) => {
       if (data.length > 0) {
         const requestorID = data[1];
         if (requestorID == socketId) {

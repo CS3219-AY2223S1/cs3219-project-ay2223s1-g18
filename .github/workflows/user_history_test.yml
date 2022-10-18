@@ -2,9 +2,9 @@ name: User History Service CI
 
 on:
   pull_request:
-    branches: [ main ]
-    paths: 
-      - 'user-history-service/**'
+    branches: [main]
+    paths:
+      - "user-history-service/**"
 
 jobs:
   test_user_history:
@@ -16,12 +16,12 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x]
-        mongodb-version: ['5.0']
+        mongodb-version: ["5.0"]
         redis-version: [4]
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -30,14 +30,14 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.8.0
         with:
-            mongodb-version: ${{ matrix.mongodb-version }}
-            mongodb-port: 27017
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-port: 27017
 
       - name: Install Node dependencies
         run: npm ci
 
-      # - name: Lint User Service Code
-      #   run: npm run lint
+      - name: Lint User Service Code
+        run: npm run lint
 
       # - name: Test User Service
       #   run: npm test -- if present

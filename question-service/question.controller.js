@@ -31,3 +31,10 @@ exports.getQuestionById = async function (req, res) {
     });
   }
 };
+
+exports.getHealthStatus = async function (req, res) {
+  res.status(200).json({
+    status: "true",
+    response: "operational",
+  });
+};

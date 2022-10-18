@@ -28,6 +28,6 @@ mongoose.connection.on("error", (err) => {
   throw new Error("Failed to connect to MongoDB database!");
 });
 
-app.use("/api/questions", QuestionRouter);
+app.use("/", QuestionRouter);
 
 app.listen(port, () => console.log("Question-Service listening on Port", port));
