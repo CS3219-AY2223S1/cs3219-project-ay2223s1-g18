@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import heroImage from "../assets/heroImage.png";
 import Button from "../components/Button";
+import PropTypes from "prop-types";
 
 const HeroPoints = [
   {
@@ -69,6 +70,11 @@ const PointBlock = ({ title, description }) => {
       <p>{description}</p>
     </StyledPointBlock>
   );
+};
+
+PointBlock.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
 };
 
 const StyledPointBlock = styled.div`

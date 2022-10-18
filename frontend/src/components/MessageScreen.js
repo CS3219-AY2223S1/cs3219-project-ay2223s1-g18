@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const MessageScreen = ({ emoji, messageTitle, description, children }) => {
   return (
@@ -23,6 +24,13 @@ const MessageScreen = ({ emoji, messageTitle, description, children }) => {
 };
 
 export default MessageScreen;
+
+MessageScreen.propTypes = {
+  emoji: PropTypes.string,
+  messageTitle: PropTypes.string,
+  description: PropTypes.string,
+  children: PropTypes.node,
+};
 
 const Container = styled.div`
   display: flex;
