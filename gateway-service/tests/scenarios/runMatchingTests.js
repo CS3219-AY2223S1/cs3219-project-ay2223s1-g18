@@ -18,7 +18,7 @@ export function runMatchingTests() {
       io = new Server(httpServer);
       httpServer.listen(() => {
         const port = httpServer.address().port;
-        clientSocket = new Client(`http://localhost:8001`);
+        clientSocket = new Client(`http://localhost:${port}`);
         io.on("connection", (socket) => {
           serverSocket = socket;
         });
