@@ -28,6 +28,7 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res, next) => {
       try {
+        console.log('auth', req.headers.authorization)
         if (req.headers.authorization == null) { throw new Error({ name: 'JsonWebTokenError' }) }
 
         const decodedToken = jwt.verify(
@@ -37,9 +38,12 @@ export class AuthMiddleware {
         if (status) { throw new Error({ name: 'JsonWebTokenError' }) }
 
         res.locals.tokenData = decodedToken
-        next()
+        res.status(HttpResponse.ACCEPTED).json({
+          status: true,
+          response: { message: 'Successfully authenticated!' }
+        })
       } catch (errorObject) {
-        console.log(errorObject)
+        console.log(errorObject.toString())
         const errorResponse = JSON.parse(serverErrorResponse)
 
         if (
@@ -84,7 +88,7 @@ export class AuthMiddleware {
           }
         })
       } catch (errorObject) {
-        console.log(errorObject)
+        console.log(errorObject.toString())
         const errorResponse = JSON.parse(serverErrorResponse)
 
         res.status(errorResponse.statusCode).json(errorResponse.response)
