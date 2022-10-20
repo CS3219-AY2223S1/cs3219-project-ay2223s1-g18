@@ -42,5 +42,15 @@ export function runHealthChecks() {
                     done();
                 });
         });
+
+        it("should verify status of auth middleware", (done) => {
+            chai.request(GATEWAY_LINK)
+                .get(`/api/auth/health`)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
     });
 }
