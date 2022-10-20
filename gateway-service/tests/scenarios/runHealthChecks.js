@@ -12,16 +12,6 @@ export function runHealthChecks() {
                     done();
                 });
         });
-        //TODO: Update
-        it("should verify status of matching service", (done) => {
-            chai.request(GATEWAY_LINK)
-                .get(`/api/user/health`)
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.be.a('object');
-                    done();
-                });
-        });
 
         it("should verify status of question service", (done) => {
             chai.request(GATEWAY_LINK)
