@@ -4,6 +4,7 @@ dotenv.config()
 
 const GATEWAY_LINK = process.env.GATEWAY_LINK
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN
 
 export function runUserTests() {
     describe("User Tests /", () => {
@@ -23,6 +24,38 @@ export function runUserTests() {
                 .set({ "Authorization": `Bearer ${ACCESS_TOKEN}` })
                 .end((err, res) => {
                     res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
+
+        it("should not be perform verification request without a valid verification token", (done) => {
+            chai.request(GATEWAY_LINK)
+                .get(`/api/user/password-verify`)
+                .end((err, res) => {
+                    res.should.have.status(401);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
+        // TODO: Make patch
+        it("should perform verification request with a valid verification token", (done) => {
+            chai.request(GATEWAY_LINK)
+                .get(`/api/user/password-verify`)
+                .set({ "Authorization": `Bearer ${VERIFICATION_TOKEN}` })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
+
+        // TODO : Convert to post
+        it("should authenticate a user", (done) => {
+            chai.request(GATEWAY_LINK)
+                .get(`/api/user/auth`)
+                .end((err, res) => {
+                    res.should.have.status(401);
                     res.body.should.be.a('object');
                     done();
                 });

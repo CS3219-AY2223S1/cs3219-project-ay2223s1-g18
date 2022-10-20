@@ -7,6 +7,11 @@ const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 const VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN
 
+/*
+* Add tests for other routes
+* ensure token obtained is to last forever
+*/
+
 export function runAuthTests() {
     describe("Auth Tests /", () => {
         it("should not be able to get new access token without a valid refresh token", (done) => {
