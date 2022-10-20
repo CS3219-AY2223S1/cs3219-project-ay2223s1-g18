@@ -4,6 +4,7 @@ import styled from "styled-components";
 import DifficultyChip from "./DifficultyChip";
 import CalendarIcon from "../assets/icons/CalendarIcon.svg";
 import QuestionIcon from "../assets/icons/QuestionIcon.svg";
+import PropTypes from "prop-types";
 
 const UserHistoryEntry = ({ session, index }) => {
   var difficultyMapping = ["easy", "medium", "hard"];
@@ -68,6 +69,11 @@ const UserHistoryEntry = ({ session, index }) => {
 };
 
 export default UserHistoryEntry;
+
+UserHistoryEntry.propTypes = {
+  session: PropTypes.node,
+  index: PropTypes.number,
+};
 
 const StyledAccordionItem = styled.div`
   .accordion-item {

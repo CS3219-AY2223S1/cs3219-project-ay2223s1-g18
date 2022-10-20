@@ -13,7 +13,7 @@ const CodeEditor = () => {
     });
   }, [socket, code]);
 
-  const handleChange = (editor, data, value) => {
+  const handleChange = (editor) => {
     socket.emit("code editor", {
       code: editor,
     });

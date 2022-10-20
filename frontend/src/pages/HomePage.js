@@ -10,6 +10,7 @@ import { SocketContext } from "../context/socket";
 import { fetchStorage } from "../utils/LocalStorageService";
 import { QuestionSvcGETRequest } from "../utils/QuestionService";
 import { STATUS_CODE_OK } from "../utils/constants";
+import PropTypes from "prop-types";
 
 const HomePage = () => {
   const socket = useContext(SocketContext);
@@ -34,11 +35,11 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    socket.on("initiate match", (socketId) => {
+    socket.on("initiate match", () => {
       setPeerType(0);
     });
 
-    socket.on("match found", (socketId) => {
+    socket.on("match found", () => {
       setPeerType(1);
     });
   }, [socket]);
@@ -162,6 +163,10 @@ const DifficultyCard = ({ difficulty }) => {
       </StyledDifficultyCard>
     </a>
   );
+};
+
+DifficultyCard.propTypes = {
+  difficulty: PropTypes.string,
 };
 
 const StyledDifficultyCard = styled.div`

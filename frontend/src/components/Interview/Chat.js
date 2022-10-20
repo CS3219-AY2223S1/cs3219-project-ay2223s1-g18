@@ -3,6 +3,7 @@ import { SocketContext } from "../../context/socket";
 import styled from "styled-components";
 import arrowIcon from "../../assets/icons/ArrowRightIcon.svg";
 import { fetchStorage } from "../../utils/LocalStorageService";
+import PropTypes from "prop-types";
 
 const Chat = () => {
   const socket = useContext(SocketContext);
@@ -101,6 +102,11 @@ var Announcement = ({ emoji, message }) => {
   );
 };
 
+Announcement.propTypes = {
+  emoji: PropTypes.string,
+  message: PropTypes.string,
+};
+
 var ChatMessage = ({ sender, message, time }) => {
   return (
     <StyledChatMessage>
@@ -111,6 +117,12 @@ var ChatMessage = ({ sender, message, time }) => {
       <p className="message">{message.msg}</p>
     </StyledChatMessage>
   );
+};
+
+ChatMessage.propTypes = {
+  sender: PropTypes.string,
+  message: PropTypes.string,
+  time: PropTypes.string,
 };
 
 var SubChatMessage = ({ message }) => {
@@ -126,6 +138,11 @@ var SubChatMessage = ({ message }) => {
       {message.msg}
     </p>
   );
+};
+
+SubChatMessage.propTypes = {
+  emoji: PropTypes.string,
+  message: PropTypes.string,
 };
 
 const StyledChatMessage = styled.div`

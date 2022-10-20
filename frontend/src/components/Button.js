@@ -1,5 +1,7 @@
+import React from "react";
 import styled from "styled-components";
 import { Spinner } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const Button = ({
   children,
@@ -19,6 +21,15 @@ const Button = ({
       {loading ? <Spinner animation="border" variant="light" /> : children}
     </StyledButton>
   );
+};
+
+Button.propTypes = {
+  variant: PropTypes.string,
+  children: PropTypes.string,
+  disabled: PropTypes.bool,
+  size: PropTypes.string,
+  loading: PropTypes.bool,
+  onClick: PropTypes.func.isRequired,
 };
 
 const StyledButton = styled.button`

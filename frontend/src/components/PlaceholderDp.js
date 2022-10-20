@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 
 const StyledDp = styled.div`
   background-color: #eef2ff;
@@ -25,3 +26,8 @@ export default function PlaceholderDp({ initial, size = 36 }) {
     </StyledDp>
   );
 }
+
+PlaceholderDp.propTypes = {
+  initial: PropTypes.string.isRequired,
+  size: PropTypes.number.isRequired,
+};
