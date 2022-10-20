@@ -6,7 +6,7 @@ import { assert } from "chai";
 const GATEWAY_LINK = "http://localhost:80/";
 
 export function runMatchingTests() {
-  describe("Matching Checks /", () => {
+  describe("Matching Tests /", () => {
     let io, serverSocket, clientSocket;
 
     //TODO: Change client to api gateway

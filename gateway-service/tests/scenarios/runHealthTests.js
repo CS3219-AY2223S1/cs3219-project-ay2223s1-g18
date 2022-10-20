@@ -1,8 +1,8 @@
 import chai from 'chai';
 const GATEWAY_LINK = 'http://localhost:80'
 
-export function runHealthChecks() {
-    describe("Health Checks /", () => {
+export function runHealthTests() {
+    describe("Health Tests /", () => {
         it("should verify status of user service", (done) => {
             chai.request(GATEWAY_LINK)
                 .get(`/api/user/health`)

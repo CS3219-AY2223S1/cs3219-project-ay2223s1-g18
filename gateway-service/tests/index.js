@@ -1,14 +1,16 @@
 import chai, { should } from "chai";
 import chaiHttp from "chai-http";
-import { runHealthChecks } from "./scenarios/runHealthChecks.js";
+import { runHealthTests } from "./scenarios/runHealthTests.js";
 import { runMatchingTests } from "./scenarios/runMatchingTests.js";
+import { runUserHistoryTests } from "./scenarios/runUserHistoryTests.js";
 
-// Configure chai
+
 chai.use(chaiHttp);
 chai.should();
 const expect = chai.expect;
 
 describe("Gateway Tests", () => {
-  runHealthChecks();
+  runHealthTests();
   runMatchingTests();
+  runUserHistoryTests();
 });
