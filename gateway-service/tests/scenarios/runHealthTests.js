@@ -1,5 +1,9 @@
 import chai from 'chai';
-const GATEWAY_LINK = 'http://localhost:80'
+import dotenv from 'dotenv';
+dotenv.config()
+
+const GATEWAY_LINK = process.env.GATEWAY_LINK
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 
 export function runHealthTests() {
     describe("Health Tests /", () => {

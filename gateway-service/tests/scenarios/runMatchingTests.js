@@ -2,8 +2,11 @@ import { createServer } from "http";
 import { io as Client } from "socket.io-client";
 import { Server } from "socket.io";
 import { assert } from "chai";
+import dotenv from 'dotenv';
+dotenv.config()
 
-const GATEWAY_LINK = "http://localhost:80/";
+const GATEWAY_LINK = process.env.GATEWAY_LINK
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 
 export function runMatchingTests() {
   describe("Matching Tests /", () => {

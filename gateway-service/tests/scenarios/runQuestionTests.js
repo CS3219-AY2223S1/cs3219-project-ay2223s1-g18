@@ -5,11 +5,11 @@ dotenv.config()
 const GATEWAY_LINK = process.env.GATEWAY_LINK
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 
-export function runUserHistoryTests() {
-    describe("User History Tests /", () => {
+export function runQuestionTests() {
+    describe("Question Tests /", () => {
         it("should not be able to access service without a valid access token", (done) => {
             chai.request(GATEWAY_LINK)
-                .get(`/api/user-history/`)
+                .get(`/api/questions/`)
                 .end((err, res) => {
                     res.should.have.status(401);
                     res.body.should.be.a('object');
@@ -19,7 +19,7 @@ export function runUserHistoryTests() {
 
         it("should be able to access service with a valid access token", (done) => {
             chai.request(GATEWAY_LINK)
-                .get(`/api/user-history/`)
+                .get(`/api/questions/`)
                 .set({ "Authorization": `Bearer ${ACCESS_TOKEN}` })
                 .end((err, res) => {
                     res.should.have.status(200);
