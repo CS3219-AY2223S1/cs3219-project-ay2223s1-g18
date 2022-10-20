@@ -15,7 +15,7 @@ describe("Gateway Tests", () => {
   runHealthTests();
   runAuthTests();
   // runUserTests();
-  //runMatchingTests();
+  runMatchingTests();
   //runQuestionTests();
   //runUserHistoryTests();
 });
