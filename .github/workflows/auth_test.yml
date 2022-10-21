@@ -7,7 +7,7 @@ on:
       - 'auth-service/**'
 
 jobs:
-  test_user:
+  test_auth:
     defaults:
       run:
         working-directory: ./auth-service

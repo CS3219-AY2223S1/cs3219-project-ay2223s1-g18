@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy_auth.yml'
 
 jobs:
-  deploy_user_gcp:
+  deploy_auth_gcp:
     runs-on: ubuntu-latest
     steps:      
 
