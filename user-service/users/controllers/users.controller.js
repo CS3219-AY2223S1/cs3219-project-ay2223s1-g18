@@ -87,6 +87,9 @@ export class UserController {
 
   static completePasswordReset () {
     return async (req, res, next) => {
+      console.log(req)
+      console.log(res)
+      console.log(res.locals)
       const { password } = req.body
       UserService.completePasswordReset(res.locals.tokenData, password)
         .then((response) => {

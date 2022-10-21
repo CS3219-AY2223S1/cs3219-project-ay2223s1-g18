@@ -28,11 +28,12 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res, next) => {
       try {
+        console.log(req.headers['x-original-uri'])
         if (!req.headers.authorization) { throw new Error('Missing auth header') }
+
         const decodedToken = jwt.verify(
           req.headers.authorization.split(' ')[1],
           secret)
-
         const status = await JwtBlacklist.getObject(req.headers.authorization)
         if (status) { throw new Error('Jwt blacklisted') }
 
@@ -52,7 +53,6 @@ export class AuthMiddleware {
           errorResponse.statusCode = HttpResponse.UNAUTHORIZED
           errorResponse.response.message = 'Not Authorized to use service!'
         }
-        console.error(errorObject)
         res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }

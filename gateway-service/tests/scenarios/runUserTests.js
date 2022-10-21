@@ -10,7 +10,7 @@ export function runUserTests() {
     describe("User Tests /", () => {
         it("should not be able to access protected service without a valid access token", (done) => {
             chai.request(GATEWAY_LINK)
-                .get(`/api/users/accounts`)
+                .get(`/api/user/accounts`)
                 .end((err, res) => {
                     res.should.have.status(401);
                     res.body.should.be.a('object');
@@ -20,7 +20,7 @@ export function runUserTests() {
 
         it("should be able to access protected service with a valid access token", (done) => {
             chai.request(GATEWAY_LINK)
-                .get(`/api/users/accounts`)
+                .get(`/api/user/accounts`)
                 .set({ "Authorization": `Bearer ${ACCESS_TOKEN}` })
                 .end((err, res) => {
                     res.should.have.status(200);
@@ -31,31 +31,21 @@ export function runUserTests() {
 
         it("should not be perform verification request without a valid verification token", (done) => {
             chai.request(GATEWAY_LINK)
-                .get(`/api/user/password-verify`)
+                .patch(`/api/user/password-reset-verify`)
                 .end((err, res) => {
                     res.should.have.status(401);
-                    res.body.should.be.a('object');
-                    done();
-                });
-        });
-        // TODO: Make patch
-        it("should perform verification request with a valid verification token", (done) => {
-            chai.request(GATEWAY_LINK)
-                .get(`/api/user/password-verify`)
-                .set({ "Authorization": `Bearer ${VERIFICATION_TOKEN}` })
-                .end((err, res) => {
-                    res.should.have.status(200);
                     res.body.should.be.a('object');
                     done();
                 });
         });
 
-        // TODO : Convert to post
         it("should authenticate a user", (done) => {
             chai.request(GATEWAY_LINK)
-                .get(`/api/user/auth`)
+                .post(`/api/user/auth`)
+                .type('form')
+                .send({username: 'hong', password: 'test'})
                 .end((err, res) => {
-                    res.should.have.status(401);
+                    res.should.have.status(200);
                     res.body.should.be.a('object');
                     done();
                 });
