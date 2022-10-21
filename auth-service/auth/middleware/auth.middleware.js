@@ -28,7 +28,7 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res, next) => {
       try {
-        if (req.headers.authorization == null) { throw new Error('Missing auth header') }
+        if (!req.headers.authorization) { throw new Error('Missing auth header') }
         const decodedToken = jwt.verify(
           req.headers.authorization.split(' ')[1],
           secret)
@@ -36,14 +36,18 @@ export class AuthMiddleware {
         const status = await JwtBlacklist.getObject(req.headers.authorization)
         if (status) { throw new Error('Jwt blacklisted') }
 
-        res.locals.tokenData = decodedToken
-        next()
+        res.status(HttpResponse.OK).json({
+          status: true,
+          response: {
+            decodedToken
+          }
+        })
       } catch (errorObject) {
         const errorResponse = JSON.parse(serverErrorResponse)
 
         if (
           errorObject.name === 'TokenExpiredError' ||
-                    errorObject.message === 'JsonWebTokenError' || errorObject.name === 'Error'
+                    errorObject.message === 'JsonWebTokenError' || errorObject instanceof Error
         ) {
           errorResponse.statusCode = HttpResponse.UNAUTHORIZED
           errorResponse.response.message = 'Not Authorized to use service!'
