@@ -48,7 +48,7 @@ export class AuthMiddleware {
           errorResponse.statusCode = HttpResponse.UNAUTHORIZED
           errorResponse.response.message = 'Not Authorized to use service!'
         }
-        console.log(errorObject.name)
+        console.error(errorObject)
         res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
