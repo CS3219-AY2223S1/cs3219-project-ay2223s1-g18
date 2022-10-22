@@ -16,6 +16,7 @@ jobs:
     env: 
       ENV: LOCAL
       DB_LOCAL_URI: mongodb://localhost/matching-service
+      SERVICE_PORT: 8001
     strategy:
       matrix:
         node-version: [14.x]
@@ -42,7 +43,7 @@ jobs:
       - name: Lint User Service Code
         run: npm run lint
 
-      # - run: npm start #& npx wait-on http://localhost:8001
+      - run: npm start & npx wait-on http://localhost:8001
 
       - name: Test User Service
         run: npm test 
