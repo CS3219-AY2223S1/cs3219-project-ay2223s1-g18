@@ -94,7 +94,6 @@ io.on("connection", (socket) => {
   socket.on("code editor", (code) => {
     if (socket.rooms.size > 1) {
       const meetingRoomId = Array.from(socket.rooms.values())[1];
-
       io.to(meetingRoomId).emit("code editor", {
         code: code.code,
       });
