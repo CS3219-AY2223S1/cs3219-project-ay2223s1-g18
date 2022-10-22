@@ -9,6 +9,7 @@ import { Select } from "../Select";
 const CodeEditor = () => {
   const [mode, setMode] = useState("javascript");
   const [extensions, setExtensions] = useState([]);
+  const [basicSetup, setBasicSetup] = useState({ autocompletion: true });
 
   const socket = useContext(SocketContext);
   const [code, setCode] = useState("");
@@ -54,6 +55,7 @@ const CodeEditor = () => {
 
       <CodeMirror
         value={code}
+        basicSetup={basicSetup}
         extensions={extensions}
         onChange={(editor, data, value) => {
           handleChange(editor, data, value);
