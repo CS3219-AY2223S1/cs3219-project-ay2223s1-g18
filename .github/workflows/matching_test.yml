@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env: 
       ENV: LOCAL
+      DB_LOCAL_URI: mongodb://localhost/matching-service
     strategy:
       matrix:
         node-version: [14.x]
