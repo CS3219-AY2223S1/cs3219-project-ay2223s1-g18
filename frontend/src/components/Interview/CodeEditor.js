@@ -7,12 +7,12 @@ import { color } from "@uiw/codemirror-extensions-color";
 import { Select } from "../Select";
 
 const CodeEditor = () => {
+  const basicSetup = { autocompletion: true };
   const [mode, setMode] = useState("javascript");
   const [extensions, setExtensions] = useState([]);
-  const [basicSetup, setBasicSetup] = useState({ autocompletion: true });
+  const [code, setCode] = useState("");
 
   const socket = useContext(SocketContext);
-  const [code, setCode] = useState("");
 
   useEffect(() => {
     handleLangChange("javascript");
