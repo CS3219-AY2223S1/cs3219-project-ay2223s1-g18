@@ -2,10 +2,10 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 
-import UserRouter from './users/routes/users.route.js'
+import AuthRouter from './auth/routes/auth.route.js'
 dotenv.config()
 
-const port = process.env.USER_PORT || 8000
+const port = process.env.AUTH_PORT || 7000
 
 const app = express()
 
@@ -14,6 +14,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.options('*', cors())
 
-app.use('/', UserRouter)
+app.use('/', AuthRouter)
 
 app.listen(port, () => console.log('User-Service listening on Port', port))
