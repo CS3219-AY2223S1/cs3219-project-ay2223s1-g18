@@ -22,7 +22,7 @@ export class UserController {
           next()
         })
         .catch((errorObject) => {
-          console.log(errorObject)
+          console.log(errorObject.toString())
           const errorResponse = JSON.parse(serverErrorResponse)
 
           if (errorObject.name === 'ValidationError') {
@@ -42,6 +42,7 @@ export class UserController {
 
   static completeUserSignup () {
     return async (req, res, next) => {
+      console.log(res.locals.tokenData)
       UserService.completeUserSignup(res.locals.tokenData)
         .then((response) => {
           res.status(HttpResponse.CREATED).json({
@@ -52,7 +53,7 @@ export class UserController {
         })
         .catch((errorObject) => {
         // TODO: user already added
-          console.log(errorObject)
+          console.log(errorObject.toString())
           const errorResponse = JSON.parse(serverErrorResponse)
           return res.status(errorResponse.statusCode).json(errorResponse.response)
         })
@@ -86,6 +87,9 @@ export class UserController {
 
   static completePasswordReset () {
     return async (req, res, next) => {
+      console.log(req)
+      console.log(res)
+      console.log(res.locals)
       const { password } = req.body
       UserService.completePasswordReset(res.locals.tokenData, password)
         .then((response) => {

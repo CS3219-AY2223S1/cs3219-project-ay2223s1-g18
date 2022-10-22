@@ -27,6 +27,14 @@ services:
       - question-service
       - user-history-service
 
+  auth-service:
+    env_file: # To be deleted
+      - ./auth-service/.env.prod
+    container_name: auth-service
+    build: ./auth-service
+    depends_on:
+      - redis_user
+
   user-service:
     env_file: # To be deleted
       - ./user-service/.env.prod
