@@ -42,7 +42,7 @@ jobs:
       - name: Lint User Service Code
         run: npm run lint
 
-      - run: npm start & npx wait-on http://localhost:8001
-
       - name: Test User Service
-        run: npm test 
+        with:
+          command: npm run test
+          start: npm start
