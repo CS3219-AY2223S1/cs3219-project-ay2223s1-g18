@@ -50,7 +50,7 @@ const CodeEditor = () => {
         label="Language"
         options={Object.keys(langs).sort()}
         value={mode}
-        onChange={(evn) => handleLangChange(evn.target.value)}
+        onChange={(e) => handleLangChange(e.target.value)}
       ></Select>
 
       <CodeMirror

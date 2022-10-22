@@ -1,6 +1,6 @@
-/* eslint-disable */
 import React from "react";
 import Form from "react-bootstrap/Form";
+import PropTypes from "prop-types";
 
 export const Select = ({ label = "", value, options = [], onChange }) => {
   return (
@@ -21,4 +21,11 @@ export const Select = ({ label = "", value, options = [], onChange }) => {
       </Form.Select>
     </label>
   );
+};
+
+Select.propTypes = {
+  label: PropTypes.string,
+  value: PropTypes.string,
+  options: PropTypes.array,
+  onChange: PropTypes.func,
 };
