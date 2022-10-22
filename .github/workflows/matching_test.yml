@@ -13,6 +13,8 @@ jobs:
         working-directory: ./matching-service
 
     runs-on: ubuntu-latest
+    env: 
+      ENV: LOCAL
     strategy:
       matrix:
         node-version: [14.x]
