@@ -40,7 +40,17 @@ jobs:
       - name: Lint User Service Code
         run: npm run lint
 
-      # - name: Test User Service
-      #   run: npm test -- if present
-      #   env:
-      #       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      - name: Test User Service
+        run: npm test 
+        env:
+            DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+            ENV: ${{ secrets.ENV }}
+            REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+            ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+            VERIFICATION_TOKEN_SECRET: ${{ secrets.VERIFICATION_TOKEN_SECRET }}
+            REFRESH_TOKEN_EXPIRY: ${{ secrets.REFRESH_TOKEN_EXPIRY }}
+            ACCESS_TOKEN_EXPIRY: ${{ secrets.ACCESS_TOKEN_EXPIRY }}
+            VERIFICATION_TOKEN_EXPIRY: ${{ secrets.VERIFICATION_TOKEN_EXPIRY }}
+            EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+            EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+            EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
