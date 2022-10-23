@@ -2,7 +2,7 @@ import chai from 'chai';
 import dotenv from 'dotenv';
 dotenv.config()
 
-const GATEWAY_LINK = process.env.GATEWAY_LINK
+const GATEWAY_LINK = 'http://localhost:80';
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN
 

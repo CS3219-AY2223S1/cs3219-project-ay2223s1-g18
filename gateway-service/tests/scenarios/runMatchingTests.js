@@ -2,13 +2,10 @@ import { io as Client } from "socket.io-client";
 import dotenv from "dotenv";
 dotenv.config();
 
-//const GATEWAY_LINK = process.env.GATEWAY_LINK;
-const GATEWAY_LINK = 'http://localhost:8001'
-//const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const GATEWAY_LINK = 'http://localhost:80';
 
 export function runMatchingTests() {
   describe("Matching Tests /", () => {
-    let io, serverSocket, clientSocket;
     let client1 = new Client(GATEWAY_LINK);
     let client2 = new Client(GATEWAY_LINK);
     let client3 = new Client(GATEWAY_LINK);
