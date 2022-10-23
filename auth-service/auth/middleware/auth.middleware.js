@@ -26,7 +26,7 @@ export class AuthMiddleware {
   }
 
   static analyseJwtToken (secret) {
-    return async (req, res, next) => {
+    return async (req, res) => {
       try {
         console.log(req.headers['x-original-uri'])
         if (!req.headers.authorization) { throw new Error('Missing auth header') }
@@ -59,7 +59,7 @@ export class AuthMiddleware {
   }
 
   static blacklistJwtToken (isLogout = false) {
-    return async (req, res, next) => {
+    return async (req, res) => {
       try {
         await JwtBlacklist.setExpiryOfObject(req.headers.authorization, +res.locals.tokenData.exp)
         if (isLogout) {
@@ -78,7 +78,7 @@ export class AuthMiddleware {
   }
 
   static getAccessToken (username) {
-    return async (req, res, next) => {
+    return async (req, res) => {
       try {
         res.status(HttpResponse.OK).json({
           status: true,
@@ -93,10 +93,10 @@ export class AuthMiddleware {
         res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
-  };
+  }
 
   static getInitialTokens (username) {
-    return async (req, res, next) => {
+    return async (req, res) => {
       try {
         res.status(HttpResponse.OK).json({
           status: true,
@@ -112,7 +112,7 @@ export class AuthMiddleware {
         res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
-  };
+  }
 }
 
 function createJwtToken (identifiers, tokenSecret, tokenExpiry) {
