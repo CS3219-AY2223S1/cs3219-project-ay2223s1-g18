@@ -24,8 +24,8 @@ jobs:
       - name: Create env for frontend
         uses: SpicyPizza/create-envfile@v1.3
         with:
-            envkey_REACT_APP_API_SVC: ${{ secrets.envkey_REACT_APP_API_SVC }}
-            envkey_REACT_APP_IS_USING_GATEWAY: ${{ secrets.envkey_REACT_APP_IS_USING_GATEWAY }}
+            envkey_REACT_APP_API_SVC: ${{ secrets.REACT_APP_API_SVC }}
+            envkey_REACT_APP_IS_USING_GATEWAY: ${{ secrets.REACT_APP_IS_USING_GATEWAY }}
             directory: ./frontend
             file_name: .env.prod
             fail_on_empty: true
