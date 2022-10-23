@@ -1,6 +1,7 @@
 import chai from "chai";
 import dotenv from "dotenv";
 dotenv.config();
+const expect = chai.expect
 
 const USERS = [
   {
@@ -50,7 +51,7 @@ export function runCrudTests(app) {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("object");
-          //expect(res.status).to.equal(200);
+          expect(res.body.response.length).to.equal(2);
           done();
         });
     });
@@ -125,39 +126,39 @@ export function runCrudTests(app) {
         })
     })
 
-    // it("not be able to get a non existent user", (done) => {
-    //   chai
-    //     .request(app)
-    //     .get(`/accounts/${USERS[0].username}`)
-    //     .end((err, res) => {
-    //       res.should.have.status(404);
-    //       res.body.should.be.a("object");
-    //       done();
-    //     });
-    // });
+    it("not be able to get a non existent user", (done) => {
+      chai
+        .request(app)
+        .get(`/accounts/${USERS[0].username}`)
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a("object");
+          done();
+        });
+    });
 
-    // it("not be able to update a non existent user", (done) => {
-    //   chai
-    //     .request(app)
-    //     .patch(`/accounts/${USERS[0].username}`)
-    //     .type('form')
-    //     .send({password: 'abaa'})
-    //     .end((err, res) => {
-    //       res.should.have.status(404);
-    //       res.body.should.be.a("object");
-    //       done();
-    //     });
-    // });
+    it("not be able to update a non existent user", (done) => {
+      chai
+        .request(app)
+        .patch(`/accounts/${USERS[0].username}`)
+        .type('form')
+        .send({password: 'abaa'})
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a("object");
+          done();
+        });
+    });
 
-    // it("should delete a non existent user", (done) => {
-    //   chai.request(app)
-    //     .delete(`/accounts/${USERS[0].username}`)
-    //     .end((err, res) => {
-    //       res.should.have.status(404)
-    //       res.body.should.be.a('object')
-    //       done()
-    //     })
-    // })
+    it("should delete a non existent user", (done) => {
+      chai.request(app)
+        .delete(`/accounts/${USERS[0].username}`)
+        .end((err, res) => {
+          res.should.have.status(404)
+          res.body.should.be.a('object')
+          done()
+        })
+    })
 
   });
 }
