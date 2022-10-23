@@ -42,8 +42,7 @@ export class UserController {
 
   static completeUserSignup () {
     return async (req, res, next) => {
-      console.log(res.locals.tokenData)
-      UserService.completeUserSignup(res.locals.tokenData)
+      UserService.completeUserSignup(JSON.parse(req.headers.tokendata))
         .then((response) => {
           res.status(HttpResponse.CREATED).json({
             status: true,
@@ -87,9 +86,6 @@ export class UserController {
 
   static completePasswordReset () {
     return async (req, res, next) => {
-      console.log(req)
-      console.log(res)
-      console.log(res.locals)
       const { password } = req.body
       UserService.completePasswordReset(res.locals.tokenData, password)
         .then((response) => {

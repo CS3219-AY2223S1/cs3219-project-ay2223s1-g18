@@ -20,7 +20,7 @@ export default class UserService {
     const verificationToken = createJwtToken(tokenDetails, JwtSecrets.VERIFICATION, process.env.VERIFICATION_TOKEN_EXPIRY)
 
     await sendValidationEmailRequest(tokenDetails, SIGNUP_MESSAGE, verificationToken, true)
-  };
+  }
 
   static async completeUserSignup (tokenData) {
     const user = await Helper.save(UserModel, {
@@ -45,7 +45,7 @@ export default class UserService {
     if (!password) { throw new Error({ name: 'ValidationError' }) }
     const hashedPassword = await hashPassword(password)
     return await Helper.updateOne(UserModel, { email: tokenData.email }, { password: hashedPassword }, { new: true })
-  };
+  }
 
   static async authenticateUser (username, password) {
     const matchingUser = await Helper.listOne(UserModel, { username })
@@ -57,43 +57,43 @@ export default class UserService {
       refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
       accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
     }
-  };
+  }
 
   static async getAccessToken (username) {
     return {
       accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
     }
-  };
+  }
 
   static async getUserAccountByName (username) {
     return await Helper.list(UserModel, { username })
-  };
+  }
 
   static async getUserAccounts () {
     return await Helper.list(UserModel, {})
-  };
+  }
 
   static async updateUserAccountByName (username, password) {
     if (!password) { throw new Error({ name: 'ValidationError' }) }
     const hashedPassword = await hashPassword(password)
     const updateResult = await Helper.updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
     return updateResult
-  };
+  }
 
   static async deleteUserAccountByName (username) {
     const deleteResult = await Helper.deleteOne(UserModel, { username })
     return deleteResult
-  };
+  }
 }
 
 async function hashPassword (password) {
   return bcrypt.hash(password, parseInt(HASH_SALT_ROUNDS))
-};
+}
 
 async function verifyHashPassword (enteredPassword, storedHashPassword) {
   return bcrypt.compare(enteredPassword, storedHashPassword)
-};
+}
 
 function createJwtToken (identifiers, tokenSecret, tokenExpiry) {
   return jwt.sign(identifiers, tokenSecret, { expiresIn: tokenExpiry })
-};
+}
