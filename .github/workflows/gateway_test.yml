@@ -8,9 +8,6 @@ on:
 
 jobs:
   test_gateway:
-    defaults:
-      run:
-        working-directory: ./gateway-service
 
     runs-on: ubuntu-latest
     strategy:
@@ -22,5 +19,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
+      # Create env.prod files per  for local testing
 
-      # - name: Test Gateway Service
+      - name: Orchestrate microservices
+        run: docker-compose -f "docker-compose.yml" up -d --build
+        working-directory: ./
+
+      - name: Install dependencies to test Gateway Service
+        run: npm ci
+        working-directory: ./gateway-service/tests
+
+      - name: Test Gateway Service
+        run: npm test
+        working-directory: ./gateway-service/tests

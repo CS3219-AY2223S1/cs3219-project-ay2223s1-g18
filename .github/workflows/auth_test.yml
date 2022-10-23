@@ -41,10 +41,10 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Lint User Service Code
+      - name: Lint Auth Service Code
         run: npm run lint
 
-      - name: Test User Service
+      - name: Test Auth Service
         run: npm test 
         env:
             REDIS_URI: ${{ secrets.REDIS_LOCAL_URI }}
