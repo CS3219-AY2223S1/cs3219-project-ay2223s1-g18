@@ -45,7 +45,7 @@ jobs:
       - name: Create env for user service
         uses: SpicyPizza/create-envfile@v1.3
         with:
-            envkey_DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+            envkey_DB_LOCAL_URI: ${{ secrets.DB_ORCH_URI }}
             envkey_ENV: ${{ secrets.ENV }}
             envkey_REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
             envkey_ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
@@ -63,7 +63,7 @@ jobs:
       - name: Create env for matching service
         uses: SpicyPizza/create-envfile@v1.3
         with:
-            envkey_DB_LOCAL_URI: ${{ secrets.DB_LOCAL_URI }}
+            envkey_DB_LOCAL_URI: ${{ secrets.DB_ORCH_URI }}
             envkey_ENV: ${{ secrets.ENV }}
             directory: ./matching-service
             file_name: .env.prod
@@ -88,7 +88,7 @@ jobs:
       - name: Create env for auth service
         uses: SpicyPizza/create-envfile@v1.3
         with:
-            envkey_REDIS_URI: ${{ secrets.REDIS_LOCAL_URI }}
+            envkey_REDIS_URI: ${{ secrets.REDIS_ORCH_URI }}
             envkey_REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
             envkey_ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
             envkey_VERIFICATION_TOKEN_SECRET: ${{ secrets.VERIFICATION_TOKEN_SECRET }}
