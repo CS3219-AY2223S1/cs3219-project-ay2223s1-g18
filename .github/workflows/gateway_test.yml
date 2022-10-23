@@ -34,7 +34,7 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.3
         with:
             envkey_AUTH_SERVICE_URL: ${{ secrets.AUTH_SERVICE_URL }}
-            envkey_USER_SERVICE_URL: ${{ secrets.USER_SERVICE_UR }}
+            envkey_USER_SERVICE_URL: ${{ secrets.USER_SERVICE_URL }}
             envkey_MATCHING_SERVICE_URL: ${{ secrets.MATCHING_SERVICE_URL }}
             envkey_QUESTION_SERVICE_URL: ${{ secrets.QUESTION_SERVICE_URL }}
             envkey_USER_HISTORY_SERVICE_URL: ${{ secrets.USER_HISTORY_SERVICE_URL }}
