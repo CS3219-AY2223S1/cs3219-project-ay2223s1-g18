@@ -11,10 +11,10 @@ const HASH_SALT_ROUNDS = 11
 
 export default class UserService {
   static async createUserVerificationRequest (email, username, password) {
-    if (!email || !username || !password) { throw new Error({ name: 'ValidationError' }) }
+    if (!email || !username || !password) { throw new Error('ValidationError') }
 
     const matchingUser = await Helper.listOne(UserModel, { $or: [{ username }, { email }] })
-    if (matchingUser) { throw new Error({ name: 'ExistingUserError' }) }
+    if (matchingUser) { throw new Error('ExistingUserError') }
 
     const tokenDetails = { email, username, password }
     const verificationToken = createJwtToken(tokenDetails, JwtSecrets.VERIFICATION, process.env.VERIFICATION_TOKEN_EXPIRY)
@@ -33,7 +33,7 @@ export default class UserService {
 
   static async createResetVerificationRequest (email) {
     const user = await Helper.list(UserModel, { email })
-    if (!user) { throw new Error({ name: 'ValidationError' }) }
+    if (!user) { throw new Error('ValidationError') }
 
     const tokenDetails = { email, username: user.username }
     const verificationToken = createJwtToken(tokenDetails, JwtSecrets.VERIFICATION, process.env.VERIFICATION_TOKEN_EXPIRY)
@@ -42,17 +42,17 @@ export default class UserService {
   }
 
   static async completePasswordReset (tokenData, password) {
-    if (!password) { throw new Error({ name: 'ValidationError' }) }
+    if (!password) { throw new Error('ValidationError') }
     const hashedPassword = await hashPassword(password)
     return await Helper.updateOne(UserModel, { email: tokenData.email }, { password: hashedPassword }, { new: true })
   }
 
   static async authenticateUser (username, password) {
     const matchingUser = await Helper.listOne(UserModel, { username })
-    if (!matchingUser) { throw new Error({ name: 'BadUsernameError' }) }
+    if (!matchingUser) { throw new Error('BadUsernameError') }
 
     const isEnteredPasswordValid = await verifyHashPassword(password, matchingUser.password)
-    if (!isEnteredPasswordValid) { throw new Error({ name: 'BadPasswordError' }) }
+    if (!isEnteredPasswordValid) { throw new Error('BadPasswordError') }
     return {
       refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
       accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
@@ -74,7 +74,7 @@ export default class UserService {
   }
 
   static async updateUserAccountByName (username, password) {
-    if (!password) { throw new Error({ name: 'ValidationError' }) }
+    if (!password) { throw new Error('ValidationError') }
     const hashedPassword = await hashPassword(password)
     const updateResult = await Helper.updateOne(UserModel, { username }, { password: hashedPassword }, { new: true })
     return updateResult
