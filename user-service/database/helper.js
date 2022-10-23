@@ -20,4 +20,4 @@ export default class Helper {
   static async deleteOne (Model, query) {
     return Model.deleteOne(query)
   }
-};
+}
