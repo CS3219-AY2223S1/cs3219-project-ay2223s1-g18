@@ -7,7 +7,7 @@ dotenv.config()
 
 const port = process.env.USER_PORT || 8000
 
-const app = express()
+export const app = express()
 
 app.use(cors()) // config cors so that front-end can use
 app.use(express.json())
