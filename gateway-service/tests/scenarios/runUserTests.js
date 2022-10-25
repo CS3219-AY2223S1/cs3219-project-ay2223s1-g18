@@ -4,14 +4,15 @@ dotenv.config()
 
 const GATEWAY_LINK = 'http://localhost:80';
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 const VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN
 const USER =  {
     email: "test@test.com",
     username: "shawn",
     password: "123456",
   }
-  
-export function runUserTests() {
+
+  export function runUserTests() {
     describe("User Tests /", () => {
         it("should not be able to access protected service without a valid access token", (done) => {
             chai.request(GATEWAY_LINK)
@@ -27,6 +28,17 @@ export function runUserTests() {
             chai.request(GATEWAY_LINK)
                 .get(`/api/user/accounts`)
                 .set({ "Authorization": `Bearer ${ACCESS_TOKEN}` })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
+
+        it("should be able to obtain a valid access token with a valid refresh token", (done) => {
+            chai.request(GATEWAY_LINK)
+                .get(`/api/user/get-access`)
+                .set({ "Authorization": `Bearer ${REFRESH_TOKEN}` })
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.a('object');

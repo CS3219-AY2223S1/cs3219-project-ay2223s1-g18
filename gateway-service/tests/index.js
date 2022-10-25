@@ -13,9 +13,9 @@ const expect = chai.expect;
 
 describe("Gateway Tests", () => {
   runHealthTests();
-  runAuthTests();
+  //runAuthTests();
   runUserTests();
-  runMatchingTests();
-  runQuestionTests();
-  runUserHistoryTests();
+  //runMatchingTests();
+  //runQuestionTests();
+  //runUserHistoryTests();
 });
