@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken'
 
 import RedisInstance from '../../cache/instance.js'
 import { HttpResponse } from '../../constants/httpResponse.js'
-import { JwtSecrets } from '../../constants/jwtSecrets.js'
 
 const JwtBlacklist = new RedisInstance()
 
@@ -78,26 +77,5 @@ export class AuthMiddleware {
     }
   }
 
-  static getAccessToken (username) {
-    return async (req, res) => {
-      try {
-        res.status(HttpResponse.OK).json({
-          status: true,
-          response: {
-            accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
-          }
-        })
-      } catch (errorObject) {
-        console.log(errorObject.toString())
-        const errorResponse = JSON.parse(serverErrorResponse)
-
-        res.status(errorResponse.statusCode).json(errorResponse.response)
-      }
-    }
-  }
-
 }
 
-function createJwtToken (identifiers, tokenSecret, tokenExpiry) {
-  return jwt.sign(identifiers, tokenSecret, { expiresIn: tokenExpiry })
-}
