@@ -28,6 +28,7 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res) => {
       try {
+        console.log(secret)
         console.log(req.headers['x-original-uri'])
         if (!req.headers.authorization) { throw new Error('Missing auth header') }
 
@@ -95,24 +96,6 @@ export class AuthMiddleware {
     }
   }
 
-  static getInitialTokens (username) {
-    return async (req, res) => {
-      try {
-        res.status(HttpResponse.OK).json({
-          status: true,
-          response: {
-            refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
-            accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
-          }
-        })
-      } catch (errorObject) {
-        console.log(errorObject.toString())
-        const errorResponse = JSON.parse(serverErrorResponse)
-
-        res.status(errorResponse.statusCode).json(errorResponse.response)
-      }
-    }
-  }
 }
 
 function createJwtToken (identifiers, tokenSecret, tokenExpiry) {
