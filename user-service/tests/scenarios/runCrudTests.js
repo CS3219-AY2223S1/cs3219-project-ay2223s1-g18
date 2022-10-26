@@ -23,7 +23,7 @@ export function runCrudTests(app) {
         .request(app)
         .post(`/signup-verify`)
         .type('form')
-        .set("tokendata", JSON.stringify(USERS[0]))
+        .set("token", JSON.stringify(USERS[0]))
         .end((err, res) => {
           res.should.have.status(201);
           res.body.should.be.a("object");
@@ -35,7 +35,7 @@ export function runCrudTests(app) {
       chai
         .request(app)
         .post(`/signup-verify`)
-        .set("tokendata", JSON.stringify(USERS[1]))
+        .set("token", JSON.stringify(USERS[1]))
         .end((err, res) => {
           res.should.have.status(201);
           res.body.should.be.a("object");
