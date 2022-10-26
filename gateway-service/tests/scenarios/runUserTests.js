@@ -46,22 +46,11 @@ const USER =  {
                 });
         });
 
-        it("should not be perform verification request without a valid verification token", (done) => {
-            chai.request(GATEWAY_LINK)
-                .patch(`/api/user/password-reset-verify`)
-                .end((err, res) => {
-                    res.should.have.status(401);
-                    res.body.should.be.a('object');
-                    done();
-                });
-        });
-
         it("should create a user", (done) => {
             chai
               .request(GATEWAY_LINK)
               .post(`/api/user/signup-verify`)
               .set({ "Authorization": `Bearer ${VERIFICATION_TOKEN}` })
-              .set("tokendata", JSON.stringify(USER))
               .end((err, res) => {
                 res.should.have.status(201);
                 res.body.should.be.a("object");
@@ -80,6 +69,33 @@ const USER =  {
                     done();
                 });
         });
+
+        it("should not perform verification request without a valid verification token", (done) => {
+            chai.request(GATEWAY_LINK)
+                .patch(`/api/user/password-reset-verify`)
+                .type('form')
+                .send({password: 'abce'})
+                .end((err, res) => {
+                    res.should.have.status(401);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
+
+        it("should perform verification request with a valid verification token", (done) => {
+            chai.request(GATEWAY_LINK)
+                .patch(`/api/user/password-reset-verify`)
+                .set({ "Authorization": `Bearer ${VERIFICATION_TOKEN}` })
+                .set({token: JSON.stringify(USER)})
+                .type('form')
+                .send({password: 'abce'})
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
+
 
         it("should delete a user", (done) => {
             chai.request(GATEWAY_LINK)

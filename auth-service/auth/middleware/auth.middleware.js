@@ -18,7 +18,7 @@ export class AuthMiddleware {
     return async (req, res, next) => {
       res.status(HttpResponse.OK).json({
         status: 'true',
-        response: 'operational'
+        response: 'validated'
       })
       next()
     }
@@ -27,23 +27,29 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res) => {
       try {
-        console.log(secret)
-        console.log(req.headers['x-original-uri'])
+        console.log(1)
         if (!req.headers.authorization) { throw new Error('Missing auth header') }
-
+        
         const decodedToken = jwt.verify(
           req.headers.authorization.split(' ')[1],
           secret)
+          console.log(2)
+
         const status = await JwtBlacklist.getObject(req.headers.authorization)
         if (status) { throw new Error('Jwt blacklisted') }
+        console.log(3)
+
+        res.header('token', JSON.stringify(decodedToken))
+        console.log(4)
 
         res.status(HttpResponse.OK).json({
-          status: true,
-          response: {
-            decodedToken
-          }
+          status: 'true',
+          response: 'operational'
         })
+        console.log(5)
+
       } catch (errorObject) {
+        console.log('ERROR')
         const errorResponse = JSON.parse(serverErrorResponse)
 
         if (
