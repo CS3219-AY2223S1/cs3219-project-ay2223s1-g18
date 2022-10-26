@@ -27,7 +27,6 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res) => {
       try {
-        console.log(req.type)
         if (!req.headers.authorization) { throw new Error('Missing auth header') }
         
         const decodedToken = jwt.verify(
@@ -35,7 +34,7 @@ export class AuthMiddleware {
           secret)
 
         const status = await JwtBlacklist.getObject(req.headers.authorization)
-        if (status) { throw new Error('Jwt blacklisted') }
+        if (status) { throw new Error('JsonWebTokenError') }
 
         res.header('token', JSON.stringify(decodedToken))
 
@@ -63,7 +62,10 @@ export class AuthMiddleware {
   static blacklistJwtToken (isLogout = false) {
     return async (req, res) => {
       try {
-        await JwtBlacklist.setExpiryOfObject(req.headers.authorization, +res.locals.tokenData.exp)
+        const tokenData = JSON.parse(req.headers.token)
+
+        await JwtBlacklist.createObject(req.headers.authorization, 'invalid')
+        await JwtBlacklist.setExpiryOfObject(req.headers.authorization, +tokenData.exp)
         if (isLogout) {
           res.status(HttpResponse.OK).json({
             status: true,
@@ -73,6 +75,10 @@ export class AuthMiddleware {
       } catch (errorObject) {
         console.log(errorObject.toString())
         const errorResponse = JSON.parse(serverErrorResponse)
+        if (errorObject.message === 'RedundantError' ) {
+          errorResponse.statusCode = HttpResponse.BAD_REQUEST
+          errorResponse.response.message = 'Action already performed!'
+        }
 
         res.status(errorResponse.statusCode).json(errorResponse.response)
       }
