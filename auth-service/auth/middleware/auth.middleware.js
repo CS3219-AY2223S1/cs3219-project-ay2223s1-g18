@@ -27,7 +27,7 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res) => {
       try {
-        console.log(1)
+        console.log(req.type)
         if (!req.headers.authorization) { throw new Error('Missing auth header') }
         
         const decodedToken = jwt.verify(
