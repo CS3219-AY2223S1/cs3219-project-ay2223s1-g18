@@ -96,6 +96,19 @@ const USER =  {
                 });
         });
 
+        it("should update a user", (done) => {
+            chai.request(GATEWAY_LINK)
+                .patch(`/api/user/accounts/${USER.username}`)
+                .set({ "Authorization": `Bearer ${ACCESS_TOKEN}` })
+                .type('form')
+                .send({password: 'abce'})
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.a('object');
+                    done();
+                });
+        });
+
 
         it("should delete a user", (done) => {
             chai.request(GATEWAY_LINK)

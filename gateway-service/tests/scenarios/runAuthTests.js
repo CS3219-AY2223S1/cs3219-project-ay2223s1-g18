@@ -14,26 +14,6 @@ const VERIFICATION_TOKEN = process.env.VERIFICATION_TOKEN
 
 export function runAuthTests() {
     describe("Auth Tests /", () => {
-        it("should not be able to get new access token without a valid refresh token", (done) => {
-            chai.request(GATEWAY_LINK)
-                .get(`/api/auth/get-access`)
-                .end((err, res) => {
-                    res.should.have.status(401);
-                    res.body.should.be.a('object');
-                    done();
-                });
-        });
-
-        it("should be able to get new access token with a valid refresh token", (done) => {
-            chai.request(GATEWAY_LINK)
-                .get(`/api/auth/get-access`)
-                .set({ "Authorization": `Bearer ${REFRESH_TOKEN}` })
-                .end((err, res) => {
-                    res.should.have.status(200);
-                    res.body.should.be.a('object');
-                    done();
-                });
-        });
 
     });
 }
