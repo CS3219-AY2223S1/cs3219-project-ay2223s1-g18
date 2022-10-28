@@ -71,7 +71,7 @@ const UserHistoryEntry = ({ session, index }) => {
 export default UserHistoryEntry;
 
 UserHistoryEntry.propTypes = {
-  session: PropTypes.node,
+  session: PropTypes.object,
   index: PropTypes.number,
 };
 

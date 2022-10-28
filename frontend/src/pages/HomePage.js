@@ -166,7 +166,7 @@ const DifficultyCard = ({ difficulty }) => {
 };
 
 DifficultyCard.propTypes = {
-  difficulty: PropTypes.string,
+  difficulty: PropTypes.number,
 };
 
 const StyledDifficultyCard = styled.div`

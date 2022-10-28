@@ -29,7 +29,7 @@ Button.propTypes = {
   disabled: PropTypes.bool,
   size: PropTypes.string,
   loading: PropTypes.bool,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };
 
 const StyledButton = styled.button`

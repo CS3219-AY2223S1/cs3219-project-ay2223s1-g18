@@ -23,6 +23,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     setLoading(true);
+
     GETRequest(`/accounts/${username}`)
       .then((res) => {
         if (res.status === STATUS_CODE_OK) {
@@ -57,7 +58,7 @@ const ProfilePage = () => {
       sum += session.ratingReceived;
     }
     setPeerPoints(sum);
-    var averageRating = sum === 0 ? 0 : (sum / historyArr.length).toFixed(2);
+    var averageRating = sum === 0 ? 0 : +(sum / historyArr.length).toFixed(2);
 
     setAverageRating(averageRating);
   };
@@ -183,7 +184,7 @@ const StatisticTile = ({ emoji, tileColor, number, label }) => {
 };
 
 UserHistorySection.propTypes = {
-  userHistory: PropTypes.node,
+  userHistory: PropTypes.array,
 };
 
 StatisticTile.propTypes = {
