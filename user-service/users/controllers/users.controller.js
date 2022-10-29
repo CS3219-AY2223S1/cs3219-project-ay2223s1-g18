@@ -42,7 +42,8 @@ export class UserController {
 
   static completeUserSignup () {
     return async (req, res, next) => {
-      UserService.completeUserSignup(JSON.parse(req.headers.tokendata))
+      const tokenData = JSON.parse(req.headers.token)
+      UserService.completeUserSignup(tokenData)
         .then((response) => {
           res.status(HttpResponse.CREATED).json({
             status: true,
@@ -86,8 +87,12 @@ export class UserController {
 
   static completePasswordReset () {
     return async (req, res, next) => {
+      console.log('101')
+      console.log(req.body)
       const { password } = req.body
-      UserService.completePasswordReset(res.locals.tokenData, password)
+      const tokenData = JSON.parse(req.headers.token)
+  
+      UserService.completePasswordReset(tokenData, password)
         .then((response) => {
           if (!response) throw new Error({ name: 'BadUsernameError' })
 
@@ -149,7 +154,8 @@ export class UserController {
 
   static getAccessToken () {
     return async (req, res, next) => {
-      UserService.getAccessToken(res.locals.tokenData.username)
+      const tokenData = JSON.parse(req.headers.token)
+      UserService.getAccessToken(tokenData.username)
         .then((response) => {
           res.status(HttpResponse.OK).json({
             status: true,

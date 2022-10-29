@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken'
 
 import RedisInstance from '../../cache/instance.js'
 import { HttpResponse } from '../../constants/httpResponse.js'
-import { JwtSecrets } from '../../constants/jwtSecrets.js'
 
 const JwtBlacklist = new RedisInstance()
 
@@ -19,7 +18,7 @@ export class AuthMiddleware {
     return async (req, res, next) => {
       res.status(HttpResponse.OK).json({
         status: 'true',
-        response: 'operational'
+        response: 'validated'
       })
       next()
     }
@@ -28,21 +27,22 @@ export class AuthMiddleware {
   static analyseJwtToken (secret) {
     return async (req, res) => {
       try {
-        console.log(req.headers['x-original-uri'])
         if (!req.headers.authorization) { throw new Error('Missing auth header') }
-
+        console.log(1)
         const decodedToken = jwt.verify(
           req.headers.authorization.split(' ')[1],
           secret)
+
         const status = await JwtBlacklist.getObject(req.headers.authorization)
-        if (status) { throw new Error('Jwt blacklisted') }
+        if (status) { throw new Error('JsonWebTokenError') }
+
+        res.header('token', JSON.stringify(decodedToken))
 
         res.status(HttpResponse.OK).json({
-          status: true,
-          response: {
-            decodedToken
-          }
+          status: 'true',
+          response: 'operational'
         })
+
       } catch (errorObject) {
         const errorResponse = JSON.parse(serverErrorResponse)
 
@@ -61,7 +61,10 @@ export class AuthMiddleware {
   static blacklistJwtToken (isLogout = false) {
     return async (req, res) => {
       try {
-        await JwtBlacklist.setExpiryOfObject(req.headers.authorization, +res.locals.tokenData.exp)
+        const tokenData = JSON.parse(req.headers.token)
+
+        await JwtBlacklist.createObject(req.headers.authorization, 'invalid')
+        await JwtBlacklist.setExpiryOfObject(req.headers.authorization, +tokenData.exp)
         if (isLogout) {
           res.status(HttpResponse.OK).json({
             status: true,
@@ -71,50 +74,15 @@ export class AuthMiddleware {
       } catch (errorObject) {
         console.log(errorObject.toString())
         const errorResponse = JSON.parse(serverErrorResponse)
+        if (errorObject.message === 'RedundantError' ) {
+          errorResponse.statusCode = HttpResponse.BAD_REQUEST
+          errorResponse.response.message = 'Action already performed!'
+        }
 
         res.status(errorResponse.statusCode).json(errorResponse.response)
       }
     }
   }
 
-  static getAccessToken (username) {
-    return async (req, res) => {
-      try {
-        res.status(HttpResponse.OK).json({
-          status: true,
-          response: {
-            accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
-          }
-        })
-      } catch (errorObject) {
-        console.log(errorObject.toString())
-        const errorResponse = JSON.parse(serverErrorResponse)
-
-        res.status(errorResponse.statusCode).json(errorResponse.response)
-      }
-    }
-  }
-
-  static getInitialTokens (username) {
-    return async (req, res) => {
-      try {
-        res.status(HttpResponse.OK).json({
-          status: true,
-          response: {
-            refreshToken: createJwtToken({ username }, JwtSecrets.REFRESH, process.env.REFRESH_TOKEN_EXPIRY),
-            accessToken: createJwtToken({ username }, JwtSecrets.ACCESS, process.env.ACCESS_TOKEN_EXPIRY)
-          }
-        })
-      } catch (errorObject) {
-        console.log(errorObject.toString())
-        const errorResponse = JSON.parse(serverErrorResponse)
-
-        res.status(errorResponse.statusCode).json(errorResponse.response)
-      }
-    }
-  }
 }
 
-function createJwtToken (identifiers, tokenSecret, tokenExpiry) {
-  return jwt.sign(identifiers, tokenSecret, { expiresIn: tokenExpiry })
-}
