@@ -48,3 +48,6 @@ jobs:
             REFRESH_TOKEN_EXPIRY: ${{ secrets.REFRESH_TOKEN_EXPIRY }}
             ACCESS_TOKEN_EXPIRY: ${{ secrets.ACCESS_TOKEN_EXPIRY }}
             VERIFICATION_TOKEN_EXPIRY: ${{ secrets.VERIFICATION_TOKEN_EXPIRY }}
+            REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+            ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+            VERIFICATION_TOKEN: ${{ secrets.VERIFICATION_TOKEN }}

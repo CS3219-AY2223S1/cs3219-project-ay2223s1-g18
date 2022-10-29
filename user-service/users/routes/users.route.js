@@ -10,6 +10,7 @@ router.route('/password-reset').post(UserController.sendResetPasswordToken())
 router.route('/password-reset-verify').patch(UserController.completePasswordReset())
 
 router.route('/auth').post(UserController.authenticateUser())
+router.route('/get-access').get(UserController.getAccessToken())
 
 router.route('/health').get(UserController.getHealthStatus())
 
