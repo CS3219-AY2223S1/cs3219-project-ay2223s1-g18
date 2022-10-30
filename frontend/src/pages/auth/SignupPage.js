@@ -117,25 +117,17 @@ function SignupPage() {
           {error && (
             <p style={{ color: "var(--red)", marginBottom: "8px" }}>{error}</p>
           )}
-          {loading ? (
-            <Button
-              variant="primary"
-              size="big"
-              style={{ width: "100%" }}
-              loading
-            >
-              Sign up
-            </Button>
-          ) : (
-            <Button
-              variant="primary"
-              size="big"
-              style={{ width: "100%" }}
-              onClick={handleSignup}
-            >
-              Sign up
-            </Button>
-          )}
+
+          <Button
+            variant="primary"
+            size="big"
+            style={{ width: "100%" }}
+            onClick={handleSignup}
+            loading={loading}
+          >
+            Sign up
+          </Button>
+
           <p style={{ marginTop: "16px" }}>
             Already have an account? <a href="/login">Log in</a>
           </p>

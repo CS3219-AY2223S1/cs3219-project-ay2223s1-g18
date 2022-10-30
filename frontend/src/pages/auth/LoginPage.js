@@ -10,9 +10,11 @@ function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = () => {
+    setLoading(true);
     POSTRequest("USER", `/auth/`, { username, password })
       .then((res) => {
         if (res.data.status && res.data.response) {
@@ -21,6 +23,7 @@ function LoginPage() {
 
           saveStorage("currentUsername", username);
           navigate("/home");
+          setLoading(false);
         } else if (res.status === 500) {
           setError("Wrong username or password!");
         }
@@ -86,6 +89,7 @@ function LoginPage() {
             size="big"
             style={{ width: "100%" }}
             onClick={handleLogin}
+            loading={loading}
           >
             Log in
           </Button>
