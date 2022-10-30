@@ -22,7 +22,7 @@ function SignupPage() {
   const handleSignup = () => {
     setLoading(true);
     if (checkInputsFilled()) {
-      POSTRequest("/signup", { email, username, password })
+      POSTRequest("USER", "/signup", { email, username, password })
         .then((res) => {
           if (res && res.status === STATUS_CODE_ACCEPTED) {
             setIsSignedUp(true);

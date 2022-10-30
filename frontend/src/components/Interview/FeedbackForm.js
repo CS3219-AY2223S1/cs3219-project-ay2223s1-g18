@@ -4,7 +4,7 @@ import Button from "../Button";
 import StarIcon from "../../assets/icons/StarIcon.svg";
 import { SocketContext } from "../../context/socket";
 import { fetchStorage } from "../../utils/LocalStorageService";
-import { addUserHistory } from "../../utils/UserHistoryService";
+import { POSTRequest } from "../../utils/axios";
 import { STATUS_CODE_OK } from "../../utils/constants";
 import PropTypes from "prop-types";
 
@@ -44,7 +44,7 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
         comments_received: comments,
         datetime: Date.now(),
       };
-      addUserHistory("/", session)
+      POSTRequest("USER-HISTORY", ``, session)
         .then((res) => {
           if (res.status === STATUS_CODE_OK) {
             setHasReceivedFeedback(true);

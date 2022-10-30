@@ -22,7 +22,7 @@ const SettingsPage = () => {
   const deleteAccount = () => {
     setError("");
 
-    DELETERequest(`accounts/${username}`, {}).then((res) => {
+    DELETERequest("USER", `accounts/${username}`, {}).then((res) => {
       if (res.data.status) {
         clearStorage("currentUsername");
         clearCookies();
@@ -38,7 +38,7 @@ const SettingsPage = () => {
   const updatePassword = () => {
     setSuccessMsg("");
     setError("");
-    PATCHRequest(`accounts/${username}`, { password })
+    PATCHRequest("USER", `accounts/${username}`, { password })
       .then((res) => {
         if (res.data.status) {
           setPassword("");

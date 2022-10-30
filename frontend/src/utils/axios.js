@@ -1,6 +1,7 @@
 import axios from "axios";
 import { URL_USER_SVC } from "../utils/configs";
 import { clearStorage } from "./LocalStorageService";
+import { getServiceUrl } from "./serviceUrl";
 import {
   clearCookies,
   getAccessToken,
@@ -12,6 +13,8 @@ const requestInterceptor = (req) => {
   try {
     var accessToken = getAccessToken();
     req.headers.Authorization = `Bearer ${accessToken}`;
+    req.headers.token = `${accessToken}`;
+
     return req;
   } catch (err) {
     console.error(err);
@@ -19,7 +22,7 @@ const requestInterceptor = (req) => {
 };
 
 const instance = axios.create({
-  baseURL: `${URL_USER_SVC}`,
+  baseURL: ``,
   timeout: 5000,
 });
 
@@ -66,18 +69,24 @@ instance.interceptors.response.use(
   }
 );
 
-export const GETRequest = (url, params = {}) => {
-  return instance.get(url, { params });
+export const GETRequest = (service, url, params = {}) => {
+  var endpoint = getServiceUrl(service) + url;
+  return instance.get(endpoint, { params });
 };
 
-export const POSTRequest = (url, data = {}) => {
-  return instance.post(url, data);
+export const POSTRequest = (service, url, data = {}) => {
+  var endpoint = getServiceUrl(service) + url;
+  return instance.post(endpoint, data);
 };
 
-export const PATCHRequest = (url, data = {}) => {
-  return instance.patch(url, data);
+export const PATCHRequest = (service, url, data = {}) => {
+  var endpoint = getServiceUrl(service) + url;
+
+  return instance.patch(endpoint, data);
 };
 
-export const DELETERequest = (url, params = {}) => {
-  return instance.delete(url, { params });
+export const DELETERequest = (service, url, params = {}) => {
+  var endpoint = getServiceUrl(service) + url;
+
+  return instance.delete(endpoint, { params });
 };

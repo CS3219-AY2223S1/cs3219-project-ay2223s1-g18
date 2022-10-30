@@ -11,7 +11,7 @@ import Button from "../components/Button";
 import { useParams } from "react-router-dom";
 import { SocketContext } from "../context/socket";
 import { STATUS_CODE_OK } from "../utils/constants";
-import { QuestionSvcGETRequest } from "../utils/QuestionService";
+import { GETRequest } from "../utils/axios";
 import Modal from "react-bootstrap/Modal";
 
 const InterviewPage = () => {
@@ -34,7 +34,7 @@ const InterviewPage = () => {
 
   // On page load, get the Question object using the Question id
   useEffect(() => {
-    QuestionSvcGETRequest(`/${question_id}`).then((res) => {
+    GETRequest("QUESTION", `/${question_id}`).then((res) => {
       if (res.status === STATUS_CODE_OK) {
         setQuestion(res.data.data);
       }

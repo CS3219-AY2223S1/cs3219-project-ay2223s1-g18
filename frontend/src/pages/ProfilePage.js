@@ -5,7 +5,6 @@ import PlaceholderDp from "../components/PlaceholderDp";
 import { fetchStorage } from "../utils/LocalStorageService";
 import Button from "../components/Button";
 import UserHistoryEntry from "../components/UserHistoryEntry";
-import { getUserHistory } from "../utils/UserHistoryService";
 import { STATUS_CODE_OK } from "../utils/constants";
 import { useParams } from "react-router-dom";
 import { GETRequest } from "../utils/axios";
@@ -24,10 +23,10 @@ const ProfilePage = () => {
   useEffect(() => {
     setLoading(true);
 
-    GETRequest(`/accounts/${username}`)
+    GETRequest("USER", `/accounts/${username}`)
       .then((res) => {
         if (res.status === STATUS_CODE_OK) {
-          getUserHistory(`/${username}`).then((res) => {
+          GETRequest("USER-HISTORY", `/${username}`).then((res) => {
             if (res.status === STATUS_CODE_OK) {
               setUserHistory(res.data.data.reverse());
               getAverageRating(res.data.data);

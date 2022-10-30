@@ -13,7 +13,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    POSTRequest(`/auth/`, { username, password })
+    POSTRequest("USER", `/auth/`, { username, password })
       .then((res) => {
         if (res.data.status && res.data.response) {
           setAccessToken(res.data.response.accessToken);

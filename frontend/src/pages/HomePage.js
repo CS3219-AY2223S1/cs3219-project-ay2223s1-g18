@@ -8,7 +8,7 @@ import CountdownPage from "./CountdownPage";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../context/socket";
 import { fetchStorage } from "../utils/LocalStorageService";
-import { QuestionSvcGETRequest } from "../utils/QuestionService";
+import { GETRequest } from "../utils/axios";
 import { STATUS_CODE_OK } from "../utils/constants";
 import PropTypes from "prop-types";
 
@@ -21,7 +21,7 @@ const HomePage = () => {
 
   const handleDifficultySelection = (difficulty) => {
     setIsLoading(true);
-    QuestionSvcGETRequest("/", { difficulty: difficulty }).then((res) => {
+    GETRequest("QUESTION", "", { difficulty: difficulty }).then((res) => {
       if (res.status === STATUS_CODE_OK) {
         socket.emit(
           "match request",

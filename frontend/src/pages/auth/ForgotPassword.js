@@ -12,7 +12,7 @@ const ForgotPassword = () => {
 
   const handleSendResetPasswordEmail = () => {
     setLoading(true);
-    POSTRequest("/password-reset", { email })
+    POSTRequest("USER", "/password-reset", { email })
       .then((res) => {
         if (res.data.status) {
           setSentEmail(true);
