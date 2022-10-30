@@ -5,22 +5,22 @@ export const URL_USER_SVC = isUsingGateway
   ? API_SVC + "/api/user"
   : process.env.REACT_APP_URI_USER_SVC
   ? process.env.REACT_APP_URI_USER_SVC
-  : "http://localhost:8000/";
+  : "http://localhost:8000";
 
 export const SOCKET_URL = isUsingGateway
   ? API_SVC
   : process.env.REACT_APP_URI_MATCHING_SVC
   ? process.env.REACT_APP_URI_MATCHING_SVC
-  : "http://localhost:8001/";
+  : "http://localhost:8001";
 
 export const URL_QUESTION_SVC = isUsingGateway
   ? API_SVC + "/api/questions"
   : process.env.REACT_APP_URI_QUESTION_SVC
   ? process.env.REACT_APP_URI_QUESTION_SVC
-  : "http://localhost:8002/";
+  : "http://localhost:8002";
 
 export const URL_USER_HISTORY_SVC = isUsingGateway
   ? API_SVC + "/api/user-history"
   : process.env.REACT_APP_URI_USER_HISTORY_SVC
   ? process.env.REACT_APP_URI_USER_HISTORY_SVC
-  : "http://localhost:8003/";
+  : "http://localhost:8003";
