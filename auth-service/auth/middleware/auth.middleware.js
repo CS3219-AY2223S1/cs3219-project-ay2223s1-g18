@@ -24,7 +24,7 @@ export class AuthMiddleware {
     }
   }
 
-  static analyseJwtToken (secret, x) {
+  static analyseJwtToken (secret) {
     return async (req, res) => {
       try {
         console.log(req.headers)
