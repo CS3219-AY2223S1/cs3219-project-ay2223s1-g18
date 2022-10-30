@@ -9,6 +9,8 @@ services:
     image: mongo:latest
 
   frontend-service:
+    env_file: # To be deleted
+      - ./frontend/.env.prod
     container_name: frontend-service
     build: ./frontend
     ports:
