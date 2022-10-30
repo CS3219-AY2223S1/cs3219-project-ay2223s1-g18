@@ -27,7 +27,7 @@ const Question = ({ difficulty, question }) => {
 
 Question.propTypes = {
   difficulty: PropTypes.string,
-  question: PropTypes.node,
+  question: PropTypes.object,
 };
 
 export default Question;
