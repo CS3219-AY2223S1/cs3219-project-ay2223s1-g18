@@ -6,6 +6,7 @@ import { SocketContext } from "../../context/socket";
 import { fetchStorage } from "../../utils/LocalStorageService";
 import { addUserHistory } from "../../utils/UserHistoryService";
 import { STATUS_CODE_OK } from "../../utils/constants";
+import PropTypes from "prop-types";
 
 const FeedbackForm = ({ partnerSocketId, question }) => {
   const [selectedRating, setSelectedRating] = useState(0);
@@ -50,6 +51,7 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
           }
         })
         .catch((err) => {
+          console.error(err);
           window.location.href = "/error";
         });
     });
@@ -138,6 +140,11 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
 
 export default FeedbackForm;
 
+FeedbackForm.propTypes = {
+  partnerSocketId: PropTypes.node,
+  question: PropTypes.node,
+};
+
 var SelectionTile = ({ label, isSelected, numStars, onClick }) => {
   return (
     <StyledSelectionTile isSelected={isSelected} onClick={onClick}>
@@ -149,6 +156,13 @@ var SelectionTile = ({ label, isSelected, numStars, onClick }) => {
       <span>{label}</span>
     </StyledSelectionTile>
   );
+};
+
+SelectionTile.propTypes = {
+  label: PropTypes.string,
+  isSelected: PropTypes.bool,
+  numStars: PropTypes.number,
+  onClick: PropTypes.func,
 };
 
 const StyledSelectionTile = styled.div`

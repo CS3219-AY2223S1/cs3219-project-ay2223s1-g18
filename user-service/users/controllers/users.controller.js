@@ -22,7 +22,7 @@ export class UserController {
           next()
         })
         .catch((errorObject) => {
-          console.log(errorObject)
+          console.log(errorObject.toString())
           const errorResponse = JSON.parse(serverErrorResponse)
 
           if (errorObject.name === 'ValidationError') {
@@ -42,7 +42,8 @@ export class UserController {
 
   static completeUserSignup () {
     return async (req, res, next) => {
-      UserService.completeUserSignup(res.locals.tokenData)
+      const tokenData = JSON.parse(req.headers.token)
+      UserService.completeUserSignup(tokenData)
         .then((response) => {
           res.status(HttpResponse.CREATED).json({
             status: true,
@@ -52,7 +53,7 @@ export class UserController {
         })
         .catch((errorObject) => {
         // TODO: user already added
-          console.log(errorObject)
+          console.log(errorObject.toString())
           const errorResponse = JSON.parse(serverErrorResponse)
           return res.status(errorResponse.statusCode).json(errorResponse.response)
         })
@@ -86,8 +87,12 @@ export class UserController {
 
   static completePasswordReset () {
     return async (req, res, next) => {
+      console.log('101')
+      console.log(req.body)
       const { password } = req.body
-      UserService.completePasswordReset(res.locals.tokenData, password)
+      const tokenData = JSON.parse(req.headers.token)
+  
+      UserService.completePasswordReset(tokenData, password)
         .then((response) => {
           if (!response) throw new Error({ name: 'BadUsernameError' })
 
@@ -127,7 +132,7 @@ export class UserController {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message =
               'Username and/or Password are missing!'
-          } else if (errorObject.name === 'BadUsernameError' || errorObject.name === 'BadPasswordError') {
+          } else if (errorObject.message === 'BadUsernameError' || errorObject.message === 'BadPasswordError') {
             errorResponse.statusCode = HttpResponse.UNAUTHORIZED
             errorResponse.response.message = 'Invalid Credentials provided!'
           }
@@ -149,7 +154,8 @@ export class UserController {
 
   static getAccessToken () {
     return async (req, res, next) => {
-      UserService.getAccessToken(res.locals.tokenData.username)
+      const tokenData = JSON.parse(req.headers.token)
+      UserService.getAccessToken(tokenData.username)
         .then((response) => {
           res.status(HttpResponse.OK).json({
             status: true,
@@ -170,7 +176,7 @@ export class UserController {
       const { username } = req.params
       UserService.getUserAccountByName(username)
         .then((response) => {
-          if (response.length === 0) throw new Error({ name: 'BadUsernameError' })
+          if (response.length === 0) throw new Error('BadUsernameError')
           res.status(HttpResponse.OK).json({
             status: true,
             response
@@ -180,9 +186,9 @@ export class UserController {
         .catch((errorObject) => {
           const errorResponse = JSON.parse(serverErrorResponse)
 
-          if (errorObject.name === 'BadUsernameError') {
+          if (errorObject.message === 'BadUsernameError') {
             errorResponse.statusCode = HttpResponse.NOT_FOUND
-            errorResponse.response.message = 'No such Username found for update!'
+            errorResponse.response.message = 'No such Username found!'
           }
 
           res.status(errorResponse.statusCode).json(errorResponse.response)
@@ -200,13 +206,8 @@ export class UserController {
           })
           next()
         })
-        .catch((errorObject) => {
+        .catch(() => {
           const errorResponse = JSON.parse(serverErrorResponse)
-
-          if (errorObject.name === 'BadUsernameError') {
-            errorResponse.statusCode = HttpResponse.NOT_FOUND
-            errorResponse.response.message = 'No such Username found for update!'
-          }
 
           res.status(errorResponse.statusCode).json(errorResponse.response)
         })
@@ -219,7 +220,7 @@ export class UserController {
       const { password } = req.body
       UserService.updateUserAccountByName(username, password)
         .then((response) => {
-          if (!response) throw new Error({ name: 'BadUsernameError' })
+          if (!response) throw new Error('BadUsernameError')
 
           res.status(HttpResponse.OK).json({
             status: true,
@@ -233,7 +234,7 @@ export class UserController {
           if (errorObject.name === 'ValidationError') {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message = 'Password is missing!'
-          } else if (errorObject.name === 'BadUsernameError') {
+          } else if (errorObject.message === 'BadUsernameError') {
             errorResponse.statusCode = HttpResponse.NOT_FOUND
             errorResponse.response.message = 'No such Username found!'
           }
@@ -248,7 +249,7 @@ export class UserController {
       const { username } = req.params
       UserService.deleteUserAccountByName(username)
         .then((response) => {
-          if (response.deletedCount === 0) throw new Error({ name: 'BadUsernameError' })
+          if (response.deletedCount === 0) throw new Error('BadUsernameError')
           res.status(HttpResponse.OK).json({
             status: true,
             response
@@ -258,7 +259,7 @@ export class UserController {
         .catch((errorObject) => {
           const errorResponse = JSON.parse(serverErrorResponse)
 
-          if (errorObject.name === 'BadUsernameError') {
+          if (errorObject.message === 'BadUsernameError') {
             errorResponse.statusCode = HttpResponse.NOT_FOUND
             errorResponse.response.message =
               'Invalid username supplied for deletion!'

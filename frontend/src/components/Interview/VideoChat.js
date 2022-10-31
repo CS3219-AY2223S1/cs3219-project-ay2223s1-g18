@@ -6,6 +6,7 @@ import { ReactComponent as MicIcon } from "../../assets/icons/MicIcon.svg";
 import { ReactComponent as MicOffIcon } from "../../assets/icons/MicOffIcon.svg";
 import { ReactComponent as VideocamIcon } from "../../assets/icons/VideocamIcon.svg";
 import { ReactComponent as VideocamOffIcon } from "../../assets/icons/VideocamOffIcon.svg";
+import PropTypes from "prop-types";
 
 const VideoChat = ({ peerType, guestSocketId }) => {
   const socket = useContext(SocketContext);
@@ -133,6 +134,11 @@ const VideoChat = ({ peerType, guestSocketId }) => {
 };
 
 export default VideoChat;
+
+VideoChat.propTypes = {
+  peerType: PropTypes.string,
+  guestSocketId: PropTypes.number,
+};
 
 const VideoWrapper = styled.div`
   width: 50%;

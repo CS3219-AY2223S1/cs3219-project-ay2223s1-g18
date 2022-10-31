@@ -1,5 +1,6 @@
 import React from "react";
 import DifficultyChip from "../DifficultyChip";
+import PropTypes from "prop-types";
 
 const Question = ({ difficulty, question }) => {
   return (
@@ -22,6 +23,11 @@ const Question = ({ difficulty, question }) => {
       </div>
     )
   );
+};
+
+Question.propTypes = {
+  difficulty: PropTypes.string,
+  question: PropTypes.node,
 };
 
 export default Question;

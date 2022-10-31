@@ -16,7 +16,7 @@ export default class MatchingService {
                 })
                 .catch((e) => reject(e));
         });
-    };
+    }
 
     // Get the first pending match in the queue with the same difficulty
     static async getPendingMatches(difficulty) {
@@ -32,7 +32,7 @@ export default class MatchingService {
                 })
                 .catch((e) => reject(e));
         });
-    };
+    }
 
     static async deletePendingMatch(name) {
         return new Promise((resolve, reject) => {
@@ -45,5 +45,5 @@ export default class MatchingService {
                 })
                 .catch((e) => reject(e));
         });
-    };
+    }
 }

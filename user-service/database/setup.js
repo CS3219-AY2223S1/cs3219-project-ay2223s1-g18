@@ -18,4 +18,4 @@ export async function startMongoDatabase (mongoose) {
     console.error(err)
     throw new Error('Failed to connect to MongoDB database!')
   })
-};
+}

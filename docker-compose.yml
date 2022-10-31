@@ -9,6 +9,8 @@ services:
     image: mongo:latest
 
   frontend-service:
+    env_file: # To be deleted
+      - ./frontend/.env.prod
     container_name: frontend-service
     build: ./frontend
     ports:
@@ -26,6 +28,14 @@ services:
       - matching-service
       - question-service
       - user-history-service
+
+  auth-service:
+    env_file: # To be deleted
+      - ./auth-service/.env.prod
+    container_name: auth-service
+    build: ./auth-service
+    depends_on:
+      - redis_user
 
   user-service:
     env_file: # To be deleted

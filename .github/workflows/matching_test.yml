@@ -13,6 +13,9 @@ jobs:
         working-directory: ./matching-service
 
     runs-on: ubuntu-latest
+    env: 
+      ENV: LOCAL
+      DB_LOCAL_URI: mongodb://localhost/matchingservice      
     strategy:
       matrix:
         node-version: [14.x]
@@ -31,14 +34,15 @@ jobs:
         uses: supercharge/mongodb-github-action@1.8.0
         with:
             mongodb-version: ${{ matrix.mongodb-version }}
-            mongodb-port: 27017
+            # mongodb-port: 27017
 
       - name: Install Node dependencies
-        run: npm ci
+        run: npm install
 
-      # - name: Lint User Service Code
-      #   run: npm run lint
+      - name: Lint User Service Code
+        run: npm run lint
 
-      # - name: Test User Service
-      #   run: npm test -- if present
-      #   env:
+      - run: npm start & npx wait-on http://localhost:8001/matching
+
+      - name: Test User Service
+        run: npm test 

@@ -11,6 +11,7 @@ import LogoutIcon from "../assets/icons/LogoutIcon.svg";
 import Dropdown from "react-bootstrap/Dropdown";
 import PlaceholderDp from "./PlaceholderDp";
 import { clearCookies } from "../utils/TokenService";
+import PropTypes from "prop-types";
 
 const Navbar = ({ layout }) => {
   const currentUsername = fetchStorage("currentUsername");
@@ -120,6 +121,14 @@ var PublicLayoutNav = () => {
       </div>
     </StyledNav>
   );
+};
+
+Navbar.propTypes = {
+  layout: PropTypes.string.isRequired,
+};
+
+ProtectedLayoutNav.propTypes = {
+  currentUsername: PropTypes.string.isRequired,
 };
 
 const StyledNav = styled.nav`

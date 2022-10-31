@@ -2,10 +2,35 @@ import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import CodeMirror from "@uiw/react-codemirror";
 import { SocketContext } from "../../context/socket";
+import { langs } from "@uiw/codemirror-extensions-langs";
+import { color } from "@uiw/codemirror-extensions-color";
+import { Select } from "../Select";
 
 const CodeEditor = () => {
-  const socket = useContext(SocketContext);
+  const basicSetup = { autocompletion: true };
+  const [mode, setMode] = useState("javascript");
+  const [extensions, setExtensions] = useState([]);
   const [code, setCode] = useState("");
+
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    handleLangChange("javascript");
+  }, []);
+
+  function handleLangChange(lang) {
+    try {
+      if (langs[lang]) {
+        setExtensions([color, langs[lang]()]);
+      } else {
+        setExtensions([color]);
+      }
+      setMode(lang);
+      setCode("");
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  }
 
   useEffect(() => {
     socket.on("code editor", (code) => {
@@ -13,7 +38,7 @@ const CodeEditor = () => {
     });
   }, [socket, code]);
 
-  const handleChange = (editor, data, value) => {
+  const handleChange = (editor) => {
     socket.emit("code editor", {
       code: editor,
     });
@@ -21,11 +46,17 @@ const CodeEditor = () => {
 
   return (
     <StyledEditorWrapper>
+      <Select
+        label="Language"
+        options={Object.keys(langs).sort()}
+        value={mode}
+        onChange={(e) => handleLangChange(e.target.value)}
+      ></Select>
+
       <CodeMirror
         value={code}
-        options={{
-          mode: "jsx",
-        }}
+        basicSetup={basicSetup}
+        extensions={extensions}
         onChange={(editor, data, value) => {
           handleChange(editor, data, value);
         }}
