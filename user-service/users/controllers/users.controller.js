@@ -166,7 +166,7 @@ export class UserController {
 
   static getAccessToken() {
     return async (req, res, next) => {
-      const token = req.headers.token;
+      const token = req.headers.authorization.split(" ")[1];
 
       if (token) {
         const tokenData = JSON.parse(

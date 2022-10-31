@@ -45,8 +45,6 @@ services:
     depends_on:
       - redis_user
       - mongodb
-    ports:
-      - 8000:8000
 
   matching-service:
     env_file: # To be deleted
@@ -55,8 +53,6 @@ services:
     build: ./matching-service
     depends_on:
       - mongodb
-    ports:
-      - 8001:8001
 
   question-service:
     env_file: # To be deleted
@@ -65,8 +61,6 @@ services:
     build: ./question-service
     depends_on:
       - mongodb
-    ports:
-      - 8002:8002
 
   user-history-service:
     env_file: # To be deleted
@@ -75,5 +69,3 @@ services:
     build: ./user-history-service
     depends_on:
       - mongodb
-    ports:
-      - 8003:8003
