@@ -39,6 +39,5 @@ jobs:
       - name: Lint User Service Code
         run: npm run lint
 
-      # - name: Test User Service
-      #   run: npm test -- if present
-      #   env:
+      - name: Test User Service
+        run: npm test
