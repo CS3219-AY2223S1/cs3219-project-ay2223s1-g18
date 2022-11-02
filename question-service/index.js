@@ -31,3 +31,5 @@ mongoose.connection.on("error", (err) => {
 app.use("/", QuestionRouter);
 
 app.listen(port, () => console.log("Question-Service listening on Port", port));
+
+module.exports = app;
