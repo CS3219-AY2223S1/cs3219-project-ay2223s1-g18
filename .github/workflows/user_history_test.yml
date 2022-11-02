@@ -42,4 +42,4 @@ jobs:
       - name: Test User History Service
         run: npm test
         env:
-          DB_LOCAL_URI: ${{ secrets.DB_CLOUD_URI }}
+          DB_CLOUD_URI: ${{ secrets.DB_CLOUD_URI }}
