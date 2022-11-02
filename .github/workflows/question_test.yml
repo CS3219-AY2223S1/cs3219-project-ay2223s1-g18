@@ -41,3 +41,5 @@ jobs:
 
       - name: Test Question Service
         run: npm test
+        env:
+          DB_LOCAL_URI: ${{ secrets.DB_CLOUD_URI }}
