@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/*.js --exit",
+    "test": "mocha tests/*.js --timeout 10000 --exit",
     "start": "nodemon index.js",
     "lint": "eslint .  --ext .js",
     "lint-fix": "eslint --fix .  --ext .js"
