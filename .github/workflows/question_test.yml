@@ -39,5 +39,5 @@ jobs:
       - name: Lint User Service Code
         run: npm run lint
 
-      - name: Test User Service
+      - name: Test Question Service
         run: npm test
