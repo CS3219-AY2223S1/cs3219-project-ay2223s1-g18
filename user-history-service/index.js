@@ -33,3 +33,5 @@ app.use("/", UserHistoryRouter);
 app.listen(port, () =>
   console.log("User-History-Service listening on Port", port)
 );
+
+module.exports = app;
