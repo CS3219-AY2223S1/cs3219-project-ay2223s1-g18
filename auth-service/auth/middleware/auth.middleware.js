@@ -66,7 +66,7 @@ export class AuthMiddleware {
   static blacklistJwtToken(isLogout = false) {
     return async (req, res) => {
       try {
-        const tokenData = JSON.parse(req.headers.authorization.split(" ")[1]);
+        const tokenData = JSON.parse(req.headers.token);
 
         await JwtBlacklist.createObject(req.headers.authorization, "invalid");
         await JwtBlacklist.setExpiryOfObject(
