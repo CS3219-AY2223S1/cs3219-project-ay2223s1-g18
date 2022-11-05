@@ -14,13 +14,13 @@ export const SOCKET_URL = isUsingGateway
   : "http://localhost:8001";
 
 export const URL_QUESTION_SVC = isUsingGateway
-  ? API_SVC + "/api/questions"
+  ? API_SVC + "/api/questions/"
   : process.env.REACT_APP_URI_QUESTION_SVC
   ? process.env.REACT_APP_URI_QUESTION_SVC
   : "http://localhost:8002";
 
 export const URL_USER_HISTORY_SVC = isUsingGateway
-  ? API_SVC + "/api/user-history"
+  ? API_SVC + "/api/user-history/"
   : process.env.REACT_APP_URI_USER_HISTORY_SVC
   ? process.env.REACT_APP_URI_USER_HISTORY_SVC
   : "http://localhost:8003";
