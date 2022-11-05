@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import { saveStorage } from "../../utils/LocalStorageService";
@@ -33,6 +33,10 @@ function LoginPage() {
         setError("Wrong username or password!");
       });
   };
+
+  useEffect(() => {
+    setError("");
+  }, [username, password]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
