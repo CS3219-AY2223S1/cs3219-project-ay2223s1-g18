@@ -142,7 +142,7 @@ var SubChatMessage = ({ message }) => {
 
 SubChatMessage.propTypes = {
   emoji: PropTypes.string,
-  message: PropTypes.string,
+  message: PropTypes.object,
 };
 
 const StyledChatMessage = styled.div`

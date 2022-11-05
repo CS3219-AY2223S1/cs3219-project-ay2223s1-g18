@@ -1,11 +1,11 @@
-version: '3'
+version: "3"
 services:
   redis_user:
     container_name: redis
     image: redis:latest
 
   mongodb:
-    container_name: mongodb  
+    container_name: mongodb
     image: mongo:latest
 
   frontend-service:

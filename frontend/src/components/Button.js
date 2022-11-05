@@ -29,7 +29,7 @@ Button.propTypes = {
   disabled: PropTypes.bool,
   size: PropTypes.string,
   loading: PropTypes.bool,
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };
 
 const StyledButton = styled.button`
@@ -40,6 +40,7 @@ const StyledButton = styled.button`
   text-align: center;
   border: none;
   cursor: pointer;
+  width: auto;
 
   &.disabled {
     cursor: default;
@@ -91,6 +92,10 @@ const StyledButton = styled.button`
   }
   &.destructive:hover {
     background-color: #b91c1c;
+  }
+
+  @media (max-width: 450px) {
+    width: 100% !important;
   }
 `;
 

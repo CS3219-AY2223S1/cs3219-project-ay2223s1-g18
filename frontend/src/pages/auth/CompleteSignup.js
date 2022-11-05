@@ -15,7 +15,7 @@ const CompleteSignup = () => {
   }, []);
 
   const signupVerify = () => {
-    POSTRequest("/signup-verify").then((res) => {
+    POSTRequest("USER", "/signup-verify").then((res) => {
       if (res.data.status) {
         setSignupSucceeded(true);
         clearCookies();

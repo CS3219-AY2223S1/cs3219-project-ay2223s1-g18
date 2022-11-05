@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Button";
 import { saveStorage } from "../../utils/LocalStorageService";
@@ -10,10 +10,12 @@ function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    POSTRequest(`/auth/`, { username, password })
+    setLoading(true);
+    POSTRequest("USER", `/auth/`, { username, password })
       .then((res) => {
         if (res.data.status && res.data.response) {
           setAccessToken(res.data.response.accessToken);
@@ -21,15 +23,20 @@ function LoginPage() {
 
           saveStorage("currentUsername", username);
           navigate("/home");
+          setLoading(false);
         } else if (res.status === 500) {
           setError("Wrong username or password!");
         }
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
+        setLoading(false);
         setError("Wrong username or password!");
       });
   };
+
+  useEffect(() => {
+    setError("");
+  }, [username, password]);
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -86,6 +93,8 @@ function LoginPage() {
             size="big"
             style={{ width: "100%" }}
             onClick={handleLogin}
+            disabled={!username || !password}
+            loading={loading}
           >
             Log in
           </Button>

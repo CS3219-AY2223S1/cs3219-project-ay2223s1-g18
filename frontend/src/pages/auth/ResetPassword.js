@@ -17,12 +17,14 @@ const ResetPassword = () => {
   const handleResetPassword = () => {
     setPasswordErr("");
     if (password) {
-      PATCHRequest(`/password-reset-verify`, { password }).then((res) => {
-        if (res.data.status) {
-          clearCookies();
-          setSuccessfullyReset(true);
+      PATCHRequest("USER", `/password-reset-verify`, { password }).then(
+        (res) => {
+          if (res.data.status) {
+            clearCookies();
+            setSuccessfullyReset(true);
+          }
         }
-      });
+      );
     } else {
       setPasswordErr("Please enter a new password.");
     }

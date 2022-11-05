@@ -5,7 +5,6 @@ import PlaceholderDp from "../components/PlaceholderDp";
 import { fetchStorage } from "../utils/LocalStorageService";
 import Button from "../components/Button";
 import UserHistoryEntry from "../components/UserHistoryEntry";
-import { getUserHistory } from "../utils/UserHistoryService";
 import { STATUS_CODE_OK } from "../utils/constants";
 import { useParams } from "react-router-dom";
 import { GETRequest } from "../utils/axios";
@@ -23,10 +22,11 @@ const ProfilePage = () => {
 
   useEffect(() => {
     setLoading(true);
-    GETRequest(`/accounts/${username}`)
+
+    GETRequest("USER", `/accounts/${username}/`)
       .then((res) => {
-        if (res.status === STATUS_CODE_OK) {
-          getUserHistory(`/${username}`).then((res) => {
+        if (res && res.status === STATUS_CODE_OK) {
+          GETRequest("USER-HISTORY", `/${username}`).then((res) => {
             if (res.status === STATUS_CODE_OK) {
               setUserHistory(res.data.data.reverse());
               getAverageRating(res.data.data);
@@ -57,7 +57,7 @@ const ProfilePage = () => {
       sum += session.ratingReceived;
     }
     setPeerPoints(sum);
-    var averageRating = sum === 0 ? 0 : (sum / historyArr.length).toFixed(2);
+    var averageRating = sum === 0 ? 0 : +(sum / historyArr.length).toFixed(2);
 
     setAverageRating(averageRating);
   };
@@ -183,7 +183,7 @@ const StatisticTile = ({ emoji, tileColor, number, label }) => {
 };
 
 UserHistorySection.propTypes = {
-  userHistory: PropTypes.node,
+  userHistory: PropTypes.array,
 };
 
 StatisticTile.propTypes = {

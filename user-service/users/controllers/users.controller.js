@@ -75,7 +75,7 @@ export class UserController {
           console.log(errorObject)
           const errorResponse = JSON.parse(serverErrorResponse)
 
-          if (errorObject.name === 'ValidationError') {
+          if (errorObject.message === 'ValidationError') {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message =
               'No such user with email found!'
@@ -105,7 +105,7 @@ export class UserController {
         .catch((errorObject) => {
           const errorResponse = JSON.parse(serverErrorResponse)
 
-          if (errorObject.name === 'ValidationError') {
+          if (errorObject.message === 'ValidationError') {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message = 'Password is missing!'
           }
@@ -128,7 +128,7 @@ export class UserController {
         })
         .catch((errorObject) => {
           const errorResponse = JSON.parse(serverErrorResponse)
-          if (errorObject.name === 'ValidationError') {
+          if (errorObject.message === 'ValidationError') {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message =
               'Username and/or Password are missing!'
@@ -231,7 +231,7 @@ export class UserController {
         .catch((errorObject) => {
           const errorResponse = JSON.parse(serverErrorResponse)
 
-          if (errorObject.name === 'ValidationError') {
+          if (errorObject.message === 'ValidationError') {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message = 'Password is missing!'
           } else if (errorObject.message === 'BadUsernameError') {

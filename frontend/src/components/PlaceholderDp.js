@@ -29,5 +29,5 @@ export default function PlaceholderDp({ initial, size = 36 }) {
 
 PlaceholderDp.propTypes = {
   initial: PropTypes.string.isRequired,
-  size: PropTypes.number.isRequired,
+  size: PropTypes.number,
 };

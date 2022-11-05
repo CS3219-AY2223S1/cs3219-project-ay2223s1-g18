@@ -136,7 +136,8 @@ const StyledNav = styled.nav`
   height: 64px;
   margin-left: auto;
   margin-right: auto;
-  padding: 8px 32px;
+  padding: 8px 16px;
+
   border-bottom: 1px solid var(--base-100);
   display: flex;
   justify-content: space-between;
@@ -144,6 +145,7 @@ const StyledNav = styled.nav`
 
   @media (min-width: 640px) {
     padding-top: 12px;
+    padding: 8px 32px;
   }
 
   .userInfo {

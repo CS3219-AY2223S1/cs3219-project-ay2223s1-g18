@@ -137,7 +137,7 @@ export default VideoChat;
 
 VideoChat.propTypes = {
   peerType: PropTypes.string,
-  guestSocketId: PropTypes.number,
+  guestSocketId: PropTypes.string,
 };
 
 const VideoWrapper = styled.div`
