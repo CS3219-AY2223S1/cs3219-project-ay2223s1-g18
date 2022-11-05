@@ -36,39 +36,37 @@ instance.interceptors.response.use(
   async function (error) {
     const originalRequest = error.config;
 
-    // if (error.response.status === 401) {
-    // if (error.response.status === 401 && !originalRequest._retry) {
-    // originalRequest._retry = true;
-    const refreshToken = getRefreshToken();
+    if (!originalRequest.url.includes("/auth")) {
+      // if (error.response.status === 401 && !originalRequest._retry) {
+      const refreshToken = getRefreshToken();
 
-    return axios
-      .get(`${URL_USER_SVC}/get-access`, {
-        headers: { Authorization: `token ${refreshToken}` },
-      })
-      .then((res) => {
-        if (res.data.status) {
-          const newAccessToken = res.data.response.accessToken;
-          setAccessToken(newAccessToken);
+      return axios
+        .get(`${URL_USER_SVC}/get-access/`, {
+          headers: { Authorization: `token ${refreshToken}` },
+        })
+        .then((res) => {
+          if (res.data.status) {
+            const newAccessToken = res.data.response.accessToken;
+            setAccessToken(newAccessToken);
 
-          instance.defaults.headers.common["Authorization"] =
-            "Bearer " + newAccessToken;
+            instance.defaults.headers.common["Authorization"] =
+              "Bearer " + newAccessToken;
 
-          return instance(originalRequest);
-        }
-      })
-      .catch((err) => {
-        console.log("ACCESS TPOLENerr: ", err);
-        // Refresh Token expired
-        if (err.response.status === 401) {
-          console.log("REFRESH TOKEN EXPIRED: ", err);
+            return instance(originalRequest);
+          }
+        })
+        .catch((err) => {
+          console.log("ACCESS TPOLENerr: ", err);
+          // Refresh Token expired
+          if (err.response.status === 401) {
+            console.log("REFRESH TOKEN EXPIRED: ", err);
 
-          clearCookies();
-          clearStorage("currentUsername");
-          window.location.reload();
-        }
-      });
-    // }
-    // return Promise.reject(error);
+            clearCookies();
+            clearStorage("currentUsername");
+            window.location.reload();
+          }
+        });
+    }
   }
 );
 
