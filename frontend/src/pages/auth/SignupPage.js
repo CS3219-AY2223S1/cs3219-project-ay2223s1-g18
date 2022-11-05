@@ -124,6 +124,7 @@ function SignupPage() {
             style={{ width: "100%" }}
             onClick={handleSignup}
             loading={loading}
+            disabled={!email || !username || !password}
           >
             Sign up
           </Button>

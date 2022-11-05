@@ -28,8 +28,8 @@ function LoginPage() {
           setError("Wrong username or password!");
         }
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
+        setLoading(false);
         setError("Wrong username or password!");
       });
   };
@@ -89,6 +89,7 @@ function LoginPage() {
             size="big"
             style={{ width: "100%" }}
             onClick={handleLogin}
+            disabled={!username || !password}
             loading={loading}
           >
             Log in
