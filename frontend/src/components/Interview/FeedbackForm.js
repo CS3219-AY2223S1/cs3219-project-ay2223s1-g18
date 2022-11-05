@@ -80,18 +80,18 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
       {!hasSubmittedFeedback && (
         <CardWrap>
           <div
-            style={{ width: "650px" }}
+            style={{ maxWidth: "650px", width: "100%" }}
             className="d-flex flex-column align-items-center"
           >
-            <div>
+            <div style={{ width: "100%" }}>
               <div style={{ width: "100%", marginBottom: "48px" }}>
                 <h4>Rate your partner</h4>
                 <p style={{ color: "var(--base-500)" }}>
                   How correct and clear do you feel your partner was?
                 </p>
                 <div
-                  className="d-flex"
-                  style={{ marginLeft: "-8px", marginRight: "-8px" }}
+                  className="d-flex selection-tiles-wrap"
+                  // style={{ marginLeft: "-8px", marginRight: "-8px" }}
                 >
                   {selectionOptions.map((option, index) => (
                     <SelectionTile
@@ -168,7 +168,7 @@ SelectionTile.propTypes = {
 const StyledSelectionTile = styled.div`
   border-radius: 15px;
   padding: 20px;
-  margin: 0 8px;
+  margin: 0 4px;
   background-color: var(--base-50);
   display: flex;
   width: 20%;
@@ -179,6 +179,13 @@ const StyledSelectionTile = styled.div`
   cursor: pointer;
   text-align: center;
   box-sizing: border-box;
+
+  @media (max-width: 569px) {
+    padding: 8px 20px;
+    width: 100%;
+    margin: 4px;
+    flex-direction: row;
+  }
 
   span {
     font-size: 14px;
@@ -222,6 +229,10 @@ const CardPageWrap = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 640px) {
+    padding: 0 16px;
+  }
 `;
 
 const Header = styled.h1`
@@ -246,8 +257,18 @@ const CardWrap = styled.div`
     margin-bottom: 4px;
   }
 
+  .selection-tiles-wrap {
+    flex-direction: row;
+  }
+
   @media (min-width: 640px) {
     padding: 32px 0;
+  }
+
+  @media (max-width: 569px) {
+    .selection-tiles-wrap {
+      flex-direction: column;
+    }
   }
 
   @media (min-width: 832px) {

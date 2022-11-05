@@ -55,7 +55,7 @@ const SettingsPage = () => {
     <CardPageWrap>
       <Header>Settings</Header>
       <CardWrap>
-        <div style={{ maxWidth: "400px" }}>
+        <div style={{ maxWidth: "400px", width: "100%" }}>
           <div style={{ width: "100%", marginBottom: "40px" }}>
             <label>Password</label>
             <input
@@ -64,7 +64,7 @@ const SettingsPage = () => {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "356px" }}
+              // style={{ width: "356px" }}
             />
           </div>
 
@@ -142,6 +142,10 @@ const CardPageWrap = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 450px) {
+    padding: 0 16px;
+  }
 `;
 
 const Header = styled.h1`
@@ -158,6 +162,7 @@ const CardWrap = styled.div`
   margin: 0;
   gap: 24px;
   padding: 24px 0;
+  width: 100%;
 
   @media (min-width: 640px) {
     padding: 32px 0;

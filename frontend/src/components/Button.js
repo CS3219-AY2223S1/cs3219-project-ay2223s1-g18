@@ -40,6 +40,7 @@ const StyledButton = styled.button`
   text-align: center;
   border: none;
   cursor: pointer;
+  width: auto;
 
   &.disabled {
     cursor: default;
@@ -91,6 +92,10 @@ const StyledButton = styled.button`
   }
   &.destructive:hover {
     background-color: #b91c1c;
+  }
+
+  @media (max-width: 450px) {
+    width: 100% !important;
   }
 `;
 
