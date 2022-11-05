@@ -23,9 +23,9 @@ const ProfilePage = () => {
   useEffect(() => {
     setLoading(true);
 
-    GETRequest("USER", `/accounts/${username}`)
+    GETRequest("USER", `/accounts/${username}/`)
       .then((res) => {
-        if (res.status === STATUS_CODE_OK) {
+        if (res && res.status === STATUS_CODE_OK) {
           GETRequest("USER-HISTORY", `/${username}`).then((res) => {
             if (res.status === STATUS_CODE_OK) {
               setUserHistory(res.data.data.reverse());
