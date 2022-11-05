@@ -14,7 +14,7 @@ services:
     container_name: frontend-service
     build: ./frontend
     ports:
-      - 3001:3000
+      - 3000:3000
 
   gateway-service:
     env_file: # To be deleted
