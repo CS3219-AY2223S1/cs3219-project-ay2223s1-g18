@@ -39,7 +39,7 @@ const FeedbackForm = ({ partnerSocketId, question }) => {
         question_id: question.question_id,
         question_difficulty_index: question.difficulty_index,
         question_title: question.title,
-        answer_provided: "TODO",
+        answer_provided: "",
         rating_received: rating,
         comments_received: comments,
         datetime: Date.now(),
@@ -142,7 +142,7 @@ export default FeedbackForm;
 
 FeedbackForm.propTypes = {
   partnerSocketId: PropTypes.node,
-  question: PropTypes.node,
+  question: PropTypes.object,
 };
 
 var SelectionTile = ({ label, isSelected, numStars, onClick }) => {

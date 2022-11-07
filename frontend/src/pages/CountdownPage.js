@@ -38,10 +38,6 @@ const CountdownPage = () => {
           description="There are no other users online now."
         >
           <div className="d-flex">
-            {/* TODO: HANDLE THIS */}
-            <a href="/loading">
-              <Button>Continue Waiting</Button>
-            </a>
             <a href="/home">
               <Button variant="secondary" style={{ marginLeft: "12px" }}>
                 Choose another difficulty
