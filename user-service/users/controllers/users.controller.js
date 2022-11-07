@@ -25,13 +25,13 @@ export class UserController {
           console.log(errorObject.toString())
           const errorResponse = JSON.parse(serverErrorResponse)
 
-          if (errorObject.name === 'ValidationError') {
+          if (errorObject.message === 'ValidationError') {
             errorResponse.statusCode = HttpResponse.BAD_REQUEST
             errorResponse.response.message =
               'Email, Username and/or Password are missing!'
-          } else if (errorObject.name === 'ExistingUserError') {
+          } else if (errorObject.message === 'ExistingUserError') {
             // Duplicate Error
-            errorResponse.statusCode = HttpResponse.BAD_REQUEST
+            errorResponse.statusCode = HttpResponse.CONFLICT
             errorResponse.response.message = 'Email or username has been taken.'
           }
 
