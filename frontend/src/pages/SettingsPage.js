@@ -2,10 +2,9 @@ import { useState, React } from "react";
 import Button from "../components/Button";
 import styled from "styled-components";
 import { DELETERequest, PATCHRequest } from "../utils/axios";
-import { fetchStorage, clearStorage } from "../utils/LocalStorageService";
-import { clearCookies } from "../utils/TokenService";
+import { fetchStorage } from "../utils/LocalStorageService";
 import Modal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
+import useLogOut from "../utils/useLogOut";
 
 const SettingsPage = () => {
   const username = fetchStorage("currentUsername");
@@ -17,18 +16,15 @@ const SettingsPage = () => {
 
   const handleCloseDeleteAccountModal = () => setShowDeleteAccountModal(false);
   const handleShowDeleteAccountModal = () => setShowDeleteAccountModal(true);
-  const navigate = useNavigate();
+  const { logoutUser } = useLogOut();
 
   const deleteAccount = () => {
     setError("");
 
-    DELETERequest("USER", `accounts/${username}`, {}).then((res) => {
+    DELETERequest("USER", `/accounts/${username}`, {}).then((res) => {
       if (res.data.status) {
-        clearStorage("currentUsername");
-        clearCookies();
         handleCloseDeleteAccountModal();
-        navigate("/");
-        window.location.reload();
+        logoutUser();
       } else {
         setError("Unable to delete account. Please try again later.");
       }
@@ -64,7 +60,6 @@ const SettingsPage = () => {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              // style={{ width: "356px" }}
             />
           </div>
 
