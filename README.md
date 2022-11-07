@@ -22,7 +22,7 @@ This is the repository of the PeerPrep platform.
 ```
 docker compose up -d
 ```
-3. If the services are working properly, all the services should be started as shown below.
+4. If the services are working properly, all the services should be started as shown below.
 ```
 [+] Running 9/9
  ⠿ Network cs3219-project-ay2223s1-g18_default  Created                       1.2s
@@ -35,8 +35,8 @@ docker compose up -d
  ⠿ Container auth-service                       Started                       7.8s
  ⠿ Container gateway-service                    Started                      11.0s
 ``` 
-1. Navigate to http://localhost:3000/ to access the frontend service.
-2. Navigate to http://localhost:80/ to access the backend service.
+5. Navigate to http://localhost:3000/ to access the frontend service.
+6. Navigate to http://localhost:80/ to access the backend service.
 
 
 # Environment Variables
