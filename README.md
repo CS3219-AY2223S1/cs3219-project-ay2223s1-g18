@@ -24,9 +24,8 @@ docker compose up -d
 ```
 3. If the services are working properly, all the services should be started as shown below.
 ```
-[+] Running 10/10
+[+] Running 9/9
  ⠿ Network cs3219-project-ay2223s1-g18_default  Created                       1.2s
- ⠿ Container mongodb                            Started                       4.2s
  ⠿ Container redis                              Started                       4.2s
  ⠿ Container frontend-service                   Started                       4.2s
  ⠿ Container matching-service                   Started                       8.3s

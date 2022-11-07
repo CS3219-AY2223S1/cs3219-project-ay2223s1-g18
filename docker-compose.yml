@@ -4,10 +4,6 @@ services:
     container_name: redis
     image: redis:latest
 
-  mongodb:
-    container_name: mongodb
-    image: mongo:latest
-
   frontend-service:
     env_file: # To be deleted
       - ./frontend/.env.prod
