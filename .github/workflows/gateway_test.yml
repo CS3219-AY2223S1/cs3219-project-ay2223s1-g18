@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths: 
       - 'gateway-service/**'
+      - 'docker-compose.yml'
 
 jobs:
   test_gateway:
