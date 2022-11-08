@@ -20,3 +20,8 @@ export const clearCookies = () => {
   Cookies.remove("AccessToken");
   Cookies.remove("RefreshToken");
 };
+
+export const isJwtExpired = (token) => {
+  const jwtPayload = JSON.parse(window.atob(token.split(".")[1]));
+  return jwtPayload.exp * 1000 < Date.now();
+};

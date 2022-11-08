@@ -41,14 +41,6 @@ const InterviewPage = () => {
     });
   }, [question_id]);
 
-  // var getNewQuestion = () => {
-  //   QuestionSvcGETRequest("/", { difficulty: difficulty }).then((res) => {
-  //     if (res.status === STATUS_CODE_OK) {
-  //       socket.emit("new question", res.data.question);
-  //     }
-  //   });
-  // };
-
   const handleEndSession = () => {
     if (partnerDisconnected) {
       window.location.href = "/";

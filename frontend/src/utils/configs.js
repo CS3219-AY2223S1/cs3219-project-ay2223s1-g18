@@ -24,3 +24,9 @@ export const URL_USER_HISTORY_SVC = isUsingGateway
   : process.env.REACT_APP_URI_USER_HISTORY_SVC
   ? process.env.REACT_APP_URI_USER_HISTORY_SVC
   : "http://localhost:8003";
+
+export const URL_AUTH_SVC = isUsingGateway
+  ? API_SVC + "/api/auth"
+  : process.env.REACT_APP_URI_AUTH_SVC
+  ? process.env.REACT_APP_URI_AUTH_SVC
+  : "http://localhost:7000";
