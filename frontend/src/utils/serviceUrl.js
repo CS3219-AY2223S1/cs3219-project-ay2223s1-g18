@@ -2,10 +2,14 @@ import {
   URL_USER_HISTORY_SVC,
   URL_USER_SVC,
   URL_QUESTION_SVC,
+  URL_AUTH_SVC,
 } from "../utils/configs";
 
 var serviceStrings = [
-  { reference: "USER", url: URL_USER_SVC },
+  {
+    reference: "USER",
+    url: URL_USER_SVC,
+  },
   {
     reference: "USER-HISTORY",
     url: URL_USER_HISTORY_SVC,
@@ -13,6 +17,10 @@ var serviceStrings = [
   {
     reference: "QUESTION",
     url: URL_QUESTION_SVC,
+  },
+  {
+    reference: "AUTH",
+    url: URL_AUTH_SVC,
   },
 ];
 
