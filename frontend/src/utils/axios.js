@@ -6,16 +6,52 @@ import {
   clearCookies,
   getAccessToken,
   getRefreshToken,
+  isJwtExpired,
   setAccessToken,
 } from "./TokenService";
 
 const requestInterceptor = (req) => {
   try {
     var accessToken = getAccessToken();
-    req.headers.Authorization = `Bearer ${accessToken}`;
-    req.headers.token = `${accessToken}`;
+    if (
+      req.url.includes("auth") ||
+      req.url.includes("signup") ||
+      req.url.includes("password-reset") ||
+      (accessToken && !isJwtExpired(accessToken))
+    ) {
+      req.headers.Authorization = `Bearer ${accessToken}`;
+      req.headers.token = `${accessToken}`;
+      return req;
+    } else {
+      console.log("access token expired");
+      const refreshToken = getRefreshToken();
+      if (refreshToken && isJwtExpired(refreshToken)) {
+        clearCookies();
+        clearStorage("currentUsername");
+        window.location.reload();
+      } else {
+        return axios
+          .get(`${URL_USER_SVC}/get-access/`, {
+            headers: { Authorization: `token ${refreshToken}` },
+          })
+          .then((res) => {
+            if (res.data.status) {
+              const newAccessToken = res.data.response.accessToken;
+              setAccessToken(newAccessToken);
 
-    return req;
+              instance.defaults.headers.common["Authorization"] =
+                "Bearer " + newAccessToken;
+
+              req.headers.Authorization = `Bearer ${newAccessToken}`;
+
+              return req;
+            }
+          })
+          .catch((err) => {
+            console.log("ACCESS TOKEN ERR: ", err);
+          });
+      }
+    }
   } catch (err) {
     console.error(err);
   }
@@ -27,48 +63,6 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(requestInterceptor);
-
-instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  // Access Token Expired
-  async function (error) {
-    const originalRequest = error.config;
-
-    if (!originalRequest.url.includes("/auth")) {
-      // if (error.response.status === 401 && !originalRequest._retry) {
-      const refreshToken = getRefreshToken();
-
-      return axios
-        .get(`${URL_USER_SVC}/get-access/`, {
-          headers: { Authorization: `token ${refreshToken}` },
-        })
-        .then((res) => {
-          if (res.data.status) {
-            const newAccessToken = res.data.response.accessToken;
-            setAccessToken(newAccessToken);
-
-            instance.defaults.headers.common["Authorization"] =
-              "Bearer " + newAccessToken;
-
-            return instance(originalRequest);
-          }
-        })
-        .catch((err) => {
-          console.log("ACCESS TPOLENerr: ", err);
-          // Refresh Token expired
-          if (err.response.status === 401) {
-            console.log("REFRESH TOKEN EXPIRED: ", err);
-
-            clearCookies();
-            clearStorage("currentUsername");
-            window.location.reload();
-          }
-        });
-    }
-  }
-);
 
 export const GETRequest = (service, url, params = {}) => {
   var endpoint = getServiceUrl(service) + url;
