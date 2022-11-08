@@ -38,8 +38,11 @@ const ProfilePage = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err);
-        window.location.href = "/404";
+        if (err.response.status === 404) {
+          window.location.href = "/404";
+        } else {
+          window.location.href = "/error";
+        }
       });
   }, []);
 

@@ -1,9 +1,6 @@
 import styled from "styled-components";
 import React, { useState } from "react";
-import {
-  STATUS_CODE_CONFLICT,
-  STATUS_CODE_ACCEPTED,
-} from "../../utils/constants";
+import { STATUS_CODE_ACCEPTED } from "../../utils/constants";
 import Button from "../../components/Button";
 import { POSTRequest } from "../../utils/axios";
 import MessageScreen from "../../components/MessageScreen";
@@ -27,15 +24,15 @@ function SignupPage() {
           if (res && res.status === STATUS_CODE_ACCEPTED) {
             setIsSignedUp(true);
             setLoading(false);
+          } else {
+            setLoading(false);
+            setError("Something went wrong. Please try again later.");
           }
         })
-        .catch((err) => {
+        .catch(() => {
           setLoading(false);
-          if (err.response.status === STATUS_CODE_CONFLICT) {
-            setError("Username or email has already been taken.");
-          } else {
-            setError("Something went wrong. Please try again later");
-          }
+
+          setError("Username or email has already been taken.");
         });
     }
   };

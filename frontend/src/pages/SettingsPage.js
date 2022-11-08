@@ -34,7 +34,7 @@ const SettingsPage = () => {
   const updatePassword = () => {
     setSuccessMsg("");
     setError("");
-    PATCHRequest("USER", `accounts/${username}`, { password })
+    PATCHRequest("USER", `/accounts/${username}`, { password })
       .then((res) => {
         if (res.data.status) {
           setPassword("");
