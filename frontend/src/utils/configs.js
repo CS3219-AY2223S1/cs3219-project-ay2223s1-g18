@@ -7,10 +7,10 @@ export const URL_USER_SVC = isUsingGateway
   ? process.env.REACT_APP_URI_USER_SVC
   : "http://localhost:8000";
 
-export const SOCKET_URL = isUsingGateway
-  ? API_SVC
-  : process.env.REACT_APP_URI_MATCHING_SVC
+export const SOCKET_URL = process.env.REACT_APP_URI_MATCHING_SVC 
   ? process.env.REACT_APP_URI_MATCHING_SVC
+  : isUsingGateway
+  ? API_SVC
   : "http://localhost:8001";
 
 export const URL_QUESTION_SVC = isUsingGateway
