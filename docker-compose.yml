@@ -1,0 +1,64 @@
+version: "3"
+services:
+  redis_user:
+    container_name: redis
+    image: redis:latest
+
+  frontend-service:
+    env_file: 
+      - ./frontend/.env.prod
+    container_name: frontend-service
+    build: ./frontend
+    ports:
+      - 3000:3000
+
+  gateway-service:
+    env_file:
+      - ./gateway-service/.env.prod
+    container_name: gateway-service
+    build: ./gateway-service
+    ports:
+      - 80:80
+    depends_on:
+      - auth-service
+      - user-service
+      - matching-service
+      - question-service
+      - user-history-service
+
+  auth-service:
+    env_file:
+      - ./auth-service/.env.prod
+    container_name: auth-service
+    build: ./auth-service
+    depends_on:
+      - redis_user
+
+  user-service:
+    env_file: 
+      - ./user-service/.env.prod
+    container_name: user-service
+    build: ./user-service
+    depends_on:
+      - redis_user
+
+  matching-service:
+    env_file:
+      - ./matching-service/.env.prod
+    container_name: matching-service
+    build: ./matching-service
+
+
+  question-service:
+    env_file: 
+      - ./question-service/.env.prod
+    container_name: question-service
+    build: ./question-service
+
+
+  user-history-service:
+    env_file: 
+      - ./user-history-service/.env.prod
+    container_name: user-history-service
+    build: ./user-history-service
+

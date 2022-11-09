@@ -1,22 +1,19 @@
-import express from 'express';
-import cors from 'cors';
+import express from 'express'
+import cors from 'cors'
+import dotenv from 'dotenv'
 
-const app = express();
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
+import UserRouter from './users/routes/users.route.js'
+dotenv.config()
+
+const port = process.env.USER_PORT || 8000
+
+export const app = express()
+
 app.use(cors()) // config cors so that front-end can use
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.options('*', cors())
-import { createUser } from './controller/user-controller.js';
 
-const router = express.Router()
+app.use('/', UserRouter)
 
-// Controller will contain all the User-defined Routes
-router.get('/', (_, res) => res.send('Hello World from user-service'))
-router.post('/', createUser)
-
-app.use('/api/user', router).all((_, res) => {
-    res.setHeader('content-type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-})
-
-app.listen(8000, () => console.log('user-service listening on port 8000'));
+app.listen(port, () => console.log('User-Service listening on Port', port))

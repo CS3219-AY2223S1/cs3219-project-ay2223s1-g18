@@ -1,0 +1,119 @@
+name: Gateway Service CI
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths: 
+      - 'gateway-service/**'
+      - 'docker-compose.yml'
+
+jobs:
+  test_gateway:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        mongodb-version: ['5.0']
+        redis-version: [4]
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Create env.prod files per  for local testing
+
+      - name: Create env for frontend
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+            envkey_REACT_APP_API_SVC: ${{ secrets.REACT_APP_API_SVC }}
+            envkey_REACT_APP_IS_USING_GATEWAY: ${{ secrets.REACT_APP_IS_USING_GATEWAY }}
+            directory: ./frontend
+            file_name: .env.prod
+            fail_on_empty: true
+
+      - name: Create env for gateway service
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+            envkey_AUTH_SERVICE_URL: ${{ secrets.AUTH_SERVICE_URL }}
+            envkey_USER_SERVICE_URL: ${{ secrets.USER_SERVICE_URL }}
+            envkey_MATCHING_SERVICE_URL: ${{ secrets.MATCHING_SERVICE_URL }}
+            envkey_QUESTION_SERVICE_URL: ${{ secrets.QUESTION_SERVICE_URL }}
+            envkey_USER_HISTORY_SERVICE_URL: ${{ secrets.USER_HISTORY_SERVICE_URL }}
+            directory: ./gateway-service
+            file_name: .env.prod
+            fail_on_empty: true
+
+      - name: Create env for user service
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+            envkey_DB_LOCAL_URI: ${{ secrets.DB_CLOUD_URI }}
+            envkey_ENV: ${{ secrets.ENV }}
+            envkey_REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+            envkey_ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+            envkey_VERIFICATION_TOKEN_SECRET: ${{ secrets.VERIFICATION_TOKEN_SECRET }}
+            envkey_REFRESH_TOKEN_EXPIRY: ${{ secrets.REFRESH_TOKEN_EXPIRY }}
+            envkey_ACCESS_TOKEN_EXPIRY: ${{ secrets.ACCESS_TOKEN_EXPIRY }}
+            envkey_VERIFICATION_TOKEN_EXPIRY: ${{ secrets.VERIFICATION_TOKEN_EXPIRY }}
+            envkey_EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+            envkey_EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+            envkey_EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+            directory: ./user-service
+            file_name: .env.prod
+            fail_on_empty: true
+
+      - name: Create env for matching service
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+            envkey_DB_LOCAL_URI: ${{ secrets.DB_CLOUD_URI }}
+            envkey_ENV: ${{ secrets.ENV }}
+            directory: ./matching-service
+            file_name: .env.prod
+            fail_on_empty: true
+
+      - name: Create env for question service
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+            envkey_DB_CLOUD_URI: ${{ secrets.DB_CLOUD_URI }}
+            directory: ./question-service
+            file_name: .env.prod
+            fail_on_empty: true
+
+      - name: Create env for user-history service
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+            envkey_DB_CLOUD_URI: ${{ secrets.DB_CLOUD_URI }}
+            directory: ./user-history-service
+            file_name: .env.prod
+            fail_on_empty: true
+
+      - name: Create env for auth service
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+            envkey_REDIS_URI: ${{ secrets.REDIS_CLOUD_URI }}
+            envkey_REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+            envkey_ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+            envkey_VERIFICATION_TOKEN_SECRET: ${{ secrets.VERIFICATION_TOKEN_SECRET }}
+            envkey_REFRESH_TOKEN_EXPIRY: ${{ secrets.REFRESH_TOKEN_EXPIRY }}
+            envkey_ACCESS_TOKEN_EXPIRY: ${{ secrets.ACCESS_TOKEN_EXPIRY }}
+            envkey_VERIFICATION_TOKEN_EXPIRY: ${{ secrets.VERIFICATION_TOKEN_EXPIRY }}
+            directory: ./auth-service
+            file_name: .env.prod
+            fail_on_empty: true
+
+
+
+      - name: Orchestrate microservices
+        run: docker-compose -f "docker-compose.yml" up -d --build
+        working-directory: ./
+
+      - name: Install dependencies to test Gateway Service
+        run: npm ci
+        working-directory: ./gateway-service/tests
+
+      - name: Test Gateway Service
+        run: npm test
+        working-directory: ./gateway-service/tests
+        env:
+            REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+            ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+            VERIFICATION_TOKEN: ${{ secrets.VERIFICATION_TOKEN }}

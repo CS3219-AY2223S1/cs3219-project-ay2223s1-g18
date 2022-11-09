@@ -1,0 +1,38 @@
+name: Frontend Service CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "frontend/**"
+
+jobs:
+  test_frontend:
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        mongodb-version: ["5.0"]
+        redis-version: [4]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Lint User Service Code
+        run: npm run lint
+
+      # - name: Test User Service
+      #   run: npm test -- if present
+      #   env:
